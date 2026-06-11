@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { ArrowRight, GraduationCap, PieChart } from "lucide-react";
-import { ActivitySlider } from "@/components/ActivitySlider";
+import { ActivityCalendar } from "@/components/ActivityCalendar";
 import { HeroStage } from "@/components/HeroStage";
 import { homeSections, sarGpa, sarQualityCharts, summaryStats } from "@/lib/site-data";
 
@@ -31,8 +31,8 @@ export default function HomePage() {
       <section className="section-block">
         <div className="section-heading">
           <span className="eyebrow">Navigation</span>
-          <h2>เข้าสู่แฟ้มงานแต่ละด้าน</h2>
-          <p>เลือกเปิดหน้าข้อมูลที่ต้องการจากปุ่มด้านล่าง จัดกลุ่มหลักฐานให้เข้าถึงง่ายและเข้ากับธีมเว็บไซต์</p>
+          <h2>เข้าสู่หน้าเมนู</h2>
+          <p>เลือกเปิดหน้าข้อมูลที่ต้องการจากปุ่มด้านล่าง</p>
         </div>
         <div className="portal-grid">
           {homeSections.map((section) => {
@@ -125,7 +125,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ActivitySlider />
+      <ActivityCalendar />
     </>
   );
 }

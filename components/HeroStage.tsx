@@ -14,8 +14,7 @@ export function HeroStage() {
 
       <div className="spline-hero-content">
         <div className="spline-hero-copy">
-          <div className="hero-copy-top">
-            <span className="eyebrow dark">ยินดีต้อนรับเข้าสู่</span>
+          <div className="hero-copy-top hero-copy-logo-row">
             <img className="hero-copy-logo" src="/8045-transparent.png" alt="" />
           </div>
           <div className="hero-title-group">

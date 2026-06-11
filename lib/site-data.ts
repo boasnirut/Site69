@@ -295,36 +295,66 @@ export const activityGallery = [
     title: "กิจกรรมการเรียนรู้เชิงรุก",
     category: "Active Learning",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1100&q=80",
+    images: [
+      "/AC1.JPG",
+      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1100&q=80",
+      "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1100&q=80"
+    ],
     detail: "ผู้เรียนร่วมกันคิด วิเคราะห์ ออกแบบ และนำเสนอผลงานจากสถานการณ์ใกล้ตัว"
   },
   {
     title: "ห้องเรียนดิจิทัล",
     category: "Digital Classroom",
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=80",
+    images: [
+      "/AT1.JPEG",
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=80",
+      "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=1100&q=80"
+    ],
     detail: "ใช้เครื่องมือออนไลน์เพื่อเสริมการเรียนรู้และติดตามความก้าวหน้าของผู้เรียน"
   },
   {
     title: "กิจกรรมพัฒนาผู้เรียน",
     category: "Student Development",
     image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1100&q=80",
+    images: [
+      "/C1-web.jpg",
+      "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1100&q=80",
+      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1100&q=80"
+    ],
     detail: "ส่งเสริมทักษะชีวิต วินัย ความรับผิดชอบ และการทำงานร่วมกัน"
   },
   {
     title: "แลกเปลี่ยนเรียนรู้ PLC",
     category: "Professional Learning Community",
     image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1100&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1100&q=80",
+      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1100&q=80",
+      "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1100&q=80"
+    ],
     detail: "ร่วมออกแบบแนวทางจัดการเรียนรู้และพัฒนาสื่อกับเครือข่ายครู"
   },
   {
     title: "นำเสนอผลงานนักเรียน",
     category: "Student Showcase",
     image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1100&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1100&q=80",
+      "/AC1.JPG",
+      "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1100&q=80"
+    ],
     detail: "เปิดพื้นที่ให้ผู้เรียนสื่อสารแนวคิด ทดลอง และสะท้อนผลการเรียนรู้"
   },
   {
     title: "กิจกรรมเทคโนโลยีเพื่อชุมชน",
     category: "Technology for Community",
     image: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=1100&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=1100&q=80",
+      "/AT1.JPEG",
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1100&q=80"
+    ],
     detail: "เชื่อมโยงความรู้ดิจิทัลกับการแก้ปัญหาและการสร้างคุณค่าให้ชุมชน"
   }
 ];
@@ -370,7 +400,7 @@ export const pageVisuals = {
     eyebrow: "Student Care",
     title: "งานประจำชั้น",
     description: "ฐานข้อมูลดูแลช่วยเหลือนักเรียน ติดตามพฤติกรรม การมาเรียน และการประสานผู้ปกครองอย่างเป็นระบบ",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80"
+    image: "/C1-web.jpg"
   },
   achievements: {
     eyebrow: "Portfolio",

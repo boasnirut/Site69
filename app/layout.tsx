@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
+import { PageExperience } from "@/components/PageExperience";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="th" data-scroll-behavior="smooth">
       <body>
+        <PageExperience />
         <SiteHeader />
         <main>{children}</main>
         <Footer />
