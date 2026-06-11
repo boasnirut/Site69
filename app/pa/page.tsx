@@ -1,55 +1,14 @@
-import { BadgeCheck, BookOpenCheck, ClipboardCheck, FileCheck2, Lightbulb, Target, UsersRound } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, BadgeCheck, BookOpenCheck, ClipboardCheck, Download, FileText, Target, UsersRound } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
+import { paAgreementGeneral, paAgreementStandards, paChallenges, paWorkload2569 } from "@/lib/pa-data";
 import { pageVisuals } from "@/lib/site-data";
 
-const workload = [
-  { label: "ชั่วโมงสอนตามตารางสอน", value: "24", detail: "วิทยาการคำนวณ ออกแบบและเทคโนโลยี หน้าที่พลเมือง ต้านทุจริต สุขศึกษา พลศึกษา แนะแนว และกิจกรรมพัฒนาผู้เรียน" },
-  { label: "ส่งเสริมและสนับสนุนการเรียนรู้", value: "8", detail: "จัดทำแผนการสอน วัดและประเมินผล และ PLC" },
-  { label: "พัฒนาคุณภาพสถานศึกษา", value: "6", detail: "งานวิชาการ หัวหน้ากลุ่มสาระสุขศึกษาและพลศึกษา เทคโนโลยีสารสนเทศ และประชาสัมพันธ์" },
-  { label: "ตอบสนองนโยบายและจุดเน้น", value: "5", detail: "โรงเรียนวิถีพุทธ โรงเรียนสุจริต ห้องเรียนขยายโอกาสคุณภาพ และระบบดูแลช่วยเหลือ" }
-];
-
-const paStandards = [
-  {
-    title: "ด้านการจัดการเรียนรู้",
-    icon: BookOpenCheck,
-    task: "พัฒนาหลักสูตร ออกแบบ Active Learning/PBL สร้างเว็บแอป Cyber Safety และนวัตกรรม Smart Packaging ด้วย NFC Tag",
-    outcome: "ผู้เรียนมี Digital Literacy ทักษะอาชีพ และมีชิ้นงาน/ภาระงานที่เชื่อมโยงบริบทชุมชน",
-    indicator: "ผู้เรียนร้อยละ 80 ผ่านเกณฑ์ และร้อยละ 100 มีบรรจุภัณฑ์อัจฉริยะที่ใช้ NFC Tag"
-  },
-  {
-    title: "ด้านส่งเสริมและสนับสนุนการจัดการเรียนรู้",
-    icon: UsersRound,
-    task: "จัดทำข้อมูลสารสนเทศผู้เรียน รายวิชา ระบบดูแลช่วยเหลือ ประสานผู้ปกครองและภาคีเครือข่าย",
-    outcome: "มีข้อมูลผู้เรียนเป็นปัจจุบัน ใช้ติดตาม วางแผน และส่งเสริมศักยภาพผู้เรียนได้ตรงจุด",
-    indicator: "ข้อมูลสารสนเทศเป็นปัจจุบันร้อยละ 100 และผู้เรียนได้รับการดูแลตามระบบสถานศึกษา"
-  },
-  {
-    title: "ด้านพัฒนาตนเองและวิชาชีพ",
-    icon: Lightbulb,
-    task: "เข้าร่วมอบรม/PLC แลกเปลี่ยนการแก้ปัญหาเด็กติดเกม โซเชียล และพัฒนารูปแบบโครงงานอาชีพฐานนวัตกรรม",
-    outcome: "นำความรู้มาพัฒนาเว็บแอป Cyber Safety และนวัตกรรม Smart Packaging ที่ตอบโจทย์ผู้เรียน",
-    indicator: "เข้าร่วม PLC ไม่น้อยกว่า 50 ชั่วโมง/ปีการศึกษา และมีรายงานผลการใช้นวัตกรรมอย่างน้อย 1 เรื่อง"
-  }
-];
-
-const challenges = [
-  {
-    title: "Digital Literacy & Cyber Safety",
-    eyebrow: "ประเด็นท้าทายที่ 1",
-    focus: "การพัฒนาความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ของนักเรียนชั้น ม.3 ด้วยเว็บแอปพลิเคชันสื่อการสอนแบบโต้ตอบ",
-    problem: "นักเรียนมีความเสี่ยงจากการตั้งรหัสผ่านง่าย ไม่ตรวจสอบลิงก์ Phishing และเปิดเผยข้อมูลส่วนตัวมากเกินไป",
-    method: ["ออกแบบหน่วยความปลอดภัยออนไลน์", "ใช้ PBL และ 5Es", "ทดลองผ่าน Password Lab / Phishing Simulator", "ใช้ Dashboard ติดตามและซ่อมเสริม", "แลกเปลี่ยนผลใน PLC"],
-    result: "นักเรียนร้อยละ 80 มีผลสัมฤทธิ์และทักษะ Digital Literacy ผ่านเกณฑ์ และมีสื่อเว็บแอปที่ปรับประยุกต์กับบริบทผู้เรียน"
-  },
-  {
-    title: "Digital Career Innovator",
-    eyebrow: "ประเด็นท้าทายที่ 2",
-    focus: "การพัฒนาทักษะนวัตกรอาชีพดิจิทัลผ่านบรรจุภัณฑ์อัจฉริยะ Smart Packaging ด้วย NFC Tag เชื่อมโยงผลิตภัณฑ์ชุมชน",
-    problem: "ผู้เรียนยังขาดทักษะประยุกต์เทคโนโลยีดิจิทัลเชิงพาณิชย์ และผลิตภัณฑ์ชุมชนยังขาดการสร้างมูลค่าเพิ่ม",
-    method: ["อบรม Packaging Design ด้วย Canva", "เรียนรู้ IoT และ NFC Tag", "ลงพื้นที่เลือกผลิตภัณฑ์ชุมชน", "สร้างฉลากสินค้าอัจฉริยะ", "ทดลองตลาดและรับ Feedback"],
-    result: "นักเรียนร้อยละ 80 ผ่านเกณฑ์โครงงานอาชีพ และมีต้นแบบ Smart Packaging ที่ใช้งานจริงร่วมกับผลิตภัณฑ์ชุมชน"
-  }
+const paMenu = [
+  { href: "#pa-general", label: "ข้อมูลทั่วไปของผู้ประเมิน" },
+  { href: "#pa-workload", label: "ภาระงาน ก.ค.ศ." },
+  { href: "#pa-standards", label: "มาตรฐานตำแหน่ง" },
+  { href: "#pa-challenges", label: "ประเด็นท้าทาย" }
 ];
 
 export default function PaPage() {
@@ -57,101 +16,206 @@ export default function PaPage() {
     <>
       <PageHero {...pageVisuals.pa} />
 
-      <section className="section-block pa-document-section">
+      <section className="section-block pa-document-section pa-2569-section">
         <div className="section-heading">
-          <span className="eyebrow">PA 2569</span>
-          <h2>แบบข้อตกลงในการพัฒนางาน</h2>
-          <p>สรุปข้อมูลจากไฟล์ “นิรุทธิ์-แบบข้อตกลงในการพัฒนางาน PA.docx” ระหว่างวันที่ 1 ตุลาคม 2568 ถึง 30 กันยายน 2569</p>
+          <span className="eyebrow">PA Agreement 2569</span>
+          <h2>ข้อตกลงในการพัฒนางาน (PA) ประจำปีงบประมาณ 2569</h2>
+          <p>เรียบเรียงจากไฟล์ “นิรุทธิ์-แบบข้อตกลงในการพัฒนางาน PA.docx” โดยจัดข้อมูลให้ค้นง่าย ครบทั้งข้อมูลทั่วไป ภาระงาน มาตรฐานตำแหน่ง และประเด็นท้าทาย</p>
         </div>
 
-        <div className="pa-profile-panel">
+        <div className="pa-action-strip">
           <div>
-            <span>ผู้จัดทำข้อตกลง</span>
-            <h3>นายนิรุทธิ์ เสวะนา</h3>
-            <p>ตำแหน่ง ครู คศ.1 โรงเรียนบ้านน้ำพร สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1</p>
+            <FileText aria-hidden="true" />
+            <div>
+              <strong>รายงานผล PA ประจำปีงบประมาณ 2569</strong>
+              <span>หน้าย่อยอ้างอิงจากไฟล์รายงาน PA PDF พร้อมภาพหลักฐานแบบคลิกขยายดูภาพใหญ่ได้</span>
+            </div>
           </div>
-          <div>
-            <strong>43</strong>
-            <span>ชั่วโมง/สัปดาห์</span>
-          </div>
+          <Link href="/pa/report">
+            เปิดหน้ารายงานผล PA
+            <ArrowRight aria-hidden="true" />
+          </Link>
         </div>
 
-        <div className="pa-workload-grid">
-          {workload.map((item) => (
-            <article className="pa-workload-card" key={item.label}>
-              <strong>{item.value}</strong>
-              <span>{item.label}</span>
-              <p>{item.detail}</p>
-            </article>
+        <nav className="pa-subnav" aria-label="เมนูย่อย PA 2569">
+          {paMenu.map((item) => (
+            <a href={item.href} key={item.href}>{item.label}</a>
           ))}
-        </div>
-      </section>
+        </nav>
 
-      <section className="section-block">
-        <div className="section-heading">
-          <span className="eyebrow">Position Standards</span>
-          <h2>งานที่จะปฏิบัติตามมาตรฐานตำแหน่งครู</h2>
-        </div>
-        <div className="pa-standard-grid">
-          {paStandards.map((item) => {
-            const Icon = item.icon;
-            return (
-              <article className="pa-standard-card" key={item.title}>
-                <Icon aria-hidden="true" />
-                <h3>{item.title}</h3>
-                <dl>
-                  <div>
-                    <dt>งาน</dt>
-                    <dd>{item.task}</dd>
-                  </div>
-                  <div>
-                    <dt>ผลลัพธ์</dt>
-                    <dd>{item.outcome}</dd>
-                  </div>
-                  <div>
-                    <dt>ตัวชี้วัด</dt>
-                    <dd>{item.indicator}</dd>
-                  </div>
-                </dl>
+        <section className="pa-agreement-panel" id="pa-general">
+          <div className="pa-report-title">
+            <ClipboardCheck aria-hidden="true" />
+            <div>
+              <span className="eyebrow">General Information</span>
+              <h3>ข้อมูลทั่วไปของผู้ประเมิน</h3>
+            </div>
+          </div>
+          <div className="pa-info-grid">
+            {paAgreementGeneral.map((item) => (
+              <article key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
               </article>
-            );
-          })}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
 
-      <section className="section-block">
-        <div className="section-heading">
-          <span className="eyebrow">Challenge Issues</span>
-          <h2>ประเด็นท้าทายในการพัฒนาผลลัพธ์การเรียนรู้</h2>
-        </div>
-        <div className="pa-challenge-grid">
-          {challenges.map((item) => (
-            <article className="pa-challenge-card" key={item.title}>
-              <span>{item.eyebrow}</span>
-              <h3>{item.title}</h3>
-              <strong>{item.focus}</strong>
-              <p>{item.problem}</p>
-              <ul>
-                {item.method.map((method) => (
-                  <li key={method}>{method}</li>
-                ))}
-              </ul>
-              <div>
-                <Target aria-hidden="true" />
-                <p>{item.result}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+        <section className="pa-agreement-panel" id="pa-workload">
+          <div className="pa-report-title">
+            <UsersRound aria-hidden="true" />
+            <div>
+              <span className="eyebrow">Workload</span>
+              <h3>ส่วนที่ 1 ข้อตกลงในการพัฒนางานตามมาตรฐานตำแหน่ง</h3>
+            </div>
+          </div>
+          <div className="pa-total-card">
+            <strong>43</strong>
+            <div>
+              <h4>ชั่วโมง/สัปดาห์</h4>
+              <p>ภาระงานรวมตามที่ ก.ค.ศ. กำหนด แบ่งเป็นชั่วโมงสอน งานส่งเสริมสนับสนุน งานพัฒนาคุณภาพการศึกษา และงานตอบสนองนโยบาย/จุดเน้น</p>
+            </div>
+          </div>
+          <div className="pa-workload-list detailed">
+            {paWorkload2569.map((group) => (
+              <article className="pa-workload-row" key={group.title}>
+                <div>
+                  <strong>{group.hours}</strong>
+                  <span>ชม./สัปดาห์</span>
+                </div>
+                <section>
+                  <h4>{group.title}</h4>
+                  <div className="pa-workload-table-wrap">
+                    <table className="pa-workload-table">
+                      <thead>
+                        <tr>
+                          <th>วิชา/กิจกรรม</th>
+                          <th>จำนวนชั่วโมง/สัปดาห์</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.rows.map((row) => (
+                          <tr key={`${group.title}-${row.activity}`}>
+                            <td>{row.activity}</td>
+                            <td>{row.hours}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              </article>
+            ))}
+          </div>
+        </section>
 
-      <section className="callout-band">
-        <div>
-          <span className="eyebrow">Evidence Focus</span>
-          <h2>หลักฐานเน้นผลลัพธ์ผู้เรียนและการปฏิบัติจริง</h2>
-          <p>หน้า PA นี้จัดข้อมูลให้เชื่อมโยงภาระงาน มาตรฐานตำแหน่ง ผลลัพธ์ ตัวชี้วัด และประเด็นท้าทาย เพื่อใช้เป็นแฟ้มหลักฐานประกอบการประเมินได้ชัดเจน</p>
-        </div>
-        <BadgeCheck aria-hidden="true" />
+        <section className="pa-agreement-panel" id="pa-agreement-pdf">
+          <div className="pa-report-title">
+            <FileText aria-hidden="true" />
+            <div>
+              <span className="eyebrow">Agreement PDF</span>
+              <h3>ไฟล์ข้อตกลงในการพัฒนางาน PA 2569</h3>
+            </div>
+            <a href="/pa-agreement-2569-placeholder.pdf" download>
+              <Download aria-hidden="true" />
+              ดาวน์โหลด PDF
+            </a>
+          </div>
+          <p className="pa-lead-text">ไฟล์นี้เป็น PDF จำลองสำหรับจัดตำแหน่งบนเว็บไซต์ เมื่อนำไฟล์จริงมาใช้ สามารถวางทับไฟล์ชื่อ <strong>pa-agreement-2569-placeholder.pdf</strong> ในโฟลเดอร์ public ได้เลย</p>
+          <iframe className="pa-agreement-pdf-frame" src="/pa-agreement-2569-placeholder.pdf#toolbar=1" title="ข้อตกลง PA 2569 PDF" />
+        </section>
+
+        <section className="pa-agreement-panel" id="pa-standards">
+          <div className="section-heading compact">
+            <span className="eyebrow">Position Standards</span>
+            <h3>งานที่จะปฏิบัติตามมาตรฐานตำแหน่งครู</h3>
+          </div>
+
+          <div className="pa-domain-stack">
+            {paAgreementStandards.map((domain) => (
+              <article className="pa-domain-card" key={domain.domain}>
+                <div className="pa-domain-head">
+                  <BookOpenCheck aria-hidden="true" />
+                  <div>
+                    <h3>{domain.domain}</h3>
+                    <p>{domain.description}</p>
+                  </div>
+                </div>
+
+                <div className="pa-standard-detail-list">
+                  {domain.items.map((item) => (
+                    <section className="pa-standard-detail-card" key={item.title}>
+                      <h4>{item.title}</h4>
+                      <div className="pa-detail-columns">
+                        <div>
+                          <span>งานที่จะปฏิบัติ</span>
+                          <ul>
+                            {item.tasks.map((task) => (
+                              <li key={task}>{task}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <span>ผลลัพธ์</span>
+                          <ul>
+                            {item.outcomes.map((outcome) => (
+                              <li key={outcome}>{outcome}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <span>ตัวชี้วัด</span>
+                          <ul>
+                            {item.indicators.map((indicator) => (
+                              <li key={indicator}>{indicator}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="pa-agreement-panel" id="pa-challenges">
+          <div className="section-heading compact">
+            <span className="eyebrow">Challenge Issues</span>
+            <h3>ส่วนที่ 2 ข้อตกลงในการพัฒนางานที่เป็นประเด็นท้าทาย</h3>
+          </div>
+
+          <div className="pa-challenge-grid">
+            {paChallenges.map((challenge) => (
+              <article className="pa-challenge-card" key={challenge.title}>
+                <span>{challenge.title}</span>
+                <h3>{challenge.subtitle}</h3>
+                <strong>สภาพปัญหาการจัดการเรียนรู้และคุณภาพการเรียนรู้ของผู้เรียน</strong>
+                <p>{challenge.problem}</p>
+                <strong>วิธีการดำเนินการให้บรรลุเป้าหมาย</strong>
+                <ul>
+                  {challenge.methods.map((method) => (
+                    <li key={method}>{method}</li>
+                  ))}
+                </ul>
+                <div>
+                  <Target aria-hidden="true" />
+                  <p>{challenge.expected.join(" / ")}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="callout-band">
+          <div>
+            <span className="eyebrow">Evidence Ready</span>
+            <h2>จัดข้อมูล PA ให้พร้อมใช้เป็นแฟ้มหลักฐาน</h2>
+            <p>หน้า PA นี้แยก “ข้อตกลง” และ “รายงานผล” ออกจากกัน เพื่อให้ดูง่ายและนำเสนอได้เป็นลำดับ ทั้งเป้าหมาย วิธีดำเนินงาน ตัวชี้วัด และหลักฐานที่สะท้อนผลลัพธ์ผู้เรียน</p>
+          </div>
+          <BadgeCheck aria-hidden="true" />
+        </section>
       </section>
     </>
   );

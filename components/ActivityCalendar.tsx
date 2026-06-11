@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, Download, Lock, Pencil, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, Download, Lock, Pencil, Plus, Trash2, Upload } from "lucide-react";
 
 type CalendarEvent = {
   id: string;
@@ -11,7 +11,7 @@ type CalendarEvent = {
   detail: string;
 };
 
-type EditorMode = "add" | "edit" | "delete";
+type EditorMode = "add" | "edit" | "delete" | "import";
 
 const PASSWORD = "42010113";
 const STORAGE_KEY = "nirut-calendar-events-csv";
@@ -94,6 +94,10 @@ function parseCsv(csv: string): CalendarEvent[] {
     .filter((event) => event.id && event.date && event.title);
 }
 
+function notify(kind: "success" | "error", text: string) {
+  window.dispatchEvent(new CustomEvent("site-notice", { detail: { kind, text } }));
+}
+
 function formatThaiDate(dateValue: string) {
   return new Intl.DateTimeFormat("th-TH", {
     day: "numeric",
@@ -136,6 +140,8 @@ export function ActivityCalendar() {
   const [editorMode, setEditorMode] = useState<EditorMode | null>(null);
   const [selectedId, setSelectedId] = useState("");
   const [form, setForm] = useState({ date: "", title: "", category: "", detail: "" });
+  const [importText, setImportText] = useState("");
+  const [importError, setImportError] = useState("");
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
@@ -156,9 +162,7 @@ export function ActivityCalendar() {
   }, []);
 
   useEffect(() => {
-    if (events.length > 0) {
-      window.localStorage.setItem(STORAGE_KEY, toCsv(events));
-    }
+    window.localStorage.setItem(STORAGE_KEY, toCsv(events));
   }, [events]);
 
   const cells = useMemo(() => getMonthDays(monthDate), [monthDate]);
@@ -179,11 +183,18 @@ export function ActivityCalendar() {
     }
 
     const today = new Date().toISOString().slice(0, 10);
+    const firstEvent = sortedEvents[0];
     setEditorMode(authMode);
     setAuthMode(null);
     setPassword("");
-    setSelectedId(events[0]?.id || "");
-    setForm({ date: today, title: "", category: "กิจกรรม", detail: "" });
+    setImportError("");
+    setImportText("");
+    setSelectedId(firstEvent?.id || "");
+    setForm(
+      authMode === "edit" && firstEvent
+        ? { date: firstEvent.date, title: firstEvent.title, category: firstEvent.category, detail: firstEvent.detail }
+        : { date: today, title: "", category: "กิจกรรม", detail: "" }
+    );
   };
 
   const applyEditSelection = (id: string) => {
@@ -195,7 +206,37 @@ export function ActivityCalendar() {
   };
 
   const saveEvent = () => {
+    if (editorMode === "delete") {
+      if (!selectedId) {
+        notify("error", "ไม่พบกิจกรรมที่ต้องการลบ");
+        return;
+      }
+
+      setEvents((current) => current.filter((event) => event.id !== selectedId));
+      setSelectedId("");
+      setEditorMode(null);
+      notify("success", "ลบกิจกรรมเรียบร้อย");
+      return;
+    }
+
+    if (editorMode === "import") {
+      const parsed = parseCsv(importText);
+      if (parsed.length === 0) {
+        setImportError("ไฟล์ CSV ไม่มีข้อมูลกิจกรรมที่ถูกต้อง");
+        notify("error", "นำเข้า CSV ไม่สำเร็จ");
+        return;
+      }
+
+      setEvents(parsed);
+      setEditorMode(null);
+      setImportText("");
+      setImportError("");
+      notify("success", "นำเข้า CSV เรียบร้อย");
+      return;
+    }
+
     if (!form.date || !form.title.trim()) {
+      notify("error", "กรุณากรอกวันที่และชื่อกิจกรรม");
       return;
     }
 
@@ -210,16 +251,14 @@ export function ActivityCalendar() {
           detail: form.detail.trim()
         }
       ]);
+      notify("success", "เพิ่มกิจกรรมเรียบร้อย");
     }
 
     if (editorMode === "edit" && selectedId) {
       setEvents((current) =>
         current.map((event) => (event.id === selectedId ? { ...event, ...form, title: form.title.trim() } : event))
       );
-    }
-
-    if (editorMode === "delete" && selectedId) {
-      setEvents((current) => current.filter((event) => event.id !== selectedId));
+      notify("success", "แก้ไขกิจกรรมเรียบร้อย");
     }
 
     setEditorMode(null);
@@ -233,6 +272,24 @@ export function ActivityCalendar() {
     link.download = "calendar-events.csv";
     link.click();
     URL.revokeObjectURL(url);
+    notify("success", "ส่งออก CSV เรียบร้อย");
+  };
+
+  const readImportFile = (file: File | undefined) => {
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImportText(String(reader.result || ""));
+      setImportError("");
+    };
+    reader.onerror = () => {
+      setImportError("อ่านไฟล์ CSV ไม่สำเร็จ");
+      notify("error", "อ่านไฟล์ CSV ไม่สำเร็จ");
+    };
+    reader.readAsText(file, "utf-8");
   };
 
   return (
@@ -286,7 +343,8 @@ export function ActivityCalendar() {
             <button type="button" onClick={() => openAuth("add")}><Plus aria-hidden="true" />เพิ่ม</button>
             <button type="button" onClick={() => openAuth("edit")}><Pencil aria-hidden="true" />แก้ไข</button>
             <button type="button" onClick={() => openAuth("delete")}><Trash2 aria-hidden="true" />ลบ</button>
-            <button type="button" onClick={downloadCsv}><Download aria-hidden="true" />CSV</button>
+            <button type="button" onClick={() => openAuth("import")}><Upload aria-hidden="true" />นำเข้า CSV</button>
+            <button type="button" onClick={downloadCsv}><Download aria-hidden="true" />ส่งออก CSV</button>
           </div>
 
           <div className="calendar-event-list">
@@ -328,8 +386,8 @@ export function ActivityCalendar() {
       {editorMode ? (
         <div className="calendar-modal-backdrop">
           <div className="calendar-modal">
-            <h3>{editorMode === "add" ? "เพิ่มกิจกรรม" : editorMode === "edit" ? "แก้ไขกิจกรรม" : "ลบกิจกรรม"}</h3>
-            {editorMode !== "add" ? (
+            <h3>{editorMode === "add" ? "เพิ่มกิจกรรม" : editorMode === "edit" ? "แก้ไขกิจกรรม" : editorMode === "delete" ? "ลบกิจกรรม" : "นำเข้า CSV"}</h3>
+            {editorMode !== "add" && editorMode !== "import" ? (
               <label>
                 เลือกกิจกรรม
                 <select value={selectedId} onChange={(event) => applyEditSelection(event.target.value)}>
@@ -342,6 +400,18 @@ export function ActivityCalendar() {
 
             {editorMode === "delete" ? (
               <p>ต้องการลบ “{selectedEvent?.title || "กิจกรรมนี้"}” ใช่หรือไม่</p>
+            ) : editorMode === "import" ? (
+              <>
+                <label>
+                  เลือกไฟล์ CSV
+                  <input accept=".csv,text/csv" type="file" onChange={(event) => readImportFile(event.target.files?.[0])} />
+                </label>
+                <label>
+                  ตัวอย่าง/แก้ไขข้อมูล CSV
+                  <textarea value={importText} onChange={(event) => setImportText(event.target.value)} />
+                </label>
+                {importError ? <p className="form-error">{importError}</p> : null}
+              </>
             ) : (
               <>
                 <label>
@@ -365,7 +435,7 @@ export function ActivityCalendar() {
 
             <div className="modal-actions">
               <button type="button" onClick={() => setEditorMode(null)}>ยกเลิก</button>
-              <button type="button" onClick={saveEvent}>{editorMode === "delete" ? "ลบกิจกรรม" : "บันทึก"}</button>
+              <button type="button" onClick={saveEvent}>{editorMode === "delete" ? "ลบกิจกรรม" : editorMode === "import" ? "นำเข้า" : "บันทึก"}</button>
             </div>
           </div>
         </div>

@@ -29,7 +29,7 @@ export const navigation: NavItem[] = [
   {
     href: "/",
     label: "ภาพรวม",
-    description: "หน้าหลักเว็บไซต์ครูนิรุทธิ์ เสวะนา",
+    description: "หน้าแรกเว็บไซต์ครูนิรุทธิ์ เสวะนา",
     icon: LayoutDashboard
   },
   {
@@ -41,7 +41,7 @@ export const navigation: NavItem[] = [
   {
     href: "/homeroom",
     label: "งานประจำชั้น",
-    description: "ดูแลช่วยเหลือนักเรียนและงานที่ปรึกษา",
+    description: "ระบบดูแลช่วยเหลือนักเรียนและงานที่ปรึกษา",
     icon: UsersRound
   },
   {
@@ -175,8 +175,8 @@ export const sarTeachingSubjects = [
   { subject: "ออกแบบและเทคโนโลยี", level: "ม.1-ม.3", hours: "6 ชม./สัปดาห์" },
   { subject: "สุขศึกษาและพลศึกษา", level: "ป.6-ม.3", hours: "7 ชม./สัปดาห์" },
   { subject: "การงานอาชีพ", level: "ม.3", hours: "1 ชม./สัปดาห์" },
-  { subject: "ต้านทุจริต", level: "ป.5-ป.6", hours: "2 ชม./สัปดาห์" },
-  { subject: "ลูกเสือเนตรนารี", level: "ป.1-ม.3", hours: "1 ชม./สัปดาห์" },
+  { subject: "ต้านทุจริตศึกษา", level: "ป.5-ป.6", hours: "2 ชม./สัปดาห์" },
+  { subject: "ลูกเสือ-เนตรนารี", level: "ป.1-ม.3", hours: "1 ชม./สัปดาห์" },
   { subject: "โรงเรียนวิถีพุทธ", level: "ป.1-ม.3", hours: "1 ชม./สัปดาห์" }
 ];
 
@@ -194,64 +194,114 @@ export const sarAssignments = [
 
 export const sarAchievements = [
   "ครูชนคนคุณธรรม",
-  "ครูชน คนดีศรีเลย 1",
-  "ชนะเลิศ Comic Strip ป.1-3 กลุ่มคุณภาพ ฯ",
-  "ICT Talent ภาครัฐ ระดับ “ดี”"
+  "ครูชนคนดีศรีเลย 1",
+  "รางวัลชนะเลิศ Comic Strip ระดับ ป.1-3",
+  "ICT Talent ภาครัฐ ระดับดี"
 ];
 
 export const sarDevelopment = [
-  "โมดูล A : AI สำหรับการจัดการเรียนรู้และการประเมินผล โครงการ AI for Teachers",
-  "โมดูล B : การรู้เท่าทันและการกำกับดูแล AI อย่างมีจริยธรรม โครงการ AI for Teachers",
-  "โมดูล P : Smart PA ด้วย AI สำหรับการประเมินและนวัตกรรม โครงการ AI for Teachers",
-  "อบรมเชิงปฏิบัติการออนไลน์ Google Gemini AI for Education",
-  "หลักสูตรพัฒนาทักษะภาษาอังกฤษตามกรอบมาตรฐาน CEFR ระดับ A1-A2",
-  "หลักสูตรพัฒนาสมรรถนะดิจิทัลระดับพื้นฐาน (Basic Digital Competency) ด้วยระบบ e-Learning DC1-DC3",
-  "มหกรรมการศึกษา Youth Vision : เปิดโลกการศึกษาเพื่ออนาคต และติดตามเป้าหมายการพัฒนาที่ยั่งยืนด้านการศึกษา (SDG4) จังหวัดเลย",
-  "หลักสูตรพัฒนาสมรรถนะดิจิทัลระดับกลาง (Intermediate Digital Competency) ด้วยระบบ e-Learning DC4-DC5"
+  "AI สำหรับการจัดการเรียนรู้และการประเมินผล",
+  "การรู้เท่าทันและการกำกับดูแล AI อย่างมีจริยธรรม",
+  "Smart PA ด้วย AI สำหรับการประเมินและนวัตกรรม",
+  "Google Gemini AI for Education",
+  "การพัฒนาทักษะภาษาอังกฤษตามกรอบ CEFR"
 ];
 
 export const courseSpaces = [
   {
-    title: "วิทยาการคำนวณ ม.1",
-    level: "มัธยมศึกษาปีที่ 1",
-    status: "เปิดเรียน",
-    lessons: "12 บทเรียน",
-    assessments: "6 แบบประเมิน"
-  },
-  {
-    title: "การออกแบบและเทคโนโลยี ม.2",
-    level: "มัธยมศึกษาปีที่ 2",
-    status: "กำลังดำเนินการ",
-    lessons: "10 บทเรียน",
-    assessments: "5 แบบประเมิน"
-  },
-  {
-    title: "Coding & AI เบื้องต้น",
-    level: "กิจกรรมเสริมทักษะ",
-    status: "คลังสื่อ",
+    title: "วิทยาการคำนวณ ป.4-ป.6",
+    level: "ประถมศึกษาตอนปลาย",
     lessons: "8 บทเรียน",
-    assessments: "4 แบบประเมิน"
+    assessments: "4 แบบประเมิน",
+    status: "พร้อมใช้"
+  },
+  {
+    title: "ออกแบบและเทคโนโลยี ม.1-ม.3",
+    level: "มัธยมศึกษาตอนต้น",
+    lessons: "10 บทเรียน",
+    assessments: "6 แบบประเมิน",
+    status: "กำลังอัปเดต"
+  },
+  {
+    title: "Digital Literacy & Cyber Safety",
+    level: "ม.3",
+    lessons: "5 หน่วยการเรียนรู้",
+    assessments: "Dashboard ติดตามผล",
+    status: "หน่วยท้าทาย"
+  },
+  {
+    title: "Smart Packaging NFC",
+    level: "ม.3",
+    lessons: "โครงงานอาชีพ",
+    assessments: "Rubric ชิ้นงาน",
+    status: "Project-based"
   }
 ];
 
 export const classroomFlow = [
-  "กำหนดจุดประสงค์การเรียนรู้และภาระงาน",
-  "จัดกิจกรรม Active Learning ผ่านสื่อออนไลน์",
-  "ประเมินระหว่างเรียนด้วยแบบฝึกและแบบสะท้อนผล",
-  "สรุปผลเป็นรายบุคคลเพื่อใช้ปรับการสอน"
+  "เชื่อมลิงก์บทเรียน วิดีโอ สไลด์ และใบงานในที่เดียว",
+  "จัดเก็บแบบทดสอบก่อนเรียน หลังเรียน และผลสะท้อนกลับ",
+  "รวบรวมชิ้นงานและแฟ้มส่งงานของนักเรียน",
+  "สรุปผลการเรียนรู้เพื่อใช้เป็นหลักฐานประเมิน"
 ];
 
 export const homeroomFocus = [
-  { title: "ข้อมูลนักเรียนรายบุคคล", value: "ครบ 100%", detail: "ประวัติ ครอบครัว สุขภาพ และความถนัด" },
-  { title: "ติดตามการมาเรียน", value: "รายวัน", detail: "สรุปเวลาเรียนและแจ้งเตือนกลุ่มเสี่ยง" },
-  { title: "ระบบดูแลช่วยเหลือ", value: "4 กลุ่ม", detail: "ปกติ เสี่ยง มีปัญหา และส่งเสริมพิเศษ" }
+  { title: "นักเรียน ม.3", value: "20", detail: "ชาย 9 คน หญิง 11 คน" },
+  { title: "การเยี่ยมบ้าน", value: "100%", detail: "จัดเก็บหลักฐานการเยี่ยมบ้านและการสื่อสารกับผู้ปกครอง" },
+  { title: "กิจกรรมโฮมรูม", value: "รายสัปดาห์", detail: "บันทึกกิจกรรมเสริมวินัย คุณธรรม และทักษะชีวิต" },
+  { title: "กลุ่มติดตามใกล้ชิด", value: "5 คน", detail: "ติดตามจาก SDQ การมาเรียน และข้อมูลครูที่ปรึกษา" }
 ];
 
 export const advisoryTasks = [
-  "เยี่ยมบ้านและบันทึกผลการดูแลช่วยเหลือนักเรียน",
-  "ประสานผู้ปกครองผ่านช่องทางออนไลน์ของห้องเรียน",
-  "จัดกิจกรรมโฮมรูมด้านวินัย คุณธรรม และเป้าหมายอาชีพ",
-  "ส่งต่อนักเรียนที่ต้องการความช่วยเหลือเฉพาะด้าน"
+  "คัดกรองนักเรียนและจัดทำข้อมูลสารสนเทศรายบุคคล",
+  "บันทึกโฮมรูม การมาเรียน และพฤติกรรมสำคัญ",
+  "ประสานผู้ปกครองผ่านช่องทางออนไลน์และโทรศัพท์",
+  "ส่งต่อความช่วยเหลือเมื่อพบปัญหาด้านการเรียนหรือพฤติกรรม"
+];
+
+export const homeroomDashboard = [
+  { label: "นักเรียนทั้งหมด", value: "20", detail: "ม.3", tone: "orange" },
+  { label: "ชาย", value: "9", detail: "45%", tone: "blue" },
+  { label: "หญิง", value: "11", detail: "55%", tone: "coral" },
+  { label: "มาเรียนเฉลี่ย", value: "96.8%", detail: "เดือนล่าสุด", tone: "teal" },
+  { label: "SDQ ปกติ", value: "15", detail: "75%", tone: "green" },
+  { label: "ควรติดตาม", value: "5", detail: "เฝ้าระวัง 4 / ช่วยเหลือ 1", tone: "amber" }
+];
+
+export const homeroomInsights = [
+  { title: "แฟ้มประวัติรายบุคคล", value: "ครบ 20 คน", detail: "ข้อมูลพื้นฐาน ผู้ปกครอง สุขภาพ และช่องทางติดต่อ" },
+  { title: "แผนติดตามรายสัปดาห์", value: "5 รายการ", detail: "กลุ่มที่ควรสังเกตจาก SDQ การมาเรียน หรือพฤติกรรม" },
+  { title: "กิจกรรมเสริมทักษะชีวิต", value: "4 ประเด็น", detail: "วินัย ความรับผิดชอบ ความปลอดภัยออนไลน์ และการทำงานร่วมกัน" },
+  { title: "หลักฐานพร้อมประเมิน", value: "บันทึก/ภาพ/รายงาน", detail: "ใช้ประกอบระบบดูแลช่วยเหลือนักเรียนและงานประจำชั้น" }
+];
+
+export const homeroomSdqSummary = [
+  { label: "ปกติ", value: 15, percent: 75, color: "green" },
+  { label: "เฝ้าระวัง", value: 4, percent: 20, color: "amber" },
+  { label: "ควรช่วยเหลือ", value: 1, percent: 5, color: "coral" }
+];
+
+export const homeroomStudents = [
+  { no: 1, nickname: "กัมปั้น", fullName: "ธันวา บุญตัน", gender: "ชาย", image: "/student-m3-01.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 3, peer: 2, prosocial: 8 } },
+  { no: 2, nickname: "แคน", fullName: "ธีรศักดิ์ บุญมาก", gender: "ชาย", image: "/student-m3-02.jpg", attendance: 96, sdq: { emotional: 3, conduct: 2, hyperactivity: 4, peer: 2, prosocial: 7 } },
+  { no: 3, nickname: "คิว", fullName: "วรเมธ แสงขาว", gender: "ชาย", image: "/student-m3-03.jpg", attendance: 95, sdq: { emotional: 4, conduct: 2, hyperactivity: 5, peer: 3, prosocial: 7 } },
+  { no: 4, nickname: "อิค", fullName: "สุรศักดิ์ ฤทธิศักดิ์", gender: "ชาย", image: "/student-m3-04.jpg", attendance: 99, sdq: { emotional: 1, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
+  { no: 5, nickname: "โชกุน", fullName: "ธนโชติ นิวงษา", gender: "ชาย", image: "/student-m3-05.jpg", attendance: 94, sdq: { emotional: 5, conduct: 3, hyperactivity: 5, peer: 4, prosocial: 6 } },
+  { no: 6, nickname: "จูดี้", fullName: "ณัฏฐวี ซุ้ยไกร", gender: "ชาย", image: "/student-m3-06.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 3, peer: 2, prosocial: 8 } },
+  { no: 7, nickname: "วีโก้", fullName: "อนุสรณ์ โพธิ์พันธุ์", gender: "ชาย", image: "/student-m3-07.jpg", attendance: 96, sdq: { emotional: 3, conduct: 1, hyperactivity: 4, peer: 2, prosocial: 8 } },
+  { no: 8, nickname: "ไนท์", fullName: "กฤษณะพงษ์ ฝอยทอง", gender: "ชาย", image: "/student-m3-08.jpg", attendance: 91, sdq: { emotional: 6, conduct: 4, hyperactivity: 6, peer: 5, prosocial: 5 } },
+  { no: 9, nickname: "ออกัส", fullName: "วชิรวิทย์ คำบุผา", gender: "ชาย", image: "/student-m3-09.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 3, peer: 1, prosocial: 9 } },
+  { no: 10, nickname: "โบนัส", fullName: "กวินตรา สุกสัก", gender: "หญิง", image: "/student-m3-10.jpg", attendance: 99, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
+  { no: 11, nickname: "จูน", fullName: "กวิสรา เนินสง่า", gender: "หญิง", image: "/student-m3-11.jpg", attendance: 97, sdq: { emotional: 3, conduct: 1, hyperactivity: 3, peer: 2, prosocial: 8 } },
+  { no: 12, nickname: "จีจี้", fullName: "จันทร์จิรา ครองเคหา", gender: "หญิง", image: "/student-m3-12.jpg", attendance: 96, sdq: { emotional: 3, conduct: 2, hyperactivity: 4, peer: 2, prosocial: 8 } },
+  { no: 13, nickname: "ทิพย์", fullName: "ชญานี พรหมสาส์น", gender: "หญิง", image: "/student-m3-13.jpg", attendance: 95, sdq: { emotional: 4, conduct: 2, hyperactivity: 4, peer: 3, prosocial: 7 } },
+  { no: 14, nickname: "ใบไผ่", fullName: "ปรายฉัตร โคตรอาษา", gender: "หญิง", image: "/student-m3-14.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 2, prosocial: 9 } },
+  { no: 15, nickname: "ผักบุ้ง", fullName: "รักษา แสงขาว", gender: "หญิง", image: "/student-m3-15.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 3, peer: 2, prosocial: 8 } },
+  { no: 16, nickname: "ไป๋", fullName: "อินฑิรา ถามูล", gender: "หญิง", image: "/student-m3-16.jpg", attendance: 96, sdq: { emotional: 3, conduct: 1, hyperactivity: 3, peer: 2, prosocial: 8 } },
+  { no: 17, nickname: "แอ้น", fullName: "อินทิรา มาลา", gender: "หญิง", image: "/student-m3-17.jpg", attendance: 94, sdq: { emotional: 5, conduct: 2, hyperactivity: 5, peer: 4, prosocial: 6 } },
+  { no: 18, nickname: "น้ำปั่น", fullName: "กมลลักษณ์ ศรีพิพัฒน์", gender: "หญิง", image: "/student-m3-18.jpg", attendance: 99, sdq: { emotional: 1, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
+  { no: 19, nickname: "แก้ม", fullName: "น้ำเหนือ แก้วไกรสร", gender: "หญิง", image: "/student-m3-19.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
+  { no: 20, nickname: "อ่อง", fullName: "อ่อง พรมสาส์น", gender: "หญิง", image: "/student-m3-20.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 3, peer: 2, prosocial: 8 } }
 ];
 
 export const awards = [
@@ -265,7 +315,7 @@ export const awards = [
     title: "โครงงานนักเรียนด้านเทคโนโลยีเพื่อชุมชน",
     type: "ผลงานนักเรียน",
     year: "2568",
-    detail: "นักเรียนพัฒนาต้นแบบสื่อดิจิทัลเพื่อสื่อสารข้อมูลท้องถิ่น"
+    detail: "นักเรียนพัฒนาต้นแบบสื่อดิจิทัลเพื่อสื่อสารข้อมูลท้องถิ่นและผลิตภัณฑ์ชุมชน"
   },
   {
     title: "การเผยแพร่สื่อการสอนออนไลน์",
@@ -278,15 +328,62 @@ export const awards = [
 export const portfolioGallery = [
   {
     title: "เกียรติบัตรและการอบรม",
-    image: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=900&q=80"
+    image: "/placeholder-portfolio-certificates.jpg"
   },
   {
     title: "ผลงานผู้เรียน",
-    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=80"
+    image: "/placeholder-portfolio-student-work.jpg"
   },
   {
     title: "นวัตกรรมในชั้นเรียน",
-    image: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=900&q=80"
+    image: "/placeholder-portfolio-innovation.jpg"
+  }
+];
+
+export const achievementSections = [
+  {
+    title: "รางวัลและผลงานตนเอง",
+    eyebrow: "Teacher Awards",
+    description: "รวบรวมเกียรติบัตร ผลงานนวัตกรรม และหลักฐานเชิงประจักษ์ของครู",
+    cards: [
+      { id: 1, title: "นวัตกรรมการจัดการเรียนรู้", imgUrl: "/achievement-self-01.jpg", content: "พื้นที่สำหรับภาพรางวัล ผลงานนวัตกรรม หรือหลักฐานการพัฒนาการจัดการเรียนรู้ของครู" },
+      { id: 2, title: "ครูผู้พัฒนาสื่อดิจิทัล", imgUrl: "/achievement-self-02.jpg", content: "เพิ่มภาพเกียรติบัตรหรือผลงานที่เกี่ยวข้องกับเทคโนโลยีและสื่อการสอน" },
+      { id: 3, title: "ผลงานวิชาชีพ", imgUrl: "/achievement-self-03.jpg", content: "ใช้เก็บหลักฐานการเผยแพร่ผลงาน การประกวด หรือการยกระดับวิชาชีพ" },
+      { id: 4, title: "หลักฐานเด่น", imgUrl: "/achievement-self-04.jpg", content: "วางภาพจริงทับไฟล์นี้เพื่อแสดงผลงานสำคัญประจำปี" }
+    ]
+  },
+  {
+    title: "รางวัลและผลงานผู้เรียน",
+    eyebrow: "Student Awards",
+    description: "แสดงผลงาน ชิ้นงาน การประกวด และความสำเร็จของนักเรียน",
+    cards: [
+      { id: 1, title: "ผลงานนักเรียน", imgUrl: "/achievement-student-01.jpg", content: "ภาพชิ้นงาน โครงงาน หรือผลงานสร้างสรรค์ของผู้เรียน" },
+      { id: 2, title: "รางวัลการแข่งขัน", imgUrl: "/achievement-student-02.jpg", content: "พื้นที่สำหรับภาพรับรางวัล เกียรติบัตร หรือกิจกรรมแข่งขัน" },
+      { id: 3, title: "โครงงานเทคโนโลยี", imgUrl: "/achievement-student-03.jpg", content: "เพิ่มภาพผลงานด้านดิจิทัล Coding หรือโครงงานอาชีพ" },
+      { id: 4, title: "การนำเสนอผลงาน", imgUrl: "/achievement-student-04.jpg", content: "บันทึกภาพการนำเสนอและสะท้อนผลการเรียนรู้ของนักเรียน" }
+    ]
+  },
+  {
+    title: "รางวัลผลงานสถานศึกษา",
+    eyebrow: "School Recognition",
+    description: "จัดเก็บภาพผลงานระดับสถานศึกษา โครงการเด่น และความสำเร็จของโรงเรียน",
+    cards: [
+      { id: 1, title: "โครงการสถานศึกษา", imgUrl: "/achievement-school-01.jpg", content: "ภาพกิจกรรมหรือโครงการที่สะท้อนคุณภาพของสถานศึกษา" },
+      { id: 2, title: "ผลงานโรงเรียน", imgUrl: "/achievement-school-02.jpg", content: "หลักฐานรางวัลหรือผลการดำเนินงานระดับโรงเรียน" },
+      { id: 3, title: "ชุมชนและเครือข่าย", imgUrl: "/achievement-school-03.jpg", content: "ภาพความร่วมมือกับชุมชน ผู้ปกครอง หรือหน่วยงานภายนอก" },
+      { id: 4, title: "สถานศึกษาดิจิทัล", imgUrl: "/achievement-school-04.jpg", content: "พื้นที่สำหรับผลงานด้านเทคโนโลยี ระบบข้อมูล หรือสื่อดิจิทัลของโรงเรียน" }
+    ]
+  },
+  {
+    title: "การอบรมและพัฒนาตนเอง",
+    eyebrow: "Professional Development",
+    description: "แสดงหลักฐานการอบรม การพัฒนาทักษะ และการเรียนรู้ทางวิชาชีพอย่างต่อเนื่อง",
+    cards: [
+      { id: 1, title: "อบรมด้านดิจิทัล", imgUrl: "/achievement-training-01.jpg", content: "เก็บภาพเกียรติบัตรหรือกิจกรรมอบรมด้าน AI เทคโนโลยี และการจัดการเรียนรู้" },
+      { id: 2, title: "พัฒนาวิชาชีพครู", imgUrl: "/achievement-training-02.jpg", content: "หลักฐานการพัฒนาวิชาชีพ PLC หรือการแลกเปลี่ยนเรียนรู้" },
+      { id: 3, title: "ทักษะใหม่เพื่อผู้เรียน", imgUrl: "/achievement-training-03.jpg", content: "ภาพกิจกรรมอบรมที่นำไปต่อยอดกับผู้เรียนและชั้นเรียน" },
+      { id: 4, title: "หลักฐานการเรียนรู้", imgUrl: "/achievement-training-04.jpg", content: "วางภาพจริงของเกียรติบัตรหรือเอกสารรับรองการอบรม" }
+    ]
   }
 ];
 
@@ -294,67 +391,43 @@ export const activityGallery = [
   {
     title: "กิจกรรมการเรียนรู้เชิงรุก",
     category: "Active Learning",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1100&q=80",
-    images: [
-      "/AC1.JPG",
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1100&q=80",
-      "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1100&q=80"
-    ],
+    image: "/placeholder-activity-active-learning.jpg",
+    images: ["/AC1.JPG", "/placeholder-activity-active-learning.jpg", "/placeholder-classroom-hero.jpg"],
     detail: "ผู้เรียนร่วมกันคิด วิเคราะห์ ออกแบบ และนำเสนอผลงานจากสถานการณ์ใกล้ตัว"
   },
   {
     title: "ห้องเรียนดิจิทัล",
     category: "Digital Classroom",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=80",
-    images: [
-      "/AT1.JPEG",
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1100&q=80",
-      "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=1100&q=80"
-    ],
+    image: "/placeholder-activity-digital-classroom.jpg",
+    images: ["/AT1.JPEG", "/placeholder-activity-digital-classroom.jpg", "/placeholder-activity-community-tech.jpg"],
     detail: "ใช้เครื่องมือออนไลน์เพื่อเสริมการเรียนรู้และติดตามความก้าวหน้าของผู้เรียน"
   },
   {
     title: "กิจกรรมพัฒนาผู้เรียน",
     category: "Student Development",
-    image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1100&q=80",
-    images: [
-      "/C1-web.jpg",
-      "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1100&q=80",
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1100&q=80"
-    ],
+    image: "/placeholder-activity-student-development.jpg",
+    images: ["/C1-web.jpg", "/placeholder-activity-student-development.jpg", "/placeholder-activity-active-learning.jpg"],
     detail: "ส่งเสริมทักษะชีวิต วินัย ความรับผิดชอบ และการทำงานร่วมกัน"
   },
   {
     title: "แลกเปลี่ยนเรียนรู้ PLC",
     category: "Professional Learning Community",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1100&q=80",
-    images: [
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1100&q=80",
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1100&q=80",
-      "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1100&q=80"
-    ],
+    image: "/placeholder-activity-plc.jpg",
+    images: ["/placeholder-activity-plc.jpg", "/placeholder-portfolio-student-work.jpg", "/placeholder-portfolio-certificates.jpg"],
     detail: "ร่วมออกแบบแนวทางจัดการเรียนรู้และพัฒนาสื่อกับเครือข่ายครู"
   },
   {
     title: "นำเสนอผลงานนักเรียน",
     category: "Student Showcase",
-    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1100&q=80",
-    images: [
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1100&q=80",
-      "/AC1.JPG",
-      "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1100&q=80"
-    ],
+    image: "/placeholder-activity-showcase.jpg",
+    images: ["/placeholder-activity-showcase.jpg", "/AC1.JPG", "/placeholder-portfolio-innovation.jpg"],
     detail: "เปิดพื้นที่ให้ผู้เรียนสื่อสารแนวคิด ทดลอง และสะท้อนผลการเรียนรู้"
   },
   {
-    title: "กิจกรรมเทคโนโลยีเพื่อชุมชน",
+    title: "เทคโนโลยีเพื่อชุมชน",
     category: "Technology for Community",
-    image: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=1100&q=80",
-    images: [
-      "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?auto=format&fit=crop&w=1100&q=80",
-      "/AT1.JPEG",
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1100&q=80"
-    ],
+    image: "/placeholder-activity-community-tech.jpg",
+    images: ["/placeholder-activity-community-tech.jpg", "/AT1.JPEG", "/placeholder-activity-showcase.jpg"],
     detail: "เชื่อมโยงความรู้ดิจิทัลกับการแก้ปัญหาและการสร้างคุณค่าให้ชุมชน"
   }
 ];
@@ -394,7 +467,7 @@ export const pageVisuals = {
     eyebrow: "Online Learning",
     title: "ห้องเรียนออนไลน์",
     description: "พื้นที่รวมบทเรียน สื่อ ใบงาน แบบทดสอบ และผลประเมิน เพื่อให้การเรียนรู้ต่อเนื่องทั้งในและนอกห้องเรียน",
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80"
+    image: "/placeholder-classroom-hero.jpg"
   },
   homeroom: {
     eyebrow: "Student Care",
@@ -406,19 +479,19 @@ export const pageVisuals = {
     eyebrow: "Portfolio",
     title: "รางวัลและผลงาน",
     description: "แฟ้มสะสมผลงานครูและนักเรียน แสดงหลักฐานเชิงประจักษ์จากการจัดการเรียนรู้และการพัฒนาวิชาชีพ",
-    image: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1600&q=80"
+    image: "/placeholder-achievements-hero.jpg"
   },
   activities: {
     eyebrow: "Activity Gallery",
     title: "ภาพกิจกรรม",
     description: "รวบรวมภาพกิจกรรมการเรียนรู้ กิจกรรมพัฒนาผู้เรียน และบรรยากาศการเรียนรู้แบบดิจิทัล",
-    image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=80"
+    image: "/placeholder-activities-hero.jpg"
   },
   pa: {
     eyebrow: "Performance Agreement",
     title: "การพัฒนางานตามข้อตกลง (PA)",
     description: "จัดระบบเป้าหมาย ตัวชี้วัด วิธีดำเนินงาน และหลักฐานผลลัพธ์ให้ตรวจสอบได้ง่าย",
-    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1600&q=80"
+    image: "/placeholder-pa-hero.jpg"
   }
 };
 

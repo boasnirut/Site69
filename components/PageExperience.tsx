@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { Check, X } from "lucide-react";
 
-type NoticeKind = "route" | "action" | "done";
+type NoticeKind = "success" | "error";
 
 type Notice = {
   kind: NoticeKind;
@@ -12,7 +13,6 @@ type Notice = {
 
 export function PageExperience() {
   const pathname = usePathname();
-  const previousPath = useRef<string | null>(null);
   const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showSplash, setShowSplash] = useState(true);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -23,18 +23,7 @@ export function PageExperience() {
   }, []);
 
   useEffect(() => {
-    if (previousPath.current && previousPath.current !== pathname) {
-      if (noticeTimer.current) {
-        clearTimeout(noticeTimer.current);
-      }
-      setNotice({ kind: "done", text: "เปิดหน้าเรียบร้อย" });
-      noticeTimer.current = setTimeout(() => setNotice(null), 850);
-    }
-    previousPath.current = pathname;
-  }, [pathname]);
-
-  useEffect(() => {
-    const showNotice = (nextNotice: Notice, duration = 950) => {
+    const showNotice = (nextNotice: Notice, duration = 1200) => {
       if (noticeTimer.current) {
         clearTimeout(noticeTimer.current);
       }
@@ -42,36 +31,16 @@ export function PageExperience() {
       noticeTimer.current = setTimeout(() => setNotice(null), duration);
     };
 
-    const handleClick = (event: MouseEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element)) {
-        return;
-      }
-
-      const link = target.closest("a[href]");
-      if (link instanceof HTMLAnchorElement) {
-        if (link.target || link.hasAttribute("download")) {
-          return;
-        }
-
-        const url = new URL(link.href, window.location.href);
-        const sameOrigin = url.origin === window.location.origin;
-        const samePath = url.pathname === window.location.pathname && url.hash === window.location.hash;
-
-        if (sameOrigin && !samePath) {
-          showNotice({ kind: "route", text: "กำลังเปลี่ยนหน้า" }, 1800);
-          return;
-        }
-      }
-
-      if (target.closest("button, [role='button']")) {
-        showNotice({ kind: "action", text: "กำลังดำเนินการ" });
+    const handleSiteNotice = (event: Event) => {
+      const detail = (event as CustomEvent<Partial<Notice>>).detail;
+      if (detail?.kind && detail.text) {
+        showNotice({ kind: detail.kind, text: detail.text });
       }
     };
 
-    document.addEventListener("click", handleClick, true);
+    window.addEventListener("site-notice", handleSiteNotice);
     return () => {
-      document.removeEventListener("click", handleClick, true);
+      window.removeEventListener("site-notice", handleSiteNotice);
       if (noticeTimer.current) {
         clearTimeout(noticeTimer.current);
       }
@@ -99,9 +68,10 @@ export function PageExperience() {
 
       {notice ? (
         <div className={`route-notification ${notice.kind}`} role="status" aria-live="polite">
-          <div className="mini-loader-card">
-            <div className="mini-loader-orbit" aria-hidden="true" />
-            <img src="/8045-transparent.png" alt="" />
+          <div className="action-notice-card">
+            <span className="action-notice-icon" aria-hidden="true">
+              {notice.kind === "success" ? <Check /> : <X />}
+            </span>
             <strong>{notice.text}</strong>
             <small>Nirut Sewana Digital Learning</small>
           </div>
