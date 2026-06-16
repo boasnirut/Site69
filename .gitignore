@@ -16,3 +16,5 @@ dev-server*.log
 *.tsbuildinfo
 Thumbs.db
 .DS_Store
+
+.vercel
