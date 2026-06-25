@@ -1,5 +1,6 @@
 import { HeartHandshake, PhoneCall, UserCheck } from "lucide-react";
 import { HomeroomClassroom } from "@/components/HomeroomClassroom";
+import { HomeroomReserveFund } from "@/components/HomeroomReserveFund";
 import { PageHero } from "@/components/PageHero";
 import { classScheduleSummary, m3ClassSchedule, schedulePeriods } from "@/lib/schedule-data";
 
@@ -30,6 +31,8 @@ export default function HomeroomPage() {
       />
 
       <HomeroomClassroom />
+
+      <HomeroomReserveFund />
 
       <section className="section-block schedule-section">
         <div className="section-heading">
