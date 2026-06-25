@@ -3161,6 +3161,34 @@ p {
   color: var(--orange-strong);
 }
 
+.fund-entry-section {
+  display: grid;
+  gap: 10px;
+}
+
+.fund-entry-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fund-entry-section-head strong {
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.fund-entry-section-head span {
+  padding: 5px 8px;
+  color: #ffc996;
+  background: rgba(255, 138, 31, 0.1);
+  border: 1px solid rgba(255, 138, 31, 0.22);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
 .fund-entry-list {
   display: grid;
   gap: 10px;
@@ -3207,6 +3235,40 @@ p {
 
 .fund-entry-card.expense em {
   color: var(--coral);
+}
+
+.fund-pagination {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.fund-pagination button {
+  min-height: 36px;
+  padding: 8px 10px;
+  color: #050505;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--orange), var(--orange-strong));
+  border: 0;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.fund-pagination button:disabled {
+  color: rgba(255, 255, 255, 0.42);
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fund-pagination span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
 }
 
 .fund-editor-modal {

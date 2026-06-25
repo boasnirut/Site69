@@ -169,6 +169,7 @@ function makeNewForm(): FundForm {
 
 export function HomeroomReserveFund() {
   const [entries, setEntries] = useState<FundEntry[]>(seedFundEntries);
+  const [entryPage, setEntryPage] = useState(1);
   const [authOpen, setAuthOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
@@ -197,10 +198,19 @@ export function HomeroomReserveFund() {
       .filter((entry) => entry.type === "expense")
       .reduce((total, entry) => total + entry.amount, 0);
     const balance = income - expense;
-    const latest = [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4);
+    const sortedEntries = [...entries].sort((a, b) => b.date.localeCompare(a.date));
 
-    return { income, expense, balance, latest };
+    return { income, expense, balance, sortedEntries };
   }, [entries]);
+
+  const pageSize = 3;
+  const totalPages = Math.max(1, Math.ceil(summary.sortedEntries.length / pageSize));
+  const currentPage = Math.min(entryPage, totalPages);
+  const paginatedEntries = summary.sortedEntries.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  useEffect(() => {
+    setEntryPage((page) => Math.min(page, totalPages));
+  }, [totalPages]);
 
   const openAuth = () => {
     setPassword("");
@@ -333,16 +343,39 @@ export function HomeroomReserveFund() {
               </article>
             </div>
 
-            <div className="fund-entry-list">
-              {summary.latest.map((entry) => (
-                <article className={`fund-entry-card ${entry.type}`} key={entry.id}>
-                  <div>
-                    <strong>{entry.title}</strong>
-                    <span>{formatThaiDate(entry.date)} {entry.note ? `• ${entry.note}` : ""}</span>
-                  </div>
-                  <em>{entry.type === "income" ? "+" : "-"}{formatCurrency(entry.amount)}</em>
-                </article>
-              ))}
+            <div className="fund-entry-section">
+              <div className="fund-entry-section-head">
+                <strong>รายการเงินทุนสำรอง</strong>
+                <span>หน้า {currentPage}/{totalPages}</span>
+              </div>
+              <div className="fund-entry-list">
+                {paginatedEntries.map((entry) => (
+                  <article className={`fund-entry-card ${entry.type}`} key={entry.id}>
+                    <div>
+                      <strong>{entry.title}</strong>
+                      <span>{formatThaiDate(entry.date)} {entry.note ? `• ${entry.note}` : ""}</span>
+                    </div>
+                    <em>{entry.type === "income" ? "+" : "-"}{formatCurrency(entry.amount)}</em>
+                  </article>
+                ))}
+              </div>
+              <div className="fund-pagination">
+                <button
+                  disabled={currentPage <= 1}
+                  onClick={() => setEntryPage((page) => Math.max(1, page - 1))}
+                  type="button"
+                >
+                  ก่อนหน้า
+                </button>
+                <span>{paginatedEntries.length} จาก {summary.sortedEntries.length} รายการ</span>
+                <button
+                  disabled={currentPage >= totalPages}
+                  onClick={() => setEntryPage((page) => Math.min(totalPages, page + 1))}
+                  type="button"
+                >
+                  ถัดไป
+                </button>
+              </div>
             </div>
           </div>
         </div>
