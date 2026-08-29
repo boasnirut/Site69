@@ -56,6 +56,8 @@ import {
 } from './content'
 import { displayImageUrl, displayPdfUrl } from './driveUrls'
 import { qualityLevels } from './qualityStandards'
+import LandingPage from '@/components/ui/landing-page'
+import RandomLetterSwapNav from '@/components/ui/m-random-letter-swap-1'
 
 const categories = ['ทั้งหมด', 'กิจกรรม', 'ประชาสัมพันธ์', 'ประกาศ']
 const defaultWelcomeSlides = [
@@ -328,54 +330,9 @@ function Header({ menuOpen, setMenuOpen }) {
             </span>
           </a>
 
-          <nav className="desktop-nav" aria-label="เมนูหลัก">
-            {navItems.map((item) =>
-              item.children ? (
-                <div
-                  className={`nav-dropdown ${openDropdown === item.label ? 'nav-dropdown--open' : ''}`}
-                  key={item.label}
-                  onMouseEnter={() => setOpenDropdown(item.label)}
-                  onMouseLeave={() => setOpenDropdown(null)}
-                >
-                  <button
-                    className={`nav-dropdown__trigger ${isItemActive(item) ? 'is-active' : ''}`}
-                    type="button"
-                    aria-expanded={openDropdown === item.label}
-                    onClick={() =>
-                      setOpenDropdown((current) => (current === item.label ? null : item.label))
-                    }
-                  >
-                    {item.label}
-                    <ChevronDown size={15} aria-hidden="true" />
-                  </button>
-                  <div className="nav-dropdown__menu">
-                    <span className="nav-dropdown__eyebrow">{item.label}</span>
-                    {item.children.map((child) => (
-                      <a
-                        className={child.href === currentPath ? 'is-active' : ''}
-                        key={`${item.label}-${child.label}`}
-                        href={child.href}
-                        target={child.external ? '_blank' : undefined}
-                        rel={child.external ? 'noreferrer' : undefined}
-                        onClick={closeMenu}
-                      >
-                        <span>{child.label}</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <a
-                  className={isItemActive(item) ? 'is-active' : ''}
-                  key={item.href}
-                  href={item.href}
-                  onClick={closeMenu}
-                >
-                  {item.label}
-                </a>
-              ),
-            )}
-          </nav>
+          <div className="desktop-nav-wrapper hidden md:flex items-center">
+            <RandomLetterSwapNav currentPath={currentPath} />
+          </div>
 
           <a className="header-contact" href="/login" onClick={closeMenu}>
             เข้าสู่ระบบ
@@ -3576,21 +3533,7 @@ function App() {
       {isHome && <WelcomeSlider slides={pageSlides.welcome} />}
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       {isHome ? (
-        <>
-          <Hero />
-          <Billboard slides={pageSlides.billboard} />
-          <About />
-          <Achievements awards={publicContent.awards} />
-          <HomeOperations />
-          <SarDocuments documents={publicContent.sarDocuments} compact />
-          <News liveNews={publicContent.news} />
-          <Newsletters newsletters={publicContent.newsletters} />
-          <PublicVideos news={publicContent.news} compact />
-          <Activities liveEvents={publicContent.events} />
-          <Services />
-          <DirectorMessage />
-          <Contact />
-        </>
+        <LandingPage />
       ) : (
         <main className="subpage-main">
           <PublicSubPage path={path} publicContent={publicContent} />
