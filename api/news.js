@@ -1,0 +1,306 @@
+import { randomUUID } from 'node:crypto'
+import { canModifyRecord, requireActiveUser, withUserDisplayNames } from './_lib/access.js'
+import {
+  cleanAttachmentUrls,
+  cleanExternalUrl,
+  contentAttachmentUrls,
+  nextDisplayOrderForDate,
+  sortByDateAndDisplayOrder,
+  withAttachmentColumns,
+} from './_lib/content.js'
+import { parseCsv, stringifyCsv } from './_lib/csv.js'
+import { methodNotAllowed, readJsonBody, sendJson } from './_lib/http.js'
+import {
+  dataUrlBytes,
+  GoogleDriveConfigError,
+  GoogleDriveUploadError,
+  uploadToDrive,
+} from './_lib/drive.js'
+import {
+  readRepoFile,
+  RepositoryConfigError,
+  writeRepoFile,
+} from './_lib/repo.js'
+
+const headers = [
+  'id',
+  'title',
+  'category',
+  'summary',
+  'content',
+  'image_url',
+  'document_url',
+  'photo_url',
+  'display_order',
+  'status',
+  'author',
+  'created_at',
+  'updated_at',
+  'updated_by',
+  'publish_date',
+  'document_url_2',
+  'document_url_3',
+  'document_url_4',
+  'document_url_5',
+  'video_url',
+]
+const allowedImageTypes = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+}
+const allowedDocumentTypes = new Set(['application/pdf'])
+const allowedCategories = new Set(['กิจกรรม', 'ประชาสัมพันธ์', 'ประกาศ', 'วิดีโอประชาสัมพันธ์'])
+
+function cleanVideoUrl(value) {
+  const cleaned = cleanExternalUrl(value)
+  if (!cleaned) return cleaned
+  try {
+    const url = new URL(cleaned)
+    const host = url.hostname.toLowerCase().replace(/^www\./, '')
+    if (host === 'youtu.be') {
+      return url.pathname.split('/').filter(Boolean)[0] ? url.toString() : null
+    }
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      const hasVideo = Boolean(
+        url.searchParams.get('v')
+        || url.pathname.match(/^\/(?:embed|shorts|live)\/[^/]+/),
+      )
+      return hasVideo ? url.toString() : null
+    }
+    if (host === 'drive.google.com') {
+      const hasFile = Boolean(
+        url.searchParams.get('id')
+        || url.pathname.match(/\/file\/d\/[^/]+/),
+      )
+      return hasFile ? url.toString() : null
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+function newsFields(body, existing = {}, isAdmin = false) {
+  const category = String(body.category ?? existing.category ?? 'ประชาสัมพันธ์').trim()
+  const isVideo = category === 'วิดีโอประชาสัมพันธ์'
+  const sourceUrls = Array.isArray(body.document_urls)
+    ? body.document_urls
+    : contentAttachmentUrls(existing)
+  return {
+    title: String(body.title ?? existing.title ?? '').trim(),
+    category,
+    publish_date: String(body.publish_date ?? existing.publish_date ?? '').trim(),
+    summary: String(body.summary ?? existing.summary ?? '').trim(),
+    content: String(body.content ?? existing.content ?? '').trim(),
+    image_url: isVideo ? '' : cleanExternalUrl(body.image_url ?? existing.image_url ?? ''),
+    document_urls: isVideo ? [] : cleanAttachmentUrls(sourceUrls),
+    video_url: isVideo
+      ? cleanVideoUrl(body.video_url ?? existing.video_url ?? '')
+      : '',
+    display_order: isAdmin
+      ? String(body.display_order ?? existing.display_order ?? '').trim()
+      : String(existing.display_order ?? '').trim(),
+    status: (body.status ?? existing.status) === 'draft' ? 'draft' : 'published',
+  }
+}
+
+function validate(fields, response, extraFiles = 0) {
+  if (fields.title.length < 3 || fields.title.length > 180) {
+    sendJson(response, 400, { error: 'หัวข้อต้องมีความยาว 3–180 ตัวอักษร' })
+    return false
+  }
+  if (!allowedCategories.has(fields.category)) {
+    sendJson(response, 400, { error: 'หมวดหมู่ข่าวสารไม่ถูกต้อง' })
+    return false
+  }
+  if (fields.category === 'วิดีโอประชาสัมพันธ์' && !fields.video_url) {
+    sendJson(response, 400, {
+      error: 'กรุณากรอกลิงก์วิดีโอจาก YouTube หรือ Google Drive ที่ถูกต้อง',
+    })
+    return false
+  }
+  if (!fields.content || fields.content.length > 20_000) {
+    sendJson(response, 400, { error: 'กรุณากรอกรายละเอียดข่าวไม่เกิน 20,000 ตัวอักษร' })
+    return false
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fields.publish_date)) {
+    sendJson(response, 400, { error: 'กรุณาระบุวันที่เผยแพร่ข่าวสาร' })
+    return false
+  }
+  if (
+    fields.image_url === null
+    || fields.video_url === null
+    || fields.document_urls.some((url) => url === null)
+  ) {
+    sendJson(response, 400, { error: 'ลิงก์รูปภาพและไฟล์แนบต้องเป็นลิงก์ https ที่ถูกต้อง' })
+    return false
+  }
+  if (fields.document_urls.length + extraFiles > 5) {
+    sendJson(response, 400, { error: 'แนบไฟล์หรือลิงก์ได้รวมไม่เกิน 5 รายการ' })
+    return false
+  }
+  if (fields.display_order && !Number.isFinite(Number(fields.display_order))) {
+    sendJson(response, 400, { error: 'ลำดับการแสดงผลต้องเป็นตัวเลข' })
+    return false
+  }
+  return true
+}
+
+async function uploadImage(image, id, title) {
+  if (!image?.data || !image?.type) return ''
+  const extension = allowedImageTypes[image.type]
+  if (!extension) {
+    const error = new Error('รองรับรูปภาพ JPG, PNG และ WebP เท่านั้น')
+    error.code = 'INVALID_IMAGE'
+    throw error
+  }
+  const bytes = dataUrlBytes(image.data)
+  if (!bytes.length || bytes.length > 3_000_000) {
+    const error = new Error('รูปภาพต้องมีขนาดไม่เกิน 3 MB')
+    error.code = 'INVALID_IMAGE'
+    throw error
+  }
+  const uploaded = await uploadToDrive({
+    bytes,
+    mimeType: image.type,
+    name: `${id}-${Date.now()}-${title}.${extension}`,
+    category: 'news-image',
+    image: true,
+  })
+  return uploaded.imageUrl
+}
+
+async function uploadDocument(file, id, title) {
+  if (!file?.data || !file?.type) return ''
+  if (!allowedDocumentTypes.has(file.type)) {
+    const error = new Error('รองรับไฟล์ PDF เท่านั้น')
+    error.code = 'INVALID_DOCUMENT'
+    throw error
+  }
+  const bytes = dataUrlBytes(file.data)
+  if (!bytes.length || bytes.length > 3_000_000) {
+    const error = new Error('ไฟล์ PDF ต้องมีขนาดไม่เกิน 3 MB')
+    error.code = 'INVALID_DOCUMENT'
+    throw error
+  }
+  const uploaded = await uploadToDrive({
+    bytes,
+    mimeType: file.type,
+    name: file.name || `${id}-${Date.now()}-${title}.pdf`,
+    category: 'news-document',
+  })
+  return uploaded.viewUrl
+}
+
+export default async function handler(request, response) {
+  try {
+    const session = await requireActiveUser(request, response, { permission: 'news' })
+    if (!session) return undefined
+
+    const current = await readRepoFile('data/news.csv')
+    const news = parseCsv(current.content)
+
+    if (request.method === 'GET') {
+      const namedNews = await withUserDisplayNames(
+        sortByDateAndDisplayOrder(news, 'publish_date'),
+        session.userNames,
+      )
+      return sendJson(response, 200, {
+        news: namedNews.map((item) => ({ ...item, document_urls: contentAttachmentUrls(item) })),
+      })
+    }
+
+    const body = await readJsonBody(request, 5_000_000)
+    if (request.method === 'POST') {
+      const fields = newsFields(body, {}, session.role === 'admin')
+      if (!validate(fields, response, body.document_file?.data ? 1 : 0)) return undefined
+      const id = randomUUID()
+      const now = new Date().toISOString()
+      const documentUrl = await uploadDocument(body.document_file, id, fields.title)
+      const { document_urls: documentUrls, ...savedFields } = fields
+      const item = withAttachmentColumns({
+        id,
+        ...savedFields,
+        display_order: fields.display_order || String(
+          nextDisplayOrderForDate(news, 'publish_date', fields.publish_date),
+        ),
+        image_url: await uploadImage(body.image, id, fields.title) || fields.image_url,
+        author: session.sub,
+        created_at: now,
+        updated_at: now,
+        updated_by: '',
+      }, [documentUrl, ...documentUrls].filter(Boolean))
+      news.push(item)
+      await writeRepoFile(
+        'data/news.csv',
+        stringifyCsv(news, headers),
+        `เพิ่มข่าวสาร: ${fields.title}`,
+        current.sha,
+      )
+      const [responseItem] = await withUserDisplayNames([item], session.userNames)
+      return sendJson(response, 201, { news: responseItem })
+    }
+
+    if (request.method === 'PUT' || request.method === 'DELETE') {
+      const index = news.findIndex((item) => item.id === String(body.id || ''))
+      if (index < 0) return sendJson(response, 404, { error: 'ไม่พบข่าวที่ต้องการ' })
+      if (!canModifyRecord(session, news[index])) {
+        return sendJson(response, 403, { error: 'สมาชิกแก้ไขหรือลบได้เฉพาะข่าวสารที่ตนเองสร้าง' })
+      }
+
+      if (request.method === 'DELETE') {
+        const [removed] = news.splice(index, 1)
+        await writeRepoFile(
+          'data/news.csv',
+          stringifyCsv(news, headers),
+          `ลบข่าวสาร: ${removed.title}`,
+          current.sha,
+        )
+        return sendJson(response, 200, { success: true })
+      }
+
+      const fields = newsFields(body, news[index], session.role === 'admin')
+      if (!validate(fields, response, body.document_file?.data ? 1 : 0)) return undefined
+      const newImage = await uploadImage(body.image, news[index].id, fields.title)
+      const newDocumentUrl = await uploadDocument(body.document_file, news[index].id, fields.title)
+      const { document_urls: documentUrls, ...savedFields } = fields
+      news[index] = withAttachmentColumns({
+        ...news[index],
+        ...savedFields,
+        image_url: newImage || fields.image_url || news[index].image_url,
+        updated_at: new Date().toISOString(),
+        updated_by: session.sub,
+      }, [newDocumentUrl, ...documentUrls].filter(Boolean))
+      await writeRepoFile(
+        'data/news.csv',
+        stringifyCsv(news, headers),
+        `แก้ไขข่าวสาร: ${fields.title}`,
+        current.sha,
+      )
+      const [responseItem] = await withUserDisplayNames([news[index]], session.userNames)
+      return sendJson(response, 200, { news: responseItem })
+    }
+
+    return methodNotAllowed(response, ['GET', 'POST', 'PUT', 'DELETE'])
+  } catch (error) {
+    if (error instanceof RepositoryConfigError) {
+      return sendJson(response, 503, { error: 'ระบบยังไม่ได้เชื่อมต่อ GitHub' })
+    }
+    if (error.code === 'INVALID_IMAGE' || error.code === 'INVALID_DOCUMENT') {
+      return sendJson(response, 400, { error: error.message })
+    }
+    if (error instanceof GoogleDriveConfigError) {
+      return sendJson(response, 503, { error: 'ระบบยังไม่ได้ตั้งค่า Google Drive OAuth 2.0 ใน Vercel' })
+    }
+    if (error instanceof GoogleDriveUploadError) {
+      console.error('Google Drive upload error', error.details || error)
+      return sendJson(response, 502, { error: error.message })
+    }
+    if (error.message === 'PAYLOAD_TOO_LARGE') {
+      return sendJson(response, 413, { error: 'ข้อมูลหรือรูปภาพมีขนาดใหญ่เกินไป' })
+    }
+    console.error('News API error', error)
+    return sendJson(response, 500, { error: 'ไม่สามารถดำเนินการกับข่าวสารได้ในขณะนี้' })
+  }
+}
