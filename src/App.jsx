@@ -444,47 +444,48 @@ export default function App() {
   )
 }
 
-/* REUSABLE FULL-FRAME PAGE HERO BANNER COMPONENT */
+/* REUSABLE PAGE HERO BANNER COMPONENT */
 function PageHeroBanner({ banner, navigateTo, isHomePage = false }) {
   if (!banner) return null
   return (
     <section className="hero">
-      {/* Full-Frame Background Image with Dark Gradient Overlay */}
-      <div className="hero__bg">
-        <img src={banner.image || '/boasnirut.png'} alt={banner.title || 'ภาพปก'} />
-        <div className="hero__overlay" />
-      </div>
+      <div className="container hero__grid">
+        <div>
+          {banner.badge && (
+            <div className="hero__badge">
+              <Sparkles size={16} />
+              {banner.badge}
+            </div>
+          )}
+          <h1 className="hero__title">
+            {banner.title}
+          </h1>
+          {banner.subtitle && <p className="hero__subtitle">{banner.subtitle}</p>}
 
-      {/* Text Content Layer Overlaid On Top */}
-      <div className="container hero__content">
-        {banner.badge && (
-          <div className="hero__badge">
-            <Sparkles size={16} />
-            {banner.badge}
-          </div>
-        )}
-        <h1 className="hero__title">{banner.title}</h1>
-        {banner.subtitle && <p className="hero__subtitle">{banner.subtitle}</p>}
+          {isHomePage && (
+            <div className="hero__actions">
+              <a
+                className="btn btn-primary"
+                href="/achievements"
+                onClick={(e) => navigateTo('/achievements', e)}
+              >
+                🏆 ผลงานและรางวัล
+                <ArrowRight size={18} />
+              </a>
+              <a
+                className="btn btn-outline"
+                href="/activities"
+                onClick={(e) => navigateTo('/activities', e)}
+              >
+                📸 ภาพกิจกรรม
+              </a>
+            </div>
+          )}
+        </div>
 
-        {isHomePage && (
-          <div className="hero__actions">
-            <a
-              className="btn btn-primary"
-              href="/achievements"
-              onClick={(e) => navigateTo('/achievements', e)}
-            >
-              🏆 ผลงานและรางวัล
-              <ArrowRight size={18} />
-            </a>
-            <a
-              className="btn btn-hero-outline"
-              href="/activities"
-              onClick={(e) => navigateTo('/activities', e)}
-            >
-              📸 ภาพกิจกรรม
-            </a>
-          </div>
-        )}
+        <div className="hero__visual">
+          <img src={banner.image || '/boasnirut.png'} alt={banner.title || 'ภาพปก'} />
+        </div>
       </div>
     </section>
   )
