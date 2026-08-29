@@ -1,11 +1,33 @@
 {
-  "routes": [
+  "framework": "vite",
+  "rewrites": [
     {
-      "handle": "filesystem"
+      "source": "/classroom",
+      "destination": "/index.html"
     },
     {
-      "src": "/.*",
-      "dest": "/index.html"
+      "source": "/homeroom",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/achievements",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/activities",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pa",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/((?!assets/|data/|.*\\..*).*)",
+      "destination": "/index.html"
     }
   ]
 }
