@@ -334,15 +334,27 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
+    try {
+      localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
+    } catch (e) {
+      console.warn('localStorage save warning (site_hero_banners):', e)
+    }
   }, [heroBanners])
 
   useEffect(() => {
-    localStorage.setItem('site_achievements', JSON.stringify(achievements))
+    try {
+      localStorage.setItem('site_achievements', JSON.stringify(achievements))
+    } catch (e) {
+      console.warn('localStorage save warning (site_achievements):', e)
+    }
   }, [achievements])
 
   useEffect(() => {
-    localStorage.setItem('site_activities', JSON.stringify(activities))
+    try {
+      localStorage.setItem('site_activities', JSON.stringify(activities))
+    } catch (e) {
+      console.warn('localStorage save warning (site_activities):', e)
+    }
   }, [activities])
 
   const navigateTo = (path, e) => {
@@ -1210,16 +1222,48 @@ function DedicatedAdminPage({
       return
     }
 
-    // Read Image File
+    // Compress and Read Image File
     const reader = new FileReader()
     reader.onload = (event) => {
-      setImgCallback(event.target.result)
-      const successMsg = `✅ อัปโหลดไฟล์ "${filename}" สำเร็จเรียบร้อย! (ขนาดไฟล์: ${fileSizeMB} MB)`
-      setUploadStatuses((prev) => ({
-        ...prev,
-        [formKey]: { success: true, message: successMsg, filename, sizeStr: `${fileSizeMB} MB` },
-      }))
-      if (toast) toast.success(`ไฟล์ภาพ "${filename}" (${fileSizeMB} MB) พร้อมใช้งานแล้ว`, 'อัปโหลดภาพสำเร็จ')
+      const rawDataUrl = event.target.result
+      const img = new Image()
+      img.onload = () => {
+        const maxWidth = 1200
+        const maxHeight = 1200
+        let width = img.width
+        let height = img.height
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width)
+            width = maxWidth
+          } else {
+            width = Math.round((width * maxHeight) / height)
+            height = maxHeight
+          }
+        }
+
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82)
+        setImgCallback(compressedDataUrl)
+
+        const successMsg = `✅ อัปโหลดและปรับขนาดไฟล์ "${filename}" (${fileSizeMB} MB ➔ คมชัดเรียบร้อย) สำเร็จ!`
+        setUploadStatuses((prev) => ({
+          ...prev,
+          [formKey]: { success: true, message: successMsg, filename, sizeStr: `${fileSizeMB} MB` },
+        }))
+        if (toast) toast.success(`ไฟล์ภาพ "${filename}" พร้อมใช้งานแล้ว`, 'อัปโหลดภาพสำเร็จ')
+      }
+      img.onerror = () => {
+        setImgCallback(rawDataUrl)
+      }
+      img.src = rawDataUrl
     }
     reader.onerror = () => {
       const errorMsg = `❌ อัปโหลดไฟล์ "${filename}" ไม่สำเร็จ! เนื่องจากเกิดข้อผิดพลาดระบบขณะอ่านข้อมูลไฟล์`
