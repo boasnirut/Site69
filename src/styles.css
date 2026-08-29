@@ -1041,3 +1041,117 @@ body {
     align-items: flex-start;
   }
 }
+
+/* Toast Notification System (Promise-Toast Style) */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+  width: calc(100vw - 48px);
+  pointer-events: none;
+}
+
+.toast-item {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s ease;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-item.success {
+  border-left: 5px solid #10b981;
+}
+
+.toast-item.error {
+  border-left: 5px solid #ef4444;
+}
+
+.toast-item.loading {
+  border-left: 5px solid var(--accent-gold);
+}
+
+.toast-item.info {
+  border-left: 5px solid #3b82f6;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.toast-icon.success {
+  color: #10b981;
+}
+
+.toast-icon.error {
+  color: #ef4444;
+}
+
+.toast-icon.loading {
+  color: var(--accent-gold-dark);
+}
+
+.toast-icon.info {
+  color: #3b82f6;
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin-bottom: 2px;
+}
+
+.toast-message {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.toast-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 4px;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.toast-close-btn:hover {
+  color: #334155;
+  background: rgba(0, 0, 0, 0.05);
+}

@@ -195,16 +195,86 @@ const defaultActivities = [
     id: 4,
     title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียนโฮมรูม',
     date: '2025-11-05',
-    location: 'ห้องเรียนประจำชั้น',
-    albumUrl: '',
-    image: '/B4.jpg',
     description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
   },
 ]
 
+/* PROMISE TOAST CONTAINER & MANAGER COMPONENT */
+function ToastContainer({ toasts, onClose }) {
+  if (!toasts || toasts.length === 0) return null
+
+  return (
+    <div className="toast-container">
+      {toasts.map((item) => (
+        <div key={item.id} className={`toast-item ${item.type}`}>
+          <div className={`toast-icon ${item.type}`}>
+            {item.type === 'success' && <CheckCircle2 size={20} />}
+            {item.type === 'error' && <X size={20} />}
+            {item.type === 'loading' && <Loader2 size={20} className="spin" />}
+            {item.type === 'info' && <Sparkles size={20} />}
+          </div>
+          <div className="toast-content">
+            {item.title && <div className="toast-title">{item.title}</div>}
+            <div className="toast-message">{item.message}</div>
+          </div>
+          <button
+            type="button"
+            className="toast-close-btn"
+            onClick={() => onClose(item.id)}
+            title="ปิดการแจ้งเตือน"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  // Promise-Toast Notification System State
+  const [toasts, setToasts] = useState([])
+
+  const removeToast = (id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
+  }
+
+  const addToast = (toastObj) => {
+    const id = Date.now() + Math.random()
+    const newToast = { id, type: 'info', duration: 4500, ...toastObj }
+    setToasts((prev) => [...prev, newToast])
+
+    if (newToast.duration > 0) {
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id))
+      }, newToast.duration)
+    }
+    return id
+  }
+
+  const toast = {
+    success: (message, title = 'สำเร็จ') => addToast({ type: 'success', title, message }),
+    error: (message, title = 'เกิดข้อผิดพลาด') => addToast({ type: 'error', title, message }),
+    info: (message, title = 'แจ้งเตือน') => addToast({ type: 'info', title, message }),
+    promise: async (asyncFnOrPromise, { loading = 'กำลังดำเนินการ...', success = 'สำเร็จแล้ว!', error = 'เกิดข้อผิดพลาด!' }) => {
+      const loadingId = addToast({ type: 'loading', title: 'กรุณารอสักครู่', message: loading, duration: 0 })
+      try {
+        const res = typeof asyncFnOrPromise === 'function' ? await asyncFnOrPromise() : await asyncFnOrPromise
+        removeToast(loadingId)
+        const successText = typeof success === 'function' ? success(res) : success
+        addToast({ type: 'success', title: 'สำเร็จ', message: successText })
+        return res
+      } catch (err) {
+        removeToast(loadingId)
+        const errorText = typeof error === 'function' ? error(err) : (err.message || error)
+        addToast({ type: 'error', title: 'เกิดข้อผิดพลาด', message: errorText })
+        throw err
+      }
+    },
+  }
 
   const [heroBanners, setHeroBanners] = useState(() => {
     const saved = localStorage.getItem('site_hero_banners')
@@ -411,6 +481,7 @@ export default function App() {
             onLoginSuccess={() => {
               setIsLoggedIn(true)
               localStorage.setItem('site_admin_auth', 'true')
+              toast.success('ยินดีต้อนรับเข้าสู่ระบบหลังบ้านแอดมิน', 'เข้าสู่ระบบสำเร็จ')
             }}
             onLogout={handleLogout}
             heroBanners={heroBanners}
@@ -420,6 +491,7 @@ export default function App() {
             activities={activities}
             setActivities={setActivities}
             navigateTo={navigateTo}
+            toast={toast}
           />
         )}
       </main>
@@ -440,6 +512,9 @@ export default function App() {
           onIndexChange={(newIndex) => setLightboxIndex(newIndex)}
         />
       )}
+
+      {/* Promise-Toast Notification System Container */}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
   )
 }
@@ -1024,7 +1099,7 @@ function PaView({ hero, navigateTo }) {
   )
 }
 
-/* DEDICATED ADMIN PAGE (Includes Hero Banners Management System) */
+/* DEDICATED ADMIN PAGE (Includes Hero Banners Management System & Promise-Toast) */
 function DedicatedAdminPage({
   isLoggedIn,
   onLoginSuccess,
@@ -1036,6 +1111,7 @@ function DedicatedAdminPage({
   activities,
   setActivities,
   navigateTo,
+  toast,
 }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -1094,6 +1170,7 @@ function DedicatedAdminPage({
       onLoginSuccess()
     } else {
       setError('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง!')
+      if (toast) toast.error('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง!', 'เข้าสู่ระบบไม่สำเร็จ')
     }
   }
 
@@ -1111,6 +1188,7 @@ function DedicatedAdminPage({
         ...prev,
         [formKey]: { success: false, message: errorMsg, filename },
       }))
+      if (toast) toast.error(errorMsg, 'อัปโหลดภาพไม่สำเร็จ')
       e.target.value = null
       return
     }
@@ -1122,6 +1200,7 @@ function DedicatedAdminPage({
         ...prev,
         [formKey]: { success: false, message: errorMsg, filename },
       }))
+      if (toast) toast.error(`ไฟล์ "${filename}" ขนาดใหญ่เกิน 10MB (${fileSizeMB} MB)`, 'ขนาดไฟล์เกินโควตา')
       e.target.value = null
       return
     }
@@ -1135,6 +1214,7 @@ function DedicatedAdminPage({
         ...prev,
         [formKey]: { success: true, message: successMsg, filename, sizeStr: `${fileSizeMB} MB` },
       }))
+      if (toast) toast.success(`ไฟล์ภาพ "${filename}" (${fileSizeMB} MB) พร้อมใช้งานแล้ว`, 'อัปโหลดภาพสำเร็จ')
     }
     reader.onerror = () => {
       const errorMsg = `❌ อัปโหลดไฟล์ "${filename}" ไม่สำเร็จ! เนื่องจากเกิดข้อผิดพลาดระบบขณะอ่านข้อมูลไฟล์`
@@ -1142,6 +1222,7 @@ function DedicatedAdminPage({
         ...prev,
         [formKey]: { success: false, message: errorMsg, filename },
       }))
+      if (toast) toast.error(errorMsg, 'เกิดข้อผิดพลาดขณะอ่านไฟล์')
     }
     reader.readAsDataURL(file)
   }
@@ -1158,7 +1239,9 @@ function DedicatedAdminPage({
       },
     }))
     setUploadStatuses((prev) => ({ ...prev, hero: null }))
-    setSyncMessage(`✅ บันทึกภาพปกและข้อความสำหรับหน้า "${selectedHeroPage}" เรียบร้อยแล้ว!`)
+    const msg = `✅ บันทึกภาพปกและข้อความสำหรับหน้า "${selectedHeroPage}" เรียบร้อยแล้ว!`
+    setSyncMessage(msg)
+    if (toast) toast.success(`ภาพปกและข้อความสำหรับหน้า "${selectedHeroPage}" ถูกอัปเดตแล้ว`, 'บันทึกภาพปกสำเร็จ')
     setAdminTab('hero_banners')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -1185,6 +1268,7 @@ function DedicatedAdminPage({
       )
       setEditingAchId(null)
       setSyncMessage('✅ อัปเดตข้อมูลผลงานและรางวัลเรียบร้อยแล้ว!')
+      if (toast) toast.success('อัปเดตข้อมูลผลงานและรางวัลเรียบร้อยแล้ว', 'บันทึกสำเร็จ')
     } else {
       const newItem = {
         id: Date.now(),
@@ -1197,6 +1281,7 @@ function DedicatedAdminPage({
       }
       setAchievements((prev) => [newItem, ...prev])
       setSyncMessage('✅ เพิ่มผลงานและรางวัลใหม่เรียบร้อยแล้ว!')
+      if (toast) toast.success('เพิ่มผลงานและรางวัลใหม่เข้าสู่ระบบเรียบร้อยแล้ว', 'เพิ่มผลงานสำเร็จ')
     }
 
     setAchTitle('')
@@ -1224,6 +1309,7 @@ function DedicatedAdminPage({
     if (window.confirm('คุณต้องการลบผลงานนี้ใช่หรือไม่?')) {
       setAchievements((prev) => prev.filter((item) => item.id !== id))
       setSyncMessage('🗑️ ลบผลงานเรียบร้อยแล้ว!')
+      if (toast) toast.info('ลบรายการผลงานออกจากระบบเรียบร้อยแล้ว', 'ลบผลงาน')
     }
   }
 
@@ -1259,6 +1345,7 @@ function DedicatedAdminPage({
       )
       setEditingActId(null)
       setSyncMessage('✅ อัปเดตข้อมูลภาพกิจกรรมเรียบร้อยแล้ว!')
+      if (toast) toast.success('อัปเดตข้อมูลภาพกิจกรรมเรียบร้อยแล้ว', 'บันทึกสำเร็จ')
     } else {
       const newItem = {
         id: Date.now(),
@@ -1271,6 +1358,7 @@ function DedicatedAdminPage({
       }
       setActivities((prev) => [newItem, ...prev])
       setSyncMessage('✅ เพิ่มภาพกิจกรรมใหม่เรียบร้อยแล้ว!')
+      if (toast) toast.success('เพิ่มภาพกิจกรรมใหม่เข้าสู่ระบบเรียบร้อยแล้ว', 'เพิ่มกิจกรรมสำเร็จ')
     }
 
     setActTitle('')
@@ -1299,6 +1387,7 @@ function DedicatedAdminPage({
     if (window.confirm('คุณต้องการลบภาพกิจกรรมนี้ใช่หรือไม่?')) {
       setActivities((prev) => prev.filter((item) => item.id !== id))
       setSyncMessage('🗑️ ลบภาพกิจกรรมเรียบร้อยแล้ว!')
+      if (toast) toast.info('ลบภาพกิจกรรมออกจากระบบเรียบร้อยแล้ว', 'ลบภาพกิจกรรม')
     }
   }
 
@@ -1316,58 +1405,66 @@ function DedicatedAdminPage({
     setIsSyncing(true)
     setSyncMessage('')
 
-    const fullData = {
-      heroBanners,
-      achievements,
-      activities,
-    }
+    if (toast) {
+      await toast.promise(
+        async () => {
+          const fullData = {
+            heroBanners,
+            achievements,
+            activities,
+          }
 
-    localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
-    localStorage.setItem('site_achievements', JSON.stringify(achievements))
-    localStorage.setItem('site_activities', JSON.stringify(activities))
-    if (ghToken) localStorage.setItem('gh_sync_token', ghToken)
+          localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
+          localStorage.setItem('site_achievements', JSON.stringify(achievements))
+          localStorage.setItem('site_activities', JSON.stringify(activities))
+          if (ghToken) localStorage.setItem('gh_sync_token', ghToken)
 
-    if (ghToken) {
-      try {
-        const repo = 'boasnirut/Site69'
-        const filePath = 'public/data/siteData.json'
-        const url = `https://api.github.com/repos/${repo}/contents/${filePath}`
+          if (ghToken) {
+            const repo = 'boasnirut/Site69'
+            const filePath = 'public/data/siteData.json'
+            const url = `https://api.github.com/repos/${repo}/contents/${filePath}`
 
-        const getFile = await fetch(url, {
-          headers: { Authorization: `token ${ghToken}` },
-        })
+            const getFile = await fetch(url, {
+              headers: { Authorization: `token ${ghToken}` },
+            })
 
-        let sha = ''
-        if (getFile.ok) {
-          const fileData = await getFile.json()
-          sha = fileData.sha
+            let sha = ''
+            if (getFile.ok) {
+              const fileData = await getFile.json()
+              sha = fileData.sha
+            }
+
+            const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(fullData, null, 2))))
+            const putRes = await fetch(url, {
+              method: 'PUT',
+              headers: {
+                Authorization: `token ${ghToken}`,
+                'Content-Type': 'application.json',
+              },
+              body: JSON.stringify({
+                message: 'data: update siteData.json via Admin Portal',
+                content: contentEncoded,
+                sha: sha || undefined,
+                branch: 'main',
+              }),
+            })
+
+            if (!putRes.ok) {
+              throw new Error('ไม่สามารถซิงค์ไฟล์สู่ GitHub ได้ กรุณาตรวจสอบ GitHub Token')
+            }
+            setSyncMessage('✅ ซิงค์และอัปเดตสู่ GitHub (boasnirut/Site69) สำเร็จแล้ว!')
+            return 'ซิงค์และอัปเดตข้อมูลตรงสู่ GitHub (boasnirut/Site69) และ Vercel สำเร็จแล้ว!'
+          }
+
+          setSyncMessage('✅ บันทึกข้อมูลภาพปกและเนื้อหาลงในระบบเรียบร้อยแล้ว!')
+          return 'บันทึกข้อมูลภาพปกและเนื้อหาลงในเบราว์เซอร์เรียบร้อยแล้ว!'
+        },
+        {
+          loading: 'กำลังบันทึกและซิงค์ข้อมูลตรงสู่ GitHub...',
+          success: (res) => res,
+          error: (err) => err.message || 'เกิดข้อผิดพลาดในการซิงค์ข้อมูล',
         }
-
-        const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(fullData, null, 2))))
-        const putRes = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            Authorization: `token ${ghToken}`,
-            'Content-Type': 'application.json',
-          },
-          body: JSON.stringify({
-            message: 'data: update siteData.json via Admin Portal',
-            content: contentEncoded,
-            sha: sha || undefined,
-            branch: 'main',
-          }),
-        })
-
-        if (putRes.ok) {
-          setSyncMessage('✅ ซิงค์และอัปเดตสู่ GitHub (boasnirut/Site69) สำเร็จแล้ว!')
-        } else {
-          setSyncMessage('⚠️ บันทึกลงในเบราว์เซอร์แล้ว (กรุณาตรวจสอบ GitHub Token)')
-        }
-      } catch (err) {
-        setSyncMessage('✅ บันทึกลงในระบบเรียบร้อยแล้ว!')
-      }
-    } else {
-      setSyncMessage('✅ บันทึกข้อมูลภาพปกและเนื้อหาลงในระบบเรียบร้อยแล้ว!')
+      )
     }
 
     setIsSyncing(false)
