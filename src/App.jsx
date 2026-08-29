@@ -127,7 +127,7 @@ const defaultActivities = [
     title: 'กิจกรรมการเรียนรู้ Active Learning วิทยาการคำนวณ',
     date: '2026-02-15',
     location: 'ห้องปฏิบัติการคอมพิวเตอร์ โรงเรียนบ้านน้ำพร',
-    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz4',
+    albumUrl: '',
     image: '/B1.jpg',
     description: 'บรรยากาศการลงมือปฏิบัติจริงและการนำเสนอผลงานของนักเรียนในชั้นเรียน',
   },
@@ -136,7 +136,7 @@ const defaultActivities = [
     title: 'กิจกรรมส่งเสริมทักษะดิจิทัลและการโค้ดดิ้ง',
     date: '2026-01-20',
     location: 'อาคารเรียนดิจิทัล',
-    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz5',
+    albumUrl: '',
     image: '/B2.jpg',
     description: 'การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้',
   },
@@ -145,7 +145,7 @@ const defaultActivities = [
     title: 'การอบรมและพัฒนาวิชาชีพครูด้านเทคโนโลยีดิจิทัล',
     date: '2025-12-10',
     location: 'หอประชุมใหญ่ เขตพื้นที่การศึกษา',
-    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz6',
+    albumUrl: '',
     image: '/B3.jpg',
     description: 'การเข้าร่วมอบรมและแบ่งปันความรู้เทคโนโลยีดิจิทัลเพื่อการศึกษา',
   },
@@ -154,7 +154,7 @@ const defaultActivities = [
     title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียนโฮมรูม',
     date: '2025-11-05',
     location: 'ห้องเรียนประจำชั้น',
-    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz7',
+    albumUrl: '',
     image: '/B4.jpg',
     description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
   },
@@ -706,64 +706,34 @@ function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox })
   )
 }
 
-/* CAROUSEL CARD COMPONENT WITH DYNAMIC GOOGLE PHOTOS ALBUM EXTRACTION VIA CORS PROXIES */
+/* CAROUSEL CARD COMPONENT WITH REAL DYNAMIC GOOGLE PHOTOS ALBUM EXTRACTION */
 function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) {
-  const isGPhotos = Boolean(item.albumUrl)
+  const isGPhotos = Boolean(item.albumUrl && item.albumUrl.trim().length > 0 && !item.albumUrl.includes('example'))
   
   const [gphotosImages, setGphotosImages] = useState(() => item.images || [])
   const [isLoadingGPhotos, setIsLoadingGPhotos] = useState(false)
   const [currentImgIndex, setCurrentImgIndex] = useState(0)
 
-  // Dynamically extract photos from Google Photos album URL using CORS proxy
+  // Dynamically extract photos from Google Photos album URL using Vercel api/gphotos endpoint
   useEffect(() => {
-    if (!item.albumUrl) return
+    if (!isGPhotos) return
 
     let isMounted = true
     setIsLoadingGPhotos(true)
 
     const extractPhotos = async () => {
-      // Proxy Strategy 1: allorigins raw proxy
       try {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(item.albumUrl)}`
-        const proxyRes = await fetch(proxyUrl)
-        if (proxyRes.ok) {
-          const html = await proxyRes.text()
-          const matches =
-            html.match(/https:\/\/lh3\.googleusercontent\.com\/pw\/[a-zA-Z0-9_\-]+/gi) ||
-            html.match(/https:\/\/lh3\.googleusercontent\.com\/[a-zA-Z0-9_\-]+/gi) ||
-            []
-          const cleanImages = Array.from(new Set(matches)).map(
-            (u) => u.replace(/=w\d+-h\d+.*$/, '') + '=w1000-h750-no'
-          )
-          if (isMounted && cleanImages.length > 0) {
-            setGphotosImages(cleanImages)
+        const apiRes = await fetch(`/api/gphotos?url=${encodeURIComponent(item.albumUrl)}`)
+        if (apiRes.ok) {
+          const data = await apiRes.json()
+          if (isMounted && data.images && data.images.length > 0) {
+            setGphotosImages(data.images)
             setIsLoadingGPhotos(false)
             return
           }
         }
-      } catch (err) {
-        console.warn('Proxy 1 fetch error, trying Proxy 2...', err)
-      }
-
-      // Proxy Strategy 2: corsproxy.io fallback
-      try {
-        const proxyUrl2 = `https://corsproxy.io/?${encodeURIComponent(item.albumUrl)}`
-        const proxyRes2 = await fetch(proxyUrl2)
-        if (proxyRes2.ok) {
-          const html2 = await proxyRes2.text()
-          const matches2 =
-            html2.match(/https:\/\/lh3\.googleusercontent\.com\/pw\/[a-zA-Z0-9_\-]+/gi) ||
-            html2.match(/https:\/\/lh3\.googleusercontent\.com\/[a-zA-Z0-9_\-]+/gi) ||
-            []
-          const cleanImages2 = Array.from(new Set(matches2)).map(
-            (u) => u.replace(/=w\d+-h\d+.*$/, '') + '=w1000-h750-no'
-          )
-          if (isMounted && cleanImages2.length > 0) {
-            setGphotosImages(cleanImages2)
-          }
-        }
-      } catch (err2) {
-        console.error('Failed to extract Google Photos via proxy 2:', err2)
+      } catch (e) {
+        console.warn('API fetch error:', e)
       } finally {
         if (isMounted) setIsLoadingGPhotos(false)
       }
@@ -774,7 +744,7 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
     return () => {
       isMounted = false
     }
-  }, [item.albumUrl])
+  }, [item.albumUrl, isGPhotos])
 
   // Effective gallery images list
   const activeGallery =
@@ -1613,16 +1583,6 @@ function DedicatedAdminPage({
                 className="admin-input"
                 onChange={(e) => handleImageFileUpload(e, setAchImg)}
               />
-              <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                หรือกรอก URL/Path รูปภาพ:
-              </div>
-              <input
-                type="text"
-                className="admin-input"
-                value={achImg}
-                onChange={(e) => setAchImg(e.target.value)}
-                placeholder="/B1.jpg หรือ URL รูปภาพ"
-              />
               {achImg && (
                 <div style={{ marginTop: '10px' }}>
                   <img
@@ -1652,7 +1612,7 @@ function DedicatedAdminPage({
           </form>
         )}
 
-        {/* 4. Add / Edit Activity Form */}
+        {/* 4. Add / Edit Activity Form (Text Input URL Removed per User Request) */}
         {adminTab === 'add_activity' && (
           <form onSubmit={handleSaveActivity} style={{ maxWidth: '650px' }}>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
@@ -1704,23 +1664,14 @@ function DedicatedAdminPage({
               />
             </div>
 
+            {/* ONLY File Uploader (Text Input URL Removed per User Request) */}
             <div className="admin-form-group">
-              <label>อัปโหลดภาพปกกิจกรรม (จำกัดไม่เกิน 10MB):</label>
+              <label>อัปโหลดภาพปกกิจกรรม (จำกัดขนาดไฟล์ไม่เกิน 10MB):</label>
               <input
                 type="file"
                 accept="image/*"
                 className="admin-input"
                 onChange={(e) => handleImageFileUpload(e, setActImg)}
-              />
-              <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                หรือกรอก URL/Path รูปภาพ:
-              </div>
-              <input
-                type="text"
-                className="admin-input"
-                value={actImg}
-                onChange={(e) => setActImg(e.target.value)}
-                placeholder="/B1.jpg หรือ URL รูปภาพ"
               />
               {actImg && (
                 <div style={{ marginTop: '10px' }}>
