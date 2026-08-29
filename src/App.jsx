@@ -22,8 +22,9 @@ import {
   LogOut,
   PlusCircle,
   Trash2,
-  X,
   ShieldCheck,
+  ArrowLeft,
+  Settings,
 } from 'lucide-react'
 import './styles.css'
 
@@ -107,8 +108,6 @@ const initialActivities = [
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [showLoginModal, setShowLoginModal] = useState(false)
-  const [showAdminPanel, setShowAdminPanel] = useState(false)
   
   // Custom Data States with LocalStorage Persistence
   const [achievements, setAchievements] = useState(() => {
@@ -155,6 +154,7 @@ export default function App() {
     if (currentPath === '/achievements') return 'achievements'
     if (currentPath === '/activities') return 'activities'
     if (currentPath === '/pa') return 'pa'
+    if (currentPath === '/admin') return 'admin'
     return 'home'
   }
 
@@ -163,12 +163,12 @@ export default function App() {
   const handleLogout = () => {
     setIsLoggedIn(false)
     localStorage.removeItem('site_admin_auth')
-    setShowAdminPanel(false)
+    navigateTo('/admin')
   }
 
   return (
     <div className="app-root">
-      {/* Header with Glow Navigation Bar */}
+      {/* Header Navigation Bar */}
       <header className="site-header">
         <div className="container site-header__inner">
           <a
@@ -186,7 +186,7 @@ export default function App() {
             </span>
           </a>
 
-          {/* Reverted Clean Animated Tab Bar Navigation */}
+          {/* Clean Animated Tab Bar Navigation */}
           <nav className="tab-bar-nav" aria-label="เมนูหลัก">
             {menuTabs.map((tab) => {
               const Icon = tab.icon
@@ -204,26 +204,26 @@ export default function App() {
               )
             })}
 
-            {/* Login Menu item on far right */}
+            {/* Login / Admin Page Link on Far Right */}
             {isLoggedIn ? (
-              <button
-                type="button"
-                className="tab-bar-login"
-                onClick={() => setShowAdminPanel(true)}
-                title="จัดการระบบหลังบ้าน"
+              <a
+                href="/admin"
+                onClick={(e) => navigateTo('/admin', e)}
+                className={`tab-bar-login ${activeTab === 'admin' ? 'active' : ''}`}
+                title="ระบบหลังบ้านแอดมิน"
               >
                 <ShieldCheck size={16} />
                 <span>แอดมิน</span>
-              </button>
+              </a>
             ) : (
-              <button
-                type="button"
-                className="tab-bar-login"
-                onClick={() => setShowLoginModal(true)}
+              <a
+                href="/admin"
+                onClick={(e) => navigateTo('/admin', e)}
+                className={`tab-bar-login ${activeTab === 'admin' ? 'active' : ''}`}
               >
                 <LogIn size={16} />
                 <span>เข้าสู่ระบบ</span>
-              </button>
+              </a>
             )}
           </nav>
         </div>
@@ -255,39 +255,29 @@ export default function App() {
           />
         )}
         {activeTab === 'pa' && <PaView />}
+        {activeTab === 'admin' && (
+          <DedicatedAdminPage
+            isLoggedIn={isLoggedIn}
+            onLoginSuccess={() => {
+              setIsLoggedIn(true)
+              localStorage.setItem('site_admin_auth', 'true')
+            }}
+            onLogout={handleLogout}
+            achievements={achievements}
+            setAchievements={setAchievements}
+            activities={activities}
+            setActivities={setActivities}
+            navigateTo={navigateTo}
+          />
+        )}
       </main>
 
-      {/* 2. Orange Footer Bar */}
+      {/* 2. Theme-matched Footer Bar */}
       <footer className="site-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} นิรุทธิ์ เสวะนา | Nirut Sewana. All rights reserved.</p>
         </div>
       </footer>
-
-      {/* Login Modal */}
-      {showLoginModal && (
-        <LoginModal
-          onClose={() => setShowLoginModal(false)}
-          onSuccess={() => {
-            setIsLoggedIn(true)
-            localStorage.setItem('site_admin_auth', 'true')
-            setShowLoginModal(false)
-            setShowAdminPanel(true)
-          }}
-        />
-      )}
-
-      {/* Admin Panel Modal */}
-      {showAdminPanel && isLoggedIn && (
-        <AdminPanelModal
-          onClose={() => setShowAdminPanel(false)}
-          onLogout={handleLogout}
-          achievements={achievements}
-          setAchievements={setAchievements}
-          activities={activities}
-          setActivities={setActivities}
-        />
-      )}
     </div>
   )
 }
@@ -503,7 +493,7 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
         <p>คลิกปุ่มเลือกดูรายการผลงานตามหมวดหมู่ ครู, นักเรียน, สถานศึกษา และงานวิชาการ</p>
       </div>
 
-      {/* 3. Sub-Menu Glow Navigation Bar */}
+      {/* Sub-Menu Glow Navigation Bar */}
       <div className="sub-glow-container">
         <nav className="sub-glow-nav" aria-label="หมวดหมู่ผลงาน">
           {achievementSubTabs.map((tab) => {
@@ -626,87 +616,39 @@ function PaView() {
   )
 }
 
-/* 4. LOGIN MODAL */
-function LoginModal({ onClose, onSuccess }) {
+/* 1. DEDICATED ADMIN PAGE (หน้าแยกสำหรับระบบหลังบ้าน) */
+function DedicatedAdminPage({
+  isLoggedIn,
+  onLoginSuccess,
+  onLogout,
+  achievements,
+  setAchievements,
+  activities,
+  setActivities,
+  navigateTo,
+}) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (username === 'boasnirut' && password === '42010113') {
-      onSuccess()
-    } else {
-      setError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!')
-    }
-  }
-
-  return (
-    <div className="admin-modal-overlay" onClick={onClose}>
-      <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-        <button
-          type="button"
-          onClick={onClose}
-          style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-        >
-          <X size={20} />
-        </button>
-
-        <div className="admin-modal__title">
-          <Lock size={24} color="var(--accent-gold-dark)" />
-          เข้าสู่ระบบแอดมิน (หลังบ้าน)
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          {error && <div className="admin-error">{error}</div>}
-
-          <div className="admin-form-group">
-            <label>ชื่อผู้ใช้งาน (User):</label>
-            <input
-              type="text"
-              className="admin-input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="กรอกชื่อผู้ใช้..."
-              required
-            />
-          </div>
-
-          <div className="admin-form-group">
-            <label>รหัสผ่าน (Pass):</label>
-            <input
-              type="password"
-              className="admin-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="กรอกรหัสผ่าน..."
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '10px', justifyContent: 'center' }}>
-            <LogIn size={18} />
-            เข้าสู่ระบบ
-          </button>
-        </form>
-      </div>
-    </div>
-  )
-}
-
-/* 4. ADMIN PANEL MODAL (สำหรับเพิ่มผลงาน/ภาพกิจกรรม) */
-function AdminPanelModal({ onClose, onLogout, achievements, setAchievements, activities, setActivities }) {
-  const [activeTab, setActiveTab] = useState('add_achievement')
-  
-  // New Achievement Form
+  // Admin Management Tabs
+  const [adminTab, setAdminTab] = useState('add_achievement')
   const [achCategory, setAchCategory] = useState('teacher')
   const [achTitle, setAchTitle] = useState('')
   const [achDesc, setAchDesc] = useState('')
 
-  // New Activity Form
   const [actTitle, setActTitle] = useState('')
   const [actDesc, setActDesc] = useState('')
   const [actImg, setActImg] = useState('/B1.jpg')
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault()
+    if (username === 'boasnirut' && password === '42010113') {
+      onLoginSuccess()
+    } else {
+      setError('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง!')
+    }
+  }
 
   const handleAddAchievement = (e) => {
     e.preventDefault()
@@ -739,43 +681,109 @@ function AdminPanelModal({ onClose, onLogout, achievements, setAchievements, act
     alert('เพิ่มภาพกิจกรรมเรียบร้อยแล้ว!')
   }
 
+  if (!isLoggedIn) {
+    return (
+      <div className="container section">
+        <div style={{ maxWidth: '480px', margin: '0 auto' }}>
+          <div className="admin-page-card">
+            <div className="admin-page-card__title" style={{ marginBottom: '24px' }}>
+              <Lock size={28} color="var(--accent-gold-dark)" />
+              เข้าสู่ระบบหลังบ้าน (Admin)
+            </div>
+
+            <form onSubmit={handleLoginSubmit}>
+              {error && <div className="admin-error">{error}</div>}
+
+              <div className="admin-form-group">
+                <label>ชื่อผู้ใช้งาน (User):</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="กรอกชื่อผู้ใช้..."
+                  required
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label>รหัสผ่าน (Pass):</label>
+                <input
+                  type="password"
+                  className="admin-input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="กรอกรหัสผ่าน..."
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: '100%', marginTop: '14px', justifyContent: 'center' }}
+              >
+                <LogIn size={18} />
+                เข้าสู่ระบบ
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ width: '100%', marginTop: '10px', justifyContent: 'center' }}
+                onClick={(e) => navigateTo('/', e)}
+              >
+                <ArrowLeft size={18} />
+                กลับสู่หน้าหลักเว็บไซต์
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="admin-modal-overlay" onClick={onClose}>
-      <div className="admin-modal" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
-        <button
-          type="button"
-          onClick={onClose}
-          style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-        >
-          <X size={20} />
-        </button>
-
-        <div className="admin-modal__title">
-          <ShieldCheck size={24} color="var(--accent-gold-dark)" />
-          ระบบหลังบ้านแอดมิน (boasnirut)
-        </div>
-
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+    <div className="container section">
+      <div className="admin-page-card">
+        <div className="admin-page-card__header">
+          <div className="admin-page-card__title">
+            <ShieldCheck size={32} color="var(--accent-gold-dark)" />
+            ระบบจัดการหลังบ้านแอดมิน (Admin Dashboard)
+          </div>
           <button
             type="button"
-            className={`btn ${activeTab === 'add_achievement' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ padding: '8px 14px', fontSize: '0.85rem' }}
-            onClick={() => setActiveTab('add_achievement')}
+            className="btn btn-outline"
+            style={{ color: '#ef4444', borderColor: '#ef4444' }}
+            onClick={onLogout}
           >
-            <PlusCircle size={15} /> เพิ่มผลงาน/รางวัล
-          </button>
-          <button
-            type="button"
-            className={`btn ${activeTab === 'add_activity' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ padding: '8px 14px', fontSize: '0.85rem' }}
-            onClick={() => setActiveTab('add_activity')}
-          >
-            <PlusCircle size={15} /> เพิ่มภาพกิจกรรม
+            <LogOut size={16} /> ออกจากระบบ
           </button>
         </div>
 
-        {activeTab === 'add_achievement' && (
-          <form onSubmit={handleAddAchievement}>
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className={`btn ${adminTab === 'add_achievement' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setAdminTab('add_achievement')}
+          >
+            <PlusCircle size={16} /> เพิ่มผลงาน / รางวัล
+          </button>
+          <button
+            type="button"
+            className={`btn ${adminTab === 'add_activity' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setAdminTab('add_activity')}
+          >
+            <PlusCircle size={16} /> เพิ่มภาพกิจกรรม
+          </button>
+        </div>
+
+        {adminTab === 'add_achievement' && (
+          <form onSubmit={handleAddAchievement} style={{ maxWidth: '600px' }}>
+            <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
+              🏆 เพิ่มข้อมูลผลงานและรางวัลใหม่
+            </h3>
+            
             <div className="admin-form-group">
               <label>หมวดหมู่ผลงาน:</label>
               <select
@@ -806,22 +814,26 @@ function AdminPanelModal({ onClose, onLogout, achievements, setAchievements, act
               <label>รายละเอียด:</label>
               <textarea
                 className="admin-input"
-                style={{ height: '80px', resize: 'vertical' }}
+                style={{ height: '90px', resize: 'vertical' }}
                 value={achDesc}
                 onChange={(e) => setAchDesc(e.target.value)}
-                placeholder="กรอกรายละเอียด..."
+                placeholder="กรอกรายละเอียดผลงาน..."
               />
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '10px', justifyContent: 'center' }}>
+            <button type="submit" className="btn btn-primary">
               <PlusCircle size={18} />
-              บันทึกผลงานลงในระบบ
+              บันทึกผลงานลงระบบ
             </button>
           </form>
         )}
 
-        {activeTab === 'add_activity' && (
-          <form onSubmit={handleAddActivity}>
+        {adminTab === 'add_activity' && (
+          <form onSubmit={handleAddActivity} style={{ maxWidth: '600px' }}>
+            <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
+              📸 เพิ่มภาพกิจกรรมใหม่
+            </h3>
+
             <div className="admin-form-group">
               <label>ชื่อกิจกรรม / คำอธิบายภาพ:</label>
               <input
@@ -838,7 +850,7 @@ function AdminPanelModal({ onClose, onLogout, achievements, setAchievements, act
               <label>รายละเอียดกิจกรรม:</label>
               <textarea
                 className="admin-input"
-                style={{ height: '80px', resize: 'vertical' }}
+                style={{ height: '90px', resize: 'vertical' }}
                 value={actDesc}
                 onChange={(e) => setActDesc(e.target.value)}
                 placeholder="กรอกรายละเอียด..."
@@ -856,24 +868,12 @@ function AdminPanelModal({ onClose, onLogout, achievements, setAchievements, act
               />
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '10px', justifyContent: 'center' }}>
+            <button type="submit" className="btn btn-primary">
               <PlusCircle size={18} />
-              บันทึกภาพกิจกรรมลงในระบบ
+              บันทึกภาพกิจกรรมลงระบบ
             </button>
           </form>
         )}
-
-        <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>สถานะ: แอดมิน (boasnirut)</span>
-          <button
-            type="button"
-            className="btn btn-outline"
-            style={{ padding: '6px 14px', fontSize: '0.85rem', color: '#ef4444', borderColor: '#ef4444' }}
-            onClick={onLogout}
-          >
-            <LogOut size={15} /> ออกจากระบบ
-          </button>
-        </div>
       </div>
     </div>
   )
