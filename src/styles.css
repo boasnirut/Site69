@@ -1,22 +1,22 @@
 :root {
-  --navy-950: #061a35;
-  --navy-900: #0a2449;
-  --navy-800: #12366d;
-  --navy-700: #184b8f;
-  --blue-600: #1c65b5;
-  --sky-500: #38a9d6;
-  --sky-100: #e9f7fc;
-  --green-800: #24563f;
-  --green-700: #347254;
-  --green-500: #5d9b65;
-  --green-100: #eef7ed;
-  --gold-500: #f7ad1b;
-  --gold-400: #ffc447;
-  --gold-100: #fff5d8;
+  --navy-950: #0f1c2e;
+  --navy-900: #162840;
+  --navy-800: #1d3654;
+  --navy-700: #25466c;
+  --blue-600: #d48443;
+  --sky-500: #e59247;
+  --sky-100: #fff4e0;
+  --green-800: #5c2818;
+  --green-700: #7a3521;
+  --green-500: #d48443;
+  --green-100: #fff6d7;
+  --gold-500: #e59247;
+  --gold-400: #f3b069;
+  --gold-100: #fff6d7;
   --ink: #12223b;
   --muted: #607087;
   --line: #dfe7ef;
-  --soft: #f4f7fb;
+  --soft: #f8fafc;
   --white: #ffffff;
   --shadow-sm: 0 10px 30px rgba(9, 35, 70, 0.08);
   --shadow-md: 0 22px 60px rgba(9, 35, 70, 0.13);
@@ -7564,120 +7564,5 @@ body.welcome-open {
   .sar-card__preview {
     aspect-ratio: 1 / 1.18;
   }
-}
-
-/* ----------------------------------------------------
-   LOGO 8045 MATCHING COLOR THEME
-   Amber Gold (#E59247) & Deep Mahogany (#5C2818) & Cream (#FEE7B8)
-   ---------------------------------------------------- */
-:root {
-  --navy-950: #14100E;
-  --navy-900: #1E1A17;
-  --navy-800: #2C2420;
-  --navy-700: #42352F;
-  --blue-600: #D48443;
-  --sky-500: #E59247;
-  --sky-100: #FEE7B8;
-  --green-800: #5C2818;
-  --green-700: #7A3521;
-  --green-500: #D48443;
-  --green-100: #FFF6D7;
-  --gold-500: #E59247;
-  --gold-400: #F3B069;
-  --gold-100: #FFF6D7;
-  --ink: #F5EFEA;
-  --muted: #B8ACA2;
-  --line: #3D332D;
-  --soft: #251F1B;
-  --white: #1E1A17;
-}
-
-body {
-  background-color: #14100E !important;
-  color: #F5EFEA !important;
-}
-
-.site-header {
-  background: rgba(20, 16, 14, 0.94) !important;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #332B25 !important;
-}
-
-.site-header__inner {
-  color: #F5EFEA !important;
-}
-
-.brand__text strong {
-  color: #FEE7B8 !important;
-}
-
-.brand__text small {
-  color: #E59247 !important;
-}
-
-.nav__link {
-  color: #D4C9C1 !important;
-}
-
-.nav__link:hover,
-.nav__link--active {
-  color: #E59247 !important;
-}
-
-.btn-primary,
-.button--primary,
-.hero__cta .button--primary {
-  background: linear-gradient(135deg, #E59247 0%, #D48443 100%) !important;
-  color: #14100E !important;
-  font-weight: 700 !important;
-  border: none !important;
-  box-shadow: 0 8px 24px rgba(229, 146, 71, 0.3) !important;
-}
-
-.btn-primary:hover,
-.button--primary:hover {
-  background: linear-gradient(135deg, #F3B069 0%, #E59247 100%) !important;
-  box-shadow: 0 10px 30px rgba(229, 146, 71, 0.45) !important;
-  transform: translateY(-2px);
-}
-
-.service-card,
-.about-card,
-.news-card,
-.achievement-card,
-.activity-card,
-.sar-card,
-.newsletter-card {
-  background: #1E1A17 !important;
-  border: 1px solid #332B25 !important;
-  color: #F5EFEA !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-}
-
-.service-card:hover,
-.news-card:hover,
-.achievement-card:hover {
-  border-color: #E59247 !important;
-  box-shadow: 0 12px 36px rgba(229, 146, 71, 0.25) !important;
-}
-
-.eyebrow,
-.section-heading__eyebrow {
-  color: #E59247 !important;
-}
-
-.section-heading__title,
-.hero__title {
-  color: #FEE7B8 !important;
-}
-
-.footer {
-  background: #100C0A !important;
-  border-top: 1px solid #2B231E !important;
-  color: #B8ACA2 !important;
-}
-
-.footer__brand strong {
-  color: #FEE7B8 !important;
 }
 
