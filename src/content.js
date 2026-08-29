@@ -14,49 +14,11 @@ import {
 
 export const navItems = [
   { label: 'หน้าหลัก', href: '/' },
-  {
-    label: 'เกี่ยวกับโรงเรียน',
-    children: [
-      { label: 'ข้อมูลพื้นฐาน', href: '/about/basic-info' },
-      { label: 'ข้อมูลบุคลากร', href: '/about/staff' },
-      { label: 'ประวัติโรงเรียน', href: '/about/history' },
-    ],
-  },
-  { label: 'ผลงานและรางวัล', href: '/achievements' },
-  {
-    label: 'การดำเนินงาน',
-    children: [
-      { label: 'การสอบวัดผลระดับชาติ', href: '/operations/national-tests' },
-      { label: 'ประกันคุณภาพภายนอก (สมศ.)', href: '/operations/external-quality' },
-      {
-        label: 'โรงเรียนขยายโอกาสคุณภาพ',
-        href: 'https://numporn.loei1.go.th/qoes69',
-        external: true,
-      },
-      { label: 'ITA Online', href: '/operations/ita' },
-      { label: 'SAR สถานศึกษา', href: '/operations/sar' },
-    ],
-  },
-  {
-    label: 'ข่าวสาร',
-    children: [
-      { label: 'กิจกรรม', href: '/news/activities' },
-      { label: 'ประชาสัมพันธ์', href: '/news/public-relations' },
-      { label: 'ประกาศ', href: '/news/announcements' },
-      { label: 'จดหมายข่าว', href: '/news/newsletters' },
-      { label: 'วิดีโอประชาสัมพันธ์', href: '/news/videos' },
-    ],
-  },
-  {
-    label: 'บริการ',
-    children: [
-      { label: 'ตรวจสอบผลการเรียน', href: '/services/results' },
-      { label: 'ดาวน์โหลดเอกสาร/คำร้อง', href: '/services/downloads' },
-      { label: 'ถาม-ตอบ (Q&A)', href: '/services/qa' },
-      { label: 'แจ้งเรื่องร้องเรียน', href: '/services/complaints' },
-    ],
-  },
-  { label: 'ติดต่อเรา', href: '/contact' },
+  { label: 'ห้องเรียนออนไลน์', href: '/classroom' },
+  { label: 'งานประจำชั้น', href: '/homeroom' },
+  { label: 'ผลงาน/รางวัล', href: '/achievements' },
+  { label: 'ภาพกิจกรรม', href: '/activities' },
+  { label: 'ข้อตกลงในการพัฒนางาน (PA)', href: '/pa' },
 ]
 
 export const newsItems = [
@@ -179,13 +141,13 @@ export const schoolHighlights = [
 ]
 
 export const schoolInfo = {
-  thaiName: 'Nirut Sewana',
-  englishName: 'Nirut Sewana Digital Hub',
+  thaiName: 'นิรุทธิ์ เสวะนา',
+  englishName: 'Nirut Sewana',
   educationLevels: 'สื่อการเรียนรู้ • งานประจำชั้น • PA',
   schoolType: 'Personal Portfolio & Learning Hub',
   affiliation: 'โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1',
   summary:
-    'Nirut Sewana - เว็บไซต์ผลงาน คลังบทเรียนดิจิทัล งานประจำชั้น และรายงานผลการพัฒนางานตามข้อตกลง (PA)',
+    'นิรุทธิ์ เสวะนา (Nirut Sewana) - เว็บไซต์ผลงาน คลังบทเรียนดิจิทัล งานประจำชั้น และรายงานผลการพัฒนางานตามข้อตกลง (PA)',
 }
 
 export const contactDetails = {
