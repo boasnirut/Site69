@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Home,
   Laptop,
@@ -25,6 +25,13 @@ import {
   ShieldCheck,
   ArrowLeft,
   LayoutGrid,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
 } from 'lucide-react'
 import './styles.css'
 
@@ -46,52 +53,53 @@ const achievementSubTabs = [
   { id: 'academic', label: 'งานวิชาการ', icon: FileText },
 ]
 
-// Initial Default Data
+// Initial Achievements Data with 16:9 Images
 const initialAchievements = [
   {
     id: 1,
     category: 'teacher',
     title: 'รางวัลนวัตกรรมการจัดการเรียนรู้ Active Learning',
     description: 'รางวัลยกย่องเชิดชูเกียรติด้านการสร้างสรรค์สื่อและการจัดการเรียนรู้ดิจิทัลระดับจังหวัด',
-    iconName: 'Award',
+    image: '/B1.jpg',
   },
   {
     id: 2,
     category: 'teacher',
     title: 'ครูผู้สอนดีเด่นกลุ่มสาระวิทยาศาสตร์และเทคโนโลยี',
     description: 'ผลงานการพัฒนาแผนการจัดการเรียนรู้บูรณาการวิทยาการคำนวณดีเด่น',
-    iconName: 'User',
+    image: '/B2.jpg',
   },
   {
     id: 3,
     category: 'student',
     title: 'รางวัลเหรียญทอง การแข่งขันเขียนโปรแกรมคอมพิวเตอร์',
     description: 'ส่งเสริมและฝึกหัดนักเรียนเข้าแข่งขันงานศิลปหัตถกรรมนักเรียน ระดับเขตพื้นที่การศึกษา',
-    iconName: 'GraduationCap',
+    image: '/B3.jpg',
   },
   {
     id: 4,
     category: 'student',
     title: 'รางวัลชนะเลิศ กิจกรรมโครงงานคุณธรรมผู้เรียน',
     description: 'นักเรียนแกนนำนำเสนอโครงงานคุณธรรมการใช้งานเทคโนโลยีอย่างปลอดภัย',
-    iconName: 'Trophy',
+    image: '/B4.jpg',
   },
   {
     id: 5,
     category: 'school',
     title: 'สถานศึกษาปลอดภัย และมีผลการประเมินคุณภาพระดับดีเยี่ยม',
     description: 'รางวัลการบริหารจัดการสถานศึกษาและส่งเสริมสภาพแวดล้อมเพื่อการเรียนรู้ดิจิทัล',
-    iconName: 'School',
+    image: '/TC01.png',
   },
   {
     id: 6,
     category: 'academic',
     title: 'ผลงานวิจัยในชั้นเรียน เรื่องการใช้สื่อดิจิทัลพัฒนาทักษะคิดวิเคราะห์',
     description: 'การเผยแพร่ผลงานทางวิชาการและคู่มือการใช้สื่อดิจิทัลวิทยาการคำนวณ',
-    iconName: 'FileText',
+    image: '/SAR69.jpg',
   },
 ]
 
+// Initial Activities Data with 16:9 Images
 const initialActivities = [
   {
     id: 1,
@@ -104,6 +112,18 @@ const initialActivities = [
     title: 'กิจกรรมส่งเสริมทักษะดิจิทัล',
     description: 'การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้',
     image: '/B2.jpg',
+  },
+  {
+    id: 3,
+    title: 'การอบรมและพัฒนาวิชาชีพครู',
+    description: 'การเข้าร่วมอบรมและแบ่งปันความรู้เทคโนโลยีดิจิทัลเพื่อการศึกษา',
+    image: '/B3.jpg',
+  },
+  {
+    id: 4,
+    title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียน',
+    description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
+    image: '/B4.jpg',
   },
 ]
 
@@ -121,6 +141,10 @@ export default function App() {
     const saved = localStorage.getItem('site_activities')
     return saved ? JSON.parse(saved) : initialActivities
   })
+
+  // Lightbox State
+  const [lightboxItems, setLightboxItems] = useState([])
+  const [lightboxIndex, setLightboxIndex] = useState(-1)
 
   useEffect(() => {
     const auth = localStorage.getItem('site_admin_auth')
@@ -168,6 +192,11 @@ export default function App() {
     navigateTo('/admin')
   }
 
+  const openLightbox = (itemsList, index) => {
+    setLightboxItems(itemsList)
+    setLightboxIndex(index)
+  }
+
   return (
     <div className="app-root">
       {/* Header Navigation Bar */}
@@ -207,7 +236,7 @@ export default function App() {
             })}
           </nav>
 
-          {/* 3. Standalone Icon-Only Login / Admin Link on Far Right (Same Header Row) */}
+          {/* Standalone Icon-Only Login / Admin Link on Far Right */}
           <div className="header-actions">
             {isLoggedIn ? (
               <a
@@ -241,6 +270,7 @@ export default function App() {
             navigateTo={navigateTo}
             achievements={achievements}
             activities={activities}
+            openLightbox={openLightbox}
           />
         )}
         {activeTab === 'classroom' && <ClassroomView />}
@@ -250,6 +280,7 @@ export default function App() {
             achievements={achievements}
             isLoggedIn={isLoggedIn}
             setAchievements={setAchievements}
+            openLightbox={openLightbox}
           />
         )}
         {activeTab === 'activities' && (
@@ -257,6 +288,7 @@ export default function App() {
             activities={activities}
             isLoggedIn={isLoggedIn}
             setActivities={setActivities}
+            openLightbox={openLightbox}
           />
         )}
         {activeTab === 'pa' && <PaView />}
@@ -277,18 +309,28 @@ export default function App() {
         )}
       </main>
 
-      {/* 4. Footer 50% Narrower */}
+      {/* Footer 50% Narrower */}
       <footer className="site-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} นิรุทธิ์ เสวะนา | Nirut Sewana. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* Interactive Image Lightbox Modal with Zoom & Pan */}
+      {lightboxIndex >= 0 && (
+        <ImageLightboxModal
+          items={lightboxItems}
+          currentIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(-1)}
+          onIndexChange={(newIndex) => setLightboxIndex(newIndex)}
+        />
+      )}
     </div>
   )
 }
 
 /* 1. HOME VIEW */
-function HomeView({ navigateTo, achievements, activities }) {
+function HomeView({ navigateTo, achievements, activities, openLightbox }) {
   return (
     <>
       <section className="hero">
@@ -331,7 +373,7 @@ function HomeView({ navigateTo, achievements, activities }) {
         </div>
       </section>
 
-      {/* Section 1: ผลงานและรางวัล */}
+      {/* Section 1: ผลงานและรางวัล 16:9 Cards */}
       <section className="section">
         <div className="container">
           <div className="section-title">
@@ -339,29 +381,32 @@ function HomeView({ navigateTo, achievements, activities }) {
             <p>ความภาคภูมิใจ นวัตกรรมการจัดการเรียนรู้ Active Learning และรางวัลเกียรติยศ</p>
           </div>
 
-          <div className="card-grid">
-            {achievements.slice(0, 3).map((item) => (
-              <div key={item.id} className="feature-card">
-                {/* 2. Vector Monochrome Icon */}
-                <div className="feature-card__icon">
-                  <Award size={32} />
+          <div className="media-card-grid">
+            {achievements.slice(0, 3).map((item, index) => (
+              <div
+                key={item.id}
+                className="media-card"
+                onClick={() => openLightbox(achievements, index)}
+              >
+                <img src={item.image || '/B1.jpg'} alt={item.title} className="media-card__bg" />
+                <div className="media-card__overlay">
+                  <span className="media-card__category">
+                    {item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : 'งานวิชาการ'}
+                  </span>
+                  <h3 className="media-card__title">{item.title}</h3>
+                  <div className="media-card__footer">
+                    <span className="media-card__btn">
+                      ดูภาพขยาย <Maximize2 size={14} />
+                    </span>
+                  </div>
                 </div>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-                <a
-                  href="/achievements"
-                  onClick={(e) => navigateTo('/achievements', e)}
-                  className="feature-card__link"
-                >
-                  ดูผลงานทั้งหมด <ArrowRight size={16} />
-                </a>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Section 2: ภาพกิจกรรม */}
+      {/* Section 2: ภาพกิจกรรม 16:9 Cards */}
       <section className="section" style={{ backgroundColor: 'var(--bg-subtle)' }}>
         <div className="container">
           <div className="section-title">
@@ -369,23 +414,23 @@ function HomeView({ navigateTo, achievements, activities }) {
             <p>ภาพบรรยากาศการเรียนรู้ กิจกรรมพัฒนาผู้เรียน และการทำงานร่วมกับชุมชน</p>
           </div>
 
-          <div className="card-grid">
-            {activities.map((item) => (
-              <div key={item.id} className="feature-card">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  style={{ width: '100%', borderRadius: '12px', marginBottom: '16px', height: '200px', objectFit: 'cover' }}
-                />
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-                <a
-                  href="/activities"
-                  onClick={(e) => navigateTo('/activities', e)}
-                  className="feature-card__link"
-                >
-                  ดูภาพกิจกรรมทั้งหมด <ArrowRight size={16} />
-                </a>
+          <div className="media-card-grid">
+            {activities.map((item, index) => (
+              <div
+                key={item.id}
+                className="media-card"
+                onClick={() => openLightbox(activities, index)}
+              >
+                <img src={item.image} alt={item.title} className="media-card__bg" />
+                <div className="media-card__overlay">
+                  <span className="media-card__category">กิจกรรม</span>
+                  <h3 className="media-card__title">{item.title}</h3>
+                  <div className="media-card__footer">
+                    <span className="media-card__btn">
+                      ดูภาพขยาย <Maximize2 size={14} />
+                    </span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -480,9 +525,8 @@ function HomeroomView() {
   )
 }
 
-/* 4. ACHIEVEMENTS VIEW WITH "ทั้งหมด" & SUB-MENU TABS */
-function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
-  // Initial active sub-tab set to "all" (ทั้งหมด)
+/* 4. ACHIEVEMENTS VIEW WITH 16:9 CARDS & LIGHTBOX */
+function AchievementsView({ achievements, isLoggedIn, setAchievements, openLightbox }) {
   const [activeSubTab, setActiveSubTab] = useState('all')
 
   const filteredAchievements =
@@ -490,7 +534,8 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
       ? achievements
       : achievements.filter((item) => item.category === activeSubTab)
 
-  const handleDelete = (id) => {
+  const handleDelete = (e, id) => {
+    e.stopPropagation()
     setAchievements((prev) => prev.filter((item) => item.id !== id))
   }
 
@@ -498,7 +543,7 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
     <div className="container section">
       <div className="section-title">
         <h2>🏆 ผลงานและรางวัล (Achievements & Awards)</h2>
-        <p>เลือกดูรายการผลงานในหมวดทั้งหมด, ครู, นักเรียน, สถานศึกษา หรือ งานวิชาการ</p>
+        <p>คลิกการ์ดภาพ 16:9 เพื่อเปิดดูภาพขนาดเต็ม (ขยาย ซูม และเลื่อนดูได้)</p>
       </div>
 
       {/* Sub-Menu Glow Navigation Bar with "ทั้งหมด" */}
@@ -522,27 +567,49 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
         </nav>
       </div>
 
-      {/* Achievement Content Display */}
+      {/* 16:9 Media Card Grid Matching media_1787991226220.png */}
       {filteredAchievements.length > 0 ? (
-        <div className="card-grid">
-          {filteredAchievements.map((item) => (
-            <div key={item.id} className="feature-card">
+        <div className="media-card-grid">
+          {filteredAchievements.map((item, index) => (
+            <div
+              key={item.id}
+              className="media-card"
+              onClick={() => openLightbox(filteredAchievements, index)}
+            >
               {isLoggedIn && (
                 <button
                   type="button"
                   className="delete-btn"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={(e) => handleDelete(e, item.id)}
                   title="ลบรายการนี้"
                 >
                   <Trash2 size={16} />
                 </button>
               )}
-              {/* 2. Vector Monochrome Icon */}
-              <div className="feature-card__icon">
-                <Award size={32} />
+              <img
+                src={item.image || '/B1.jpg'}
+                alt={item.title}
+                className="media-card__bg"
+              />
+              <div className="media-card__overlay">
+                <span className="media-card__category">
+                  {item.category === 'teacher'
+                    ? 'ครู'
+                    : item.category === 'student'
+                    ? 'นักเรียน'
+                    : item.category === 'school'
+                    ? 'สถานศึกษา'
+                    : item.category === 'academic'
+                    ? 'งานวิชาการ'
+                    : 'ผลงาน'}
+                </span>
+                <h3 className="media-card__title">{item.title}</h3>
+                <div className="media-card__footer">
+                  <span className="media-card__btn">
+                    ขยายภาพ <Maximize2 size={14} />
+                  </span>
+                </div>
               </div>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
             </div>
           ))}
         </div>
@@ -555,9 +622,10 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
   )
 }
 
-/* 5. ACTIVITIES VIEW */
-function ActivitiesView({ activities, isLoggedIn, setActivities }) {
-  const handleDelete = (id) => {
+/* 5. ACTIVITIES VIEW WITH 16:9 CARDS & LIGHTBOX */
+function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox }) {
+  const handleDelete = (e, id) => {
+    e.stopPropagation()
     setActivities((prev) => prev.filter((item) => item.id !== id))
   }
 
@@ -565,29 +633,36 @@ function ActivitiesView({ activities, isLoggedIn, setActivities }) {
     <div className="container section">
       <div className="section-title">
         <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้</h2>
-        <p>ประมวลภาพกิจกรรมพัฒนาผู้เรียน การจัดการเรียนรู้ และงานชุมชน</p>
+        <p>คลิกการ์ดภาพ 16:9 เพื่อเปิดดูภาพขนาดเต็ม (ขยาย ซูม และเลื่อนดูได้)</p>
       </div>
 
-      <div className="card-grid">
-        {activities.map((item) => (
-          <div key={item.id} className="feature-card">
+      <div className="media-card-grid">
+        {activities.map((item, index) => (
+          <div
+            key={item.id}
+            className="media-card"
+            onClick={() => openLightbox(activities, index)}
+          >
             {isLoggedIn && (
               <button
                 type="button"
                 className="delete-btn"
-                onClick={() => handleDelete(item.id)}
+                onClick={(e) => handleDelete(e, item.id)}
                 title="ลบภาพนี้"
               >
                 <Trash2 size={16} />
               </button>
             )}
-            <img
-              src={item.image}
-              alt={item.title}
-              style={{ width: '100%', borderRadius: '12px', marginBottom: '16px', height: '200px', objectFit: 'cover' }}
-            />
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
+            <img src={item.image} alt={item.title} className="media-card__bg" />
+            <div className="media-card__overlay">
+              <span className="media-card__category">กิจกรรม</span>
+              <h3 className="media-card__title">{item.title}</h3>
+              <div className="media-card__footer">
+                <span className="media-card__btn">
+                  ขยายภาพ <Maximize2 size={14} />
+                </span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -625,7 +700,7 @@ function PaView() {
   )
 }
 
-/* DEDICATED ADMIN PAGE (หน้าแยกสำหรับระบบหลังบ้าน) */
+/* DEDICATED ADMIN PAGE */
 function DedicatedAdminPage({
   isLoggedIn,
   onLoginSuccess,
@@ -640,11 +715,11 @@ function DedicatedAdminPage({
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  // Admin Management Tabs
   const [adminTab, setAdminTab] = useState('add_achievement')
   const [achCategory, setAchCategory] = useState('teacher')
   const [achTitle, setAchTitle] = useState('')
   const [achDesc, setAchDesc] = useState('')
+  const [achImg, setAchImg] = useState('/B1.jpg')
 
   const [actTitle, setActTitle] = useState('')
   const [actDesc, setActDesc] = useState('')
@@ -667,7 +742,7 @@ function DedicatedAdminPage({
       category: achCategory,
       title: achTitle,
       description: achDesc || 'รายละเอียดผลงานและรางวัล',
-      iconName: 'Award',
+      image: achImg || '/B1.jpg',
     }
     setAchievements((prev) => [newItem, ...prev])
     setAchTitle('')
@@ -790,7 +865,7 @@ function DedicatedAdminPage({
         {adminTab === 'add_achievement' && (
           <form onSubmit={handleAddAchievement} style={{ maxWidth: '600px' }}>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
-              🏆 เพิ่มข้อมูลผลงานและรางวัลใหม่
+              🏆 เพิ่มข้อมูลผลงานและรางวัลใหม่ (การ์ด 16:9)
             </h3>
             
             <div className="admin-form-group">
@@ -830,6 +905,17 @@ function DedicatedAdminPage({
               />
             </div>
 
+            <div className="admin-form-group">
+              <label>เลือกภาพประกอบ 16:9 (หรือ URL):</label>
+              <input
+                type="text"
+                className="admin-input"
+                value={achImg}
+                onChange={(e) => setAchImg(e.target.value)}
+                placeholder="/B1.jpg หรือ URL รูปภาพ"
+              />
+            </div>
+
             <button type="submit" className="btn btn-primary">
               <PlusCircle size={18} />
               บันทึกผลงานลงระบบ
@@ -840,7 +926,7 @@ function DedicatedAdminPage({
         {adminTab === 'add_activity' && (
           <form onSubmit={handleAddActivity} style={{ maxWidth: '600px' }}>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
-              📸 เพิ่มภาพกิจกรรมใหม่
+              📸 เพิ่มภาพกิจกรรมใหม่ (การ์ด 16:9)
             </h3>
 
             <div className="admin-form-group">
@@ -867,7 +953,7 @@ function DedicatedAdminPage({
             </div>
 
             <div className="admin-form-group">
-              <label>เลือกภาพประกอบ (หรือใช้ URL):</label>
+              <label>เลือกภาพประกอบ 16:9 (หรือ URL):</label>
               <input
                 type="text"
                 className="admin-input"
@@ -883,6 +969,166 @@ function DedicatedAdminPage({
             </button>
           </form>
         )}
+      </div>
+    </div>
+  )
+}
+
+/* INTERACTIVE FULLSCREEN LIGHTBOX MODAL (ซูม & เลื่อนภาพได้) */
+function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
+  const [scale, setScale] = useState(1)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+
+  const currentItem = items[currentIndex] || {}
+
+  // Reset zoom & pan on index change
+  useEffect(() => {
+    setScale(1)
+    setPosition({ x: 0, y: 0 })
+  }, [currentIndex])
+
+  // Keyboard navigation shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight' && currentIndex < items.length - 1) onIndexChange(currentIndex + 1)
+      if (e.key === 'ArrowLeft' && currentIndex > 0) onIndexChange(currentIndex - 1)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentIndex, items.length, onClose, onIndexChange])
+
+  const handleZoomIn = () => {
+    setScale((prev) => Math.min(prev + 0.5, 4))
+  }
+
+  const handleZoomOut = () => {
+    setScale((prev) => {
+      const next = Math.max(prev - 0.5, 1)
+      if (next === 1) setPosition({ x: 0, y: 0 })
+      return next
+    })
+  }
+
+  const handleResetZoom = () => {
+    setScale(1)
+    setPosition({ x: 0, y: 0 })
+  }
+
+  const handleMouseDown = (e) => {
+    if (scale > 1) {
+      setIsDragging(true)
+      setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
+    }
+  }
+
+  const handleMouseMove = (e) => {
+    if (isDragging && scale > 1) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const handleWheel = (e) => {
+    if (e.deltaY < 0) {
+      setScale((prev) => Math.min(prev + 0.25, 4))
+    } else {
+      setScale((prev) => {
+        const next = Math.max(prev - 0.25, 1)
+        if (next === 1) setPosition({ x: 0, y: 0 })
+        return next
+      })
+    }
+  }
+
+  return (
+    <div className="lightbox-overlay" onClick={onClose}>
+      {/* Top Header Controls Bar */}
+      <div className="lightbox-header" onClick={(e) => e.stopPropagation()}>
+        <div className="lightbox-title-box">
+          <h3>{currentItem.title}</h3>
+          {currentItem.description && <p>{currentItem.description}</p>}
+        </div>
+
+        <div className="lightbox-controls">
+          <button type="button" className="lightbox-btn" onClick={handleZoomIn} title="ซูมขยาย (+)">
+            <ZoomIn size={20} />
+          </button>
+          <button type="button" className="lightbox-btn" onClick={handleZoomOut} title="ย่อขนาด (-)">
+            <ZoomOut size={20} />
+          </button>
+          <button type="button" className="lightbox-btn" onClick={handleResetZoom} title="รีเซ็ตขนาด (1:1)">
+            <RotateCcw size={18} />
+          </button>
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', margin: '0 8px' }}>
+            {currentIndex + 1} / {items.length}
+          </span>
+          <button type="button" className="lightbox-btn" onClick={onClose} title="ปิดหน้าต่าง">
+            <X size={22} />
+          </button>
+        </div>
+      </div>
+
+      {/* Main Image View Container with Pan & Drag */}
+      <div
+        className="lightbox-body"
+        onClick={(e) => e.stopPropagation()}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        style={{ cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+      >
+        {/* Navigation Prev Button */}
+        {currentIndex > 0 && (
+          <button
+            type="button"
+            className="lightbox-nav-btn prev"
+            onClick={() => onIndexChange(currentIndex - 1)}
+            title="ภาพก่อนหน้า"
+          >
+            <ChevronLeft size={28} />
+          </button>
+        )}
+
+        <div
+          className="lightbox-img-wrapper"
+          style={{
+            transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+          }}
+        >
+          <img
+            src={currentItem.image || '/B1.jpg'}
+            alt={currentItem.title}
+            className="lightbox-img"
+            draggable={false}
+          />
+        </div>
+
+        {/* Navigation Next Button */}
+        {currentIndex < items.length - 1 && (
+          <button
+            type="button"
+            className="lightbox-nav-btn next"
+            onClick={() => onIndexChange(currentIndex + 1)}
+            title="ภาพถัดไป"
+          >
+            <ChevronRight size={28} />
+          </button>
+        )}
+      </div>
+
+      <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', paddingBottom: '10px' }}>
+        💡 คำแนะนำ: ใช้ล้อเมาส์ scroll เพื่อซูมเข้า/ออก และลากเมาส์เพื่อเลื่อนดูภาพขนาดเต็ม
       </div>
     </div>
   )
