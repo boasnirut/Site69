@@ -57,7 +57,7 @@ import {
 import { displayImageUrl, displayPdfUrl } from './driveUrls'
 import { qualityLevels } from './qualityStandards'
 import LandingPage from '@/components/ui/landing-page'
-import RandomLetterSwapNav from '@/components/ui/m-random-letter-swap-1'
+import AnimatedTabBar from '@/components/ui/animated-tab-bar'
 
 const categories = ['ทั้งหมด', 'กิจกรรม', 'ประชาสัมพันธ์', 'ประกาศ']
 const defaultWelcomeSlides = [
@@ -331,7 +331,7 @@ function Header({ menuOpen, setMenuOpen }) {
           </a>
 
           <div className="desktop-nav-wrapper hidden md:flex items-center">
-            <RandomLetterSwapNav currentPath={currentPath} />
+            <AnimatedTabBar currentPath={currentPath} />
           </div>
 
           <a className="header-contact" href="/login" onClick={closeMenu}>
