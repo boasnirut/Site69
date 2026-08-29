@@ -129,6 +129,7 @@ const defaultActivities = [
     location: 'ห้องปฏิบัติการคอมพิวเตอร์ โรงเรียนบ้านน้ำพร',
     albumUrl: 'https://photos.app.goo.gl/example1',
     image: '/B1.jpg',
+    images: ['/B1.jpg', '/B2.jpg', '/B3.jpg', '/B4.jpg', '/TC01.png'],
     description: 'บรรยากาศการลงมือปฏิบัติจริงและการนำเสนอผลงานของนักเรียนในชั้นเรียน',
   },
   {
@@ -138,6 +139,7 @@ const defaultActivities = [
     location: 'อาคารเรียนดิจิทัล',
     albumUrl: 'https://photos.app.goo.gl/example2',
     image: '/B2.jpg',
+    images: ['/B2.jpg', '/B3.jpg', '/B4.jpg', '/B1.jpg'],
     description: 'การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้',
   },
   {
@@ -147,6 +149,7 @@ const defaultActivities = [
     location: 'หอประชุมใหญ่ เขตพื้นที่การศึกษา',
     albumUrl: 'https://photos.app.goo.gl/example3',
     image: '/B3.jpg',
+    images: ['/B3.jpg', '/B4.jpg', '/TC01.png', '/SAR69.jpg'],
     description: 'การเข้าร่วมอบรมและแบ่งปันความรู้เทคโนโลยีดิจิทัลเพื่อการศึกษา',
   },
   {
@@ -156,6 +159,7 @@ const defaultActivities = [
     location: 'ห้องเรียนประจำชั้น',
     albumUrl: 'https://photos.app.goo.gl/example4',
     image: '/B4.jpg',
+    images: ['/B4.jpg', '/B1.jpg', '/B2.jpg'],
     description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
   },
 ]
@@ -423,7 +427,7 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
         </div>
       </section>
 
-      {/* Section 1: ผลงานและรางวัล Cards (Details UNDERNEATH, Original Image Ratio) */}
+      {/* Section 1: ผลงานและรางวัล Cards */}
       <section className="section">
         <div className="container">
           <div className="section-title">
@@ -477,71 +481,23 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
         </div>
       </section>
 
-      {/* Section 2: ภาพกิจกรรม Cards */}
+      {/* Section 2: ภาพกิจกรรม Cards with Interactive Carousel */}
       <section className="section" style={{ backgroundColor: 'var(--bg-subtle)' }}>
         <div className="container">
           <div className="section-title">
             <h2>📸 ภาพกิจกรรม (Activity Gallery)</h2>
-            <p>ภาพบรรยากาศการเรียนรู้ กิจกรรมพัฒนาผู้เรียน และการทำงานร่วมกับชุมชน</p>
+            <p>ภาพบรรยากาศการเรียนรู้ สไลด์หมุนภาพอัตโนมัติ 5 วินาที พร้อมลูกศรซ้าย/ขวา</p>
           </div>
 
           <div className="media-card-grid">
             {activities.map((item, index) => (
-              <div key={item.id} className="media-card">
-                <div
-                  className="media-card__img-box"
-                  onClick={() => openLightbox(activities, index)}
-                >
-                  <img
-                    src={item.image || '/B1.jpg'}
-                    alt={item.title}
-                    className={item.albumUrl ? 'media-card__img-gphotos' : 'media-card__img-original'}
-                  />
-                  <div className="media-card__zoom-badge">
-                    <Maximize2 size={16} />
-                  </div>
-                </div>
-
-                <div className="media-card__body">
-                  <span className="media-card__category">
-                    {item.albumUrl ? ' Google Photos อัลบั้ม' : 'กิจกรรม'}
-                  </span>
-                  <h3 className="media-card__title">{item.title}</h3>
-                  {item.description && <p className="media-card__desc">{item.description}</p>}
-                  <div className="media-card__meta">
-                    {item.date && (
-                      <span>
-                        <Calendar size={13} /> {item.date}
-                      </span>
-                    )}
-                    {item.location && (
-                      <span>
-                        <MapPin size={13} /> {item.location}
-                      </span>
-                    )}
-                  </div>
-                  <div className="media-card__action">
-                    {item.albumUrl ? (
-                      <a
-                        href={item.albumUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="media-card__btn"
-                      >
-                        <ExternalLink size={14} /> ดูอัลบั้ม Google Photos
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        className="media-card__btn"
-                        onClick={() => openLightbox(activities, index)}
-                      >
-                        ขยายภาพ <Maximize2 size={14} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <ActivityCardWithCarousel
+                key={item.id}
+                item={item}
+                index={index}
+                allActivities={activities}
+                openLightbox={openLightbox}
+              />
             ))}
           </div>
         </div>
@@ -635,7 +591,7 @@ function HomeroomView() {
   )
 }
 
-/* 4. ACHIEVEMENTS VIEW (Details UNDERNEATH, Original Aspect Ratio) */
+/* 4. ACHIEVEMENTS VIEW */
 function AchievementsView({ achievements, isLoggedIn, setAchievements, openLightbox }) {
   const [activeSubTab, setActiveSubTab] = useState('all')
 
@@ -672,7 +628,7 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
         </nav>
       </div>
 
-      {/* Media Card Grid (Details UNDERNEATH, Original Aspect Ratio Image) */}
+      {/* Media Card Grid */}
       {filteredAchievements.length > 0 ? (
         <div className="media-card-grid">
           {filteredAchievements.map((item, index) => (
@@ -730,93 +686,176 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
   )
 }
 
-/* 5. ACTIVITIES VIEW (Details UNDERNEATH, 4:3 for Google Photos, 5-Second Slideshow) */
+/* 5. ACTIVITIES VIEW (Details UNDERNEATH, 4:3 for Google Photos, 5-Second Slideshow with Manual Arrows) */
 function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox }) {
-  // Sample Google Photos Album cover photos array for auto-slideshow
-  const gphotosSampleCovers = ['/B1.jpg', '/B2.jpg', '/B3.jpg', '/B4.jpg', '/TC01.png']
-  const [slideshowIndex, setSlideshowIndex] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSlideshowIndex((prev) => (prev + 1) % gphotosSampleCovers.length)
-    }, 5000) // Auto-slideshow every 5 seconds for Google Photos
-    return () => clearInterval(interval)
-  }, [gphotosSampleCovers.length])
-
   return (
     <div className="container section">
       <div className="section-title">
         <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้</h2>
-        <p>รายละเอียดข้อความอยู่ใต้ภาพ / Google Photos ล็อค 4:3 พร้อมสไลด์ภาพอัตโนมัติ 5 วินาที</p>
+        <p>ดึงภาพ Google Photos สไลด์หมุนอัตโนมัติทุก 5 วินาที พร้อมลูกศรซ้าย/ขวา ให้กดเลื่อนเองได้</p>
       </div>
 
       <div className="media-card-grid">
-        {activities.map((item, index) => {
-          const isGPhotos = Boolean(item.albumUrl)
-          const displayImg = isGPhotos ? gphotosSampleCovers[slideshowIndex % gphotosSampleCovers.length] : (item.image || '/B1.jpg')
+        {activities.map((item, index) => (
+          <ActivityCardWithCarousel
+            key={item.id}
+            item={item}
+            index={index}
+            allActivities={activities}
+            openLightbox={openLightbox}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
 
-          return (
-            <div key={item.id} className="media-card">
-              {/* Image Box */}
-              <div
-                className="media-card__img-box"
-                onClick={() => openLightbox(activities, index)}
-              >
-                <img
-                  src={displayImg}
-                  alt={item.title}
-                  className={isGPhotos ? 'media-card__img-gphotos' : 'media-card__img-original'}
-                />
-                <div className="media-card__zoom-badge">
-                  <Maximize2 size={16} />
-                </div>
-              </div>
+/* CAROUSEL CARD COMPONENT FOR ACTIVITIES (5-Second Auto-Rotate + Left/Right Arrows) */
+function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) {
+  const isGPhotos = Boolean(item.albumUrl)
+  
+  // Gallery images array for the activity
+  const galleryImages =
+    item.images && item.images.length > 0
+      ? item.images
+      : [item.image || '/B1.jpg', '/B2.jpg', '/B3.jpg', '/B4.jpg', '/TC01.png']
 
-              {/* Text Details Section UNDERNEATH */}
-              <div className="media-card__body">
-                <span className="media-card__category">
-                  {isGPhotos ? '📸 Google Photos อัลบั้ม (4:3)' : 'กิจกรรม'}
-                </span>
-                <h3 className="media-card__title">{item.title}</h3>
-                {item.description && <p className="media-card__desc">{item.description}</p>}
+  const [currentImgIndex, setCurrentImgIndex] = useState(0)
 
-                <div className="media-card__meta">
-                  {item.date && (
-                    <span>
-                      <Calendar size={13} /> {item.date}
-                    </span>
-                  )}
-                  {item.location && (
-                    <span>
-                      <MapPin size={13} /> {item.location}
-                    </span>
-                  )}
-                </div>
+  // 5-Second Auto-Slideshow Timer per Card
+  useEffect(() => {
+    if (!isGPhotos || galleryImages.length <= 1) return
+    const timer = setInterval(() => {
+      setCurrentImgIndex((prev) => (prev + 1) % galleryImages.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [isGPhotos, galleryImages.length])
 
-                <div className="media-card__action">
-                  {isGPhotos ? (
-                    <a
-                      href={item.albumUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="media-card__btn"
-                    >
-                      <ExternalLink size={14} /> เปิดอัลบั้ม Google Photos
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      className="media-card__btn"
-                      onClick={() => openLightbox(activities, index)}
-                    >
-                      ขยายภาพ <Maximize2 size={14} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )
-        })}
+  const handlePrevClick = (e) => {
+    e.stopPropagation()
+    setCurrentImgIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1))
+  }
+
+  const handleNextClick = (e) => {
+    e.stopPropagation()
+    setCurrentImgIndex((prev) => (prev + 1) % galleryImages.length)
+  }
+
+  const activeImg = isGPhotos ? galleryImages[currentImgIndex] : (item.image || '/B1.jpg')
+
+  return (
+    <div className="media-card">
+      {/* 4:3 Image Container with Overlaid Left/Right Arrows */}
+      <div
+        className="media-card__img-box"
+        onClick={() => {
+          // Open lightbox with current active image list
+          const activeItemForLightbox = { ...item, image: activeImg }
+          const updatedList = [...allActivities]
+          updatedList[index] = activeItemForLightbox
+          openLightbox(updatedList, index)
+        }}
+      >
+        <img
+          src={activeImg}
+          alt={item.title}
+          className={isGPhotos ? 'media-card__img-gphotos' : 'media-card__img-original'}
+        />
+
+        {/* Counter Badge Overlaid on Image */}
+        {isGPhotos && galleryImages.length > 1 && (
+          <div className="media-card__counter">
+            <Images size={12} /> {currentImgIndex + 1} / {galleryImages.length}
+          </div>
+        )}
+
+        {/* Left Arrow Button */}
+        {isGPhotos && galleryImages.length > 1 && (
+          <button
+            type="button"
+            className="media-card__nav-btn prev"
+            onClick={handlePrevClick}
+            title="ภาพก่อนหน้า"
+          >
+            <ChevronLeft size={20} />
+          </button>
+        )}
+
+        {/* Right Arrow Button */}
+        {isGPhotos && galleryImages.length > 1 && (
+          <button
+            type="button"
+            className="media-card__nav-btn next"
+            onClick={handleNextClick}
+            title="ภาพถัดไป"
+          >
+            <ChevronRight size={20} />
+          </button>
+        )}
+
+        {/* Dot Indicators */}
+        {isGPhotos && galleryImages.length > 1 && (
+          <div className="media-card__dots">
+            {galleryImages.map((_, i) => (
+              <span
+                key={i}
+                className={`media-card__dot ${i === currentImgIndex ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setCurrentImgIndex(i)
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Hover Zoom Icon Badge */}
+        <div className="media-card__zoom-badge">
+          <Maximize2 size={16} />
+        </div>
+      </div>
+
+      {/* Details Section UNDERNEATH */}
+      <div className="media-card__body">
+        <span className="media-card__category">
+          {isGPhotos ? '📸 Google Photos อัลบั้ม (4:3)' : 'กิจกรรม'}
+        </span>
+        <h3 className="media-card__title">{item.title}</h3>
+        {item.description && <p className="media-card__desc">{item.description}</p>}
+
+        <div className="media-card__meta">
+          {item.date && (
+            <span>
+              <Calendar size={13} /> {item.date}
+            </span>
+          )}
+          {item.location && (
+            <span>
+              <MapPin size={13} /> {item.location}
+            </span>
+          )}
+        </div>
+
+        <div className="media-card__action">
+          {isGPhotos ? (
+            <a
+              href={item.albumUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="media-card__btn"
+            >
+              <ExternalLink size={14} /> เปิดอัลบั้ม Google Photos
+            </a>
+          ) : (
+            <button
+              type="button"
+              className="media-card__btn"
+              onClick={() => openLightbox(allActivities, index)}
+            >
+              ขยายภาพ <Maximize2 size={14} />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -1396,7 +1435,7 @@ function DedicatedAdminPage({
                     <div className="admin-item-row__text">
                       <strong>{item.title}</strong>
                       <small>
-                        วันที่: {item.date || '-'} | สถานที่: {item.location || '-'} {item.albumUrl ? '| Google Photos (4:3)' : ''}
+                        วันที่: {item.date || '-'} | สถานที่: {item.location || '-'} {item.albumUrl ? '| Google Photos (4:3 สไลด์ 5 วิ)' : ''}
                       </small>
                     </div>
                   </div>
@@ -1586,7 +1625,7 @@ function DedicatedAdminPage({
             </div>
 
             <div className="admin-form-group">
-              <label>ลิงก์ไฟล์แนบ / Google Photos Album URL (ล็อคอัตราส่วนภาพ 4:3 และสไลด์ 5 วินาที):</label>
+              <label>ลิงก์ไฟล์แนบ / Google Photos Album URL (สไลด์ 5 วินาที + ปุ่มกดเลื่อนลูกศร ซ้าย/ขวา):</label>
               <input
                 type="url"
                 className="admin-input"
