@@ -1081,6 +1081,13 @@ function DedicatedAdminPage({
 
   const [draggedIndex, setDraggedIndex] = useState(null)
 
+  // Upload Status Feedback State per form (hero, achievement, activity)
+  const [uploadStatuses, setUploadStatuses] = useState({
+    hero: null,
+    achievement: null,
+    activity: null,
+  })
+
   const handleLoginSubmit = (e) => {
     e.preventDefault()
     if (username === 'boasnirut' && password === '42010113') {
@@ -1090,19 +1097,51 @@ function DedicatedAdminPage({
     }
   }
 
-  const handleImageFileUpload = (e, setImgCallback) => {
+  const handleImageFileUpload = (e, setImgCallback, formKey) => {
     const file = e.target.files[0]
     if (!file) return
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert('ไฟล์รูปภาพมีขนาดเกิน 10MB! กรุณาเลือกไฟล์ภาพที่มีขนาดไม่เกิน 10MB')
+    const filename = file.name
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2)
+
+    // Check 1: File must be an image
+    if (!file.type.startsWith('image/')) {
+      const errorMsg = `❌ อัปโหลดไฟล์ "${filename}" ไม่สำเร็จ! เนื่องจากไฟล์ที่เลือกไม่ใช่ไฟล์รูปภาพที่ถูกต้อง (ชนิดไฟล์: ${file.type || 'ไม่ทราบชนิด'})`
+      setUploadStatuses((prev) => ({
+        ...prev,
+        [formKey]: { success: false, message: errorMsg, filename },
+      }))
       e.target.value = null
       return
     }
 
+    // Check 2: File size limit 10MB
+    if (file.size > 10 * 1024 * 1024) {
+      const errorMsg = `❌ อัปโหลดไฟล์ "${filename}" ไม่สำเร็จ! เนื่องจากไฟล์มีขนาดใหญ่เกินไป (${fileSizeMB} MB) เกินโควตาขนาดสูงสุดที่กำหนด 10 MB`
+      setUploadStatuses((prev) => ({
+        ...prev,
+        [formKey]: { success: false, message: errorMsg, filename },
+      }))
+      e.target.value = null
+      return
+    }
+
+    // Read Image File
     const reader = new FileReader()
     reader.onload = (event) => {
       setImgCallback(event.target.result)
+      const successMsg = `✅ อัปโหลดไฟล์ "${filename}" สำเร็จเรียบร้อย! (ขนาดไฟล์: ${fileSizeMB} MB)`
+      setUploadStatuses((prev) => ({
+        ...prev,
+        [formKey]: { success: true, message: successMsg, filename, sizeStr: `${fileSizeMB} MB` },
+      }))
+    }
+    reader.onerror = () => {
+      const errorMsg = `❌ อัปโหลดไฟล์ "${filename}" ไม่สำเร็จ! เนื่องจากเกิดข้อผิดพลาดระบบขณะอ่านข้อมูลไฟล์`
+      setUploadStatuses((prev) => ({
+        ...prev,
+        [formKey]: { success: false, message: errorMsg, filename },
+      }))
     }
     reader.readAsDataURL(file)
   }
@@ -1561,9 +1600,32 @@ function DedicatedAdminPage({
                   type="file"
                   accept="image/*"
                   className="admin-input"
-                  onChange={(e) => handleImageFileUpload(e, setHeroImage)}
+                  onChange={(e) => handleImageFileUpload(e, setHeroImage, 'hero')}
                 />
-                <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+
+                {/* Upload Status Notification Badge */}
+                {uploadStatuses.hero && (
+                  <div
+                    style={{
+                      marginTop: '10px',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      fontSize: '0.88rem',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      backgroundColor: uploadStatuses.hero.success ? '#f0fdf4' : '#fef2f2',
+                      border: uploadStatuses.hero.success ? '1px solid #bbf7d0' : '1px solid #fecaca',
+                      color: uploadStatuses.hero.success ? '#15803d' : '#dc2626',
+                    }}
+                  >
+                    {uploadStatuses.hero.success ? <CheckCircle2 size={18} /> : <X size={18} />}
+                    <span>{uploadStatuses.hero.message}</span>
+                  </div>
+                )}
+
+                <div style={{ marginTop: '10px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   หรือกรอก Path/URL รูปภาพ:
                 </div>
                 <input
@@ -1825,8 +1887,31 @@ function DedicatedAdminPage({
                 type="file"
                 accept="image/*"
                 className="admin-input"
-                onChange={(e) => handleImageFileUpload(e, setAchImg)}
+                onChange={(e) => handleImageFileUpload(e, setAchImg, 'achievement')}
               />
+
+              {/* Upload Status Notification Badge */}
+              {uploadStatuses.achievement && (
+                <div
+                  style={{
+                    marginTop: '10px',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    fontSize: '0.88rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: uploadStatuses.achievement.success ? '#f0fdf4' : '#fef2f2',
+                    border: uploadStatuses.achievement.success ? '1px solid #bbf7d0' : '1px solid #fecaca',
+                    color: uploadStatuses.achievement.success ? '#15803d' : '#dc2626',
+                  }}
+                >
+                  {uploadStatuses.achievement.success ? <CheckCircle2 size={18} /> : <X size={18} />}
+                  <span>{uploadStatuses.achievement.message}</span>
+                </div>
+              )}
+
               {achImg && (
                 <div style={{ marginTop: '10px' }}>
                   <img
@@ -1914,8 +1999,30 @@ function DedicatedAdminPage({
                 type="file"
                 accept="image/*"
                 className="admin-input"
-                onChange={(e) => handleImageFileUpload(e, setActImg)}
+                onChange={(e) => handleImageFileUpload(e, setActImg, 'activity')}
               />
+
+              {/* Upload Status Notification Badge */}
+              {uploadStatuses.activity && (
+                <div
+                  style={{
+                    marginTop: '10px',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    fontSize: '0.88rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: uploadStatuses.activity.success ? '#f0fdf4' : '#fef2f2',
+                    border: uploadStatuses.activity.success ? '1px solid #bbf7d0' : '1px solid #fecaca',
+                    color: uploadStatuses.activity.success ? '#15803d' : '#dc2626',
+                  }}
+                >
+                  {uploadStatuses.activity.success ? <CheckCircle2 size={18} /> : <X size={18} />}
+                  <span>{uploadStatuses.activity.message}</span>
+                </div>
+              )}
               {actImg && (
                 <div style={{ marginTop: '10px' }}>
                   <img
