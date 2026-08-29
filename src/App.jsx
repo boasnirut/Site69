@@ -43,6 +43,7 @@ import {
   Save,
   Github,
   Loader2,
+  Image as ImageIcon,
 } from 'lucide-react'
 import './styles.css'
 
@@ -63,7 +64,47 @@ const achievementSubTabs = [
   { id: 'academic', label: 'งานวิชาการ', icon: FileText },
 ]
 
-// Fallback Initial Data
+// Default Hero Banners for All Pages
+const defaultHeroBanners = {
+  home: {
+    badge: 'ศูนย์รวมการจัดการเรียนรู้ดิจิทัล',
+    title: 'นิรุทธิ์ เสวะนา',
+    subtitle: 'ยินดีต้อนรับสู่พอร์ตโฟลิโอส่วนตัว คลังบทเรียนดิจิทัล สื่อวิทยาการคำนวณ ระบบดูแลช่วยเหลือนักเรียนรายบุคคล และรายงานผลการพัฒนางานตามข้อตกลง (PA)',
+    image: '/boasnirut.png',
+  },
+  classroom: {
+    badge: 'สื่อการเรียนการสอนยุคใหม่',
+    title: 'ห้องเรียนออนไลน์ & สื่อการเรียนรู้',
+    subtitle: 'ศูนย์รวมสื่อดิจิทัล สื่อวิทยาการคำนวณ อัลกอริทึม คลังข้อสอบ และแบบทดสอบย่อยออนไลน์ 24 ชม.',
+    image: '/B1.jpg',
+  },
+  homeroom: {
+    badge: 'ระบบดูแลช่วยเหลือนักเรียน',
+    title: 'งานประจำชั้น & ดูแลช่วยเหลือนักเรียน',
+    subtitle: 'ระบบคัดกรองนักเรียนรายบุคคล การประเมินพฤติกรรม SDQ และบันทึกเยี่ยมบ้านพิกัด GPS',
+    image: '/B4.jpg',
+  },
+  achievements: {
+    badge: 'เกียรติยศและความภาคภูมิใจ',
+    title: 'ผลงานและรางวัล (Achievements & Awards)',
+    subtitle: 'รวบรวมรางวัลทรงคุณค่า นวัตกรรมการจัดการเรียนรู้ Active Learning ทั้งระดับครู นักเรียน สถานศึกษา และงานวิชาการ',
+    image: '/B2.jpg',
+  },
+  activities: {
+    badge: 'ภาพบรรยากาศการเรียนรู้',
+    title: 'ภาพกิจกรรม & บรรยากาศการเรียนรู้',
+    subtitle: 'คลังภาพบรรยากาศกิจกรรมการเรียนรู้ ซิงค์ภาพสดจาก Google Photos พร้อมระบบสไลด์ภาพอัตโนมัติ',
+    image: '/B3.jpg',
+  },
+  pa: {
+    badge: 'รายงานผลการพัฒนางานตามข้อตกลง',
+    title: 'ข้อตกลงในการพัฒนางาน (PA)',
+    subtitle: 'สรุปผลการพัฒนางานตามข้อตกลงสำหรับข้าราชการครู แผนการจัดการเรียนรู้ เอกสารร่องรอย และวิดีโอคลิปการสอน',
+    image: '/SAR69.jpg',
+  },
+}
+
+// Fallback Initial Achievements
 const defaultAchievements = [
   {
     id: 1,
@@ -121,6 +162,7 @@ const defaultAchievements = [
   },
 ]
 
+// Fallback Initial Activities
 const defaultActivities = [
   {
     id: 1,
@@ -164,6 +206,11 @@ export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
+  const [heroBanners, setHeroBanners] = useState(() => {
+    const saved = localStorage.getItem('site_hero_banners')
+    return saved ? JSON.parse(saved) : defaultHeroBanners
+  })
+
   const [achievements, setAchievements] = useState(() => {
     const saved = localStorage.getItem('site_achievements')
     return saved ? JSON.parse(saved) : defaultAchievements
@@ -182,11 +229,16 @@ export default function App() {
         throw new Error('No json data')
       })
       .then((data) => {
-        if (data && data.achievements && !localStorage.getItem('site_achievements')) {
-          setAchievements(data.achievements)
-        }
-        if (data && data.activities && !localStorage.getItem('site_activities')) {
-          setActivities(data.activities)
+        if (data) {
+          if (data.heroBanners && !localStorage.getItem('site_hero_banners')) {
+            setHeroBanners(data.heroBanners)
+          }
+          if (data.achievements && !localStorage.getItem('site_achievements')) {
+            setAchievements(data.achievements)
+          }
+          if (data.activities && !localStorage.getItem('site_activities')) {
+            setActivities(data.activities)
+          }
         }
       })
       .catch(() => {})
@@ -208,6 +260,10 @@ export default function App() {
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
+  }, [heroBanners])
 
   useEffect(() => {
     localStorage.setItem('site_achievements', JSON.stringify(achievements))
@@ -317,16 +373,22 @@ export default function App() {
       <main>
         {activeTab === 'home' && (
           <HomeView
+            hero={heroBanners.home}
             navigateTo={navigateTo}
             achievements={achievements}
             activities={activities}
             openLightbox={openLightbox}
           />
         )}
-        {activeTab === 'classroom' && <ClassroomView />}
-        {activeTab === 'homeroom' && <HomeroomView />}
+        {activeTab === 'classroom' && (
+          <ClassroomView hero={heroBanners.classroom} navigateTo={navigateTo} />
+        )}
+        {activeTab === 'homeroom' && (
+          <HomeroomView hero={heroBanners.homeroom} navigateTo={navigateTo} />
+        )}
         {activeTab === 'achievements' && (
           <AchievementsView
+            hero={heroBanners.achievements}
             achievements={achievements}
             isLoggedIn={isLoggedIn}
             setAchievements={setAchievements}
@@ -335,13 +397,14 @@ export default function App() {
         )}
         {activeTab === 'activities' && (
           <ActivitiesView
+            hero={heroBanners.activities}
             activities={activities}
             isLoggedIn={isLoggedIn}
             setActivities={setActivities}
             openLightbox={openLightbox}
           />
         )}
-        {activeTab === 'pa' && <PaView />}
+        {activeTab === 'pa' && <PaView hero={heroBanners.pa} navigateTo={navigateTo} />}
         {activeTab === 'admin' && (
           <DedicatedAdminPage
             isLoggedIn={isLoggedIn}
@@ -350,6 +413,8 @@ export default function App() {
               localStorage.setItem('site_admin_auth', 'true')
             }}
             onLogout={handleLogout}
+            heroBanners={heroBanners}
+            setHeroBanners={setHeroBanners}
             achievements={achievements}
             setAchievements={setAchievements}
             activities={activities}
@@ -379,25 +444,25 @@ export default function App() {
   )
 }
 
-/* 1. HOME VIEW */
-function HomeView({ navigateTo, achievements, activities, openLightbox }) {
+/* REUSABLE PAGE HERO BANNER COMPONENT */
+function PageHeroBanner({ banner, navigateTo, isHomePage = false }) {
+  if (!banner) return null
   return (
-    <>
-      <section className="hero">
-        <div className="container hero__grid">
-          <div>
+    <section className="hero">
+      <div className="container hero__grid">
+        <div>
+          {banner.badge && (
             <div className="hero__badge">
               <Sparkles size={16} />
-              ศูนย์รวมการจัดการเรียนรู้ดิจิทัล
+              {banner.badge}
             </div>
-            <h1 className="hero__title">
-              นิรุทธิ์ เสวะนา <br />
-              <span>Nirut Sewana</span>
-            </h1>
-            <p className="hero__subtitle">
-              ยินดีต้อนรับสู่พอร์ตโฟลิโอส่วนตัว คลังบทเรียนดิจิทัล สื่อวิทยาการคำนวณ
-              ระบบดูแลช่วยเหลือนักเรียนรายบุคคล และรายงานผลการพัฒนางานตามข้อตกลง (PA)
-            </p>
+          )}
+          <h1 className="hero__title">
+            {banner.title}
+          </h1>
+          {banner.subtitle && <p className="hero__subtitle">{banner.subtitle}</p>}
+
+          {isHomePage && (
             <div className="hero__actions">
               <a
                 className="btn btn-primary"
@@ -415,13 +480,22 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
                 📸 ภาพกิจกรรม
               </a>
             </div>
-          </div>
-
-          <div className="hero__visual">
-            <img src="/boasnirut.png" alt="นิรุทธิ์ เสวะนา" />
-          </div>
+          )}
         </div>
-      </section>
+
+        <div className="hero__visual">
+          <img src={banner.image || '/boasnirut.png'} alt={banner.title || 'ภาพปก'} />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* 1. HOME VIEW */
+function HomeView({ hero, navigateTo, achievements, activities, openLightbox }) {
+  return (
+    <>
+      <PageHeroBanner banner={hero} navigateTo={navigateTo} isHomePage={true} />
 
       {/* Section 1: ผลงานและรางวัล Cards */}
       <section className="section">
@@ -503,92 +577,100 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
 }
 
 /* 2. CLASSROOM VIEW */
-function ClassroomView() {
+function ClassroomView({ hero, navigateTo }) {
   return (
-    <div className="container section">
-      <div className="section-title">
-        <h2>💻 ห้องเรียนออนไลน์ & สื่อการเรียนรู้</h2>
-        <p>ศูนย์รวมสื่อดิจิทัล สื่อวิทยาการคำนวณ และแบบทดสอบย่อยออนไลน์ 24 ชม.</p>
+    <>
+      <PageHeroBanner banner={hero} navigateTo={navigateTo} />
+
+      <div className="container section">
+        <div className="section-title">
+          <h2>💻 ห้องเรียนออนไลน์ & สื่อการเรียนรู้</h2>
+          <p>ศูนย์รวมสื่อดิจิทัล สื่อวิทยาการคำนวณ และแบบทดสอบย่อยออนไลน์ 24 ชม.</p>
+        </div>
+
+        <div className="card-grid">
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <BookOpen size={32} />
+            </div>
+            <h3>สื่อการสอนวิทยาการคำนวณ</h3>
+            <p>บทเรียนการเขียนโปรแกรม อัลกอริทึม และทักษะดิจิทัลสำหรับนักเรียนทุกระดับชั้น</p>
+            <a href="#" className="feature-card__link">
+              เข้าสู่บทเรียน <ArrowRight size={16} />
+            </a>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <CheckCircle2 size={32} />
+            </div>
+            <h3>คลังข้อสอบ & ควิซย่อยออนไลน์</h3>
+            <p>ระบบประเมินผลการเรียนรู้ออนไลน์ ตรวจผลอัตโนมัติ 24 ชั่วโมง</p>
+            <a href="#" className="feature-card__link">
+              ทำแบบทดสอบ <ArrowRight size={16} />
+            </a>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <Download size={32} />
+            </div>
+            <h3>ดาวน์โหลดใบงาน & สื่อการเรียน</h3>
+            <p>เอกสารใบงาน แบบฝึกหัด และสื่อประกอบการสอนดิจิทัลครบครัน</p>
+            <a href="#" className="feature-card__link">
+              ดาวน์โหลดสื่อ <ArrowRight size={16} />
+            </a>
+          </div>
+        </div>
       </div>
-
-      <div className="card-grid">
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <BookOpen size={32} />
-          </div>
-          <h3>สื่อการสอนวิทยาการคำนวณ</h3>
-          <p>บทเรียนการเขียนโปรแกรม อัลกอริทึม และทักษะดิจิทัลสำหรับนักเรียนทุกระดับชั้น</p>
-          <a href="#" className="feature-card__link">
-            เข้าสู่บทเรียน <ArrowRight size={16} />
-          </a>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <CheckCircle2 size={32} />
-          </div>
-          <h3>คลังข้อสอบ & ควิซย่อยออนไลน์</h3>
-          <p>ระบบประเมินผลการเรียนรู้ออนไลน์ ตรวจผลอัตโนมัติ 24 ชั่วโมง</p>
-          <a href="#" className="feature-card__link">
-            ทำแบบทดสอบ <ArrowRight size={16} />
-          </a>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <Download size={32} />
-          </div>
-          <h3>ดาวน์โหลดใบงาน & สื่อการเรียน</h3>
-          <p>เอกสารใบงาน แบบฝึกหัด และสื่อประกอบการสอนดิจิทัลครบครัน</p>
-          <a href="#" className="feature-card__link">
-            ดาวน์โหลดสื่อ <ArrowRight size={16} />
-          </a>
-        </div>
-      </div>
-    </div>
+    </>
   )
 }
 
 /* 3. HOMEROOM VIEW */
-function HomeroomView() {
+function HomeroomView({ hero, navigateTo }) {
   return (
-    <div className="container section">
-      <div className="section-title">
-        <h2>🏫 งานประจำชั้น & ดูแลช่วยเหลือนักเรียน</h2>
-        <p>ระบบคัดกรองนักเรียนรายบุคคล การประเมินพฤติกรรม SDQ และบันทึกเยี่ยมบ้าน GPS</p>
+    <>
+      <PageHeroBanner banner={hero} navigateTo={navigateTo} />
+
+      <div className="container section">
+        <div className="section-title">
+          <h2>🏫 งานประจำชั้น & ดูแลช่วยเหลือนักเรียน</h2>
+          <p>ระบบคัดกรองนักเรียนรายบุคคล การประเมินพฤติกรรม SDQ และบันทึกเยี่ยมบ้าน GPS</p>
+        </div>
+
+        <div className="card-grid">
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <Users size={32} />
+            </div>
+            <h3>ระบบคัดกรองนักเรียนรายบุคคล</h3>
+            <p>บันทึกและวิเคราะห์ข้อมูลความต้องการของนักเรียนประจำชั้น 100%</p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <CheckCircle2 size={32} />
+            </div>
+            <h3>แบบประเมินพฤติกรรม SDQ</h3>
+            <p>ประเมินพฤติกรรม 5 ด้าน สรุปผลวิเคราะห์ความเสี่ยงและแนวทางการช่วยเหลือ</p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <Search size={32} />
+            </div>
+            <h3>บันทึกเยี่ยมบ้านพิกัด GPS</h3>
+            <p>จัดเก็บพิกัดแผนที่ รูปภาพ และสรุปสภาพความเป็นอยู่รายครอบครัว</p>
+          </div>
+        </div>
       </div>
-
-      <div className="card-grid">
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <Users size={32} />
-          </div>
-          <h3>ระบบคัดกรองนักเรียนรายบุคคล</h3>
-          <p>บันทึกและวิเคราะห์ข้อมูลความต้องการของนักเรียนประจำชั้น 100%</p>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <CheckCircle2 size={32} />
-          </div>
-          <h3>แบบประเมินพฤติกรรม SDQ</h3>
-          <p>ประเมินพฤติกรรม 5 ด้าน สรุปผลวิเคราะห์ความเสี่ยงและแนวทางการช่วยเหลือ</p>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <Search size={32} />
-          </div>
-          <h3>บันทึกเยี่ยมบ้านพิกัด GPS</h3>
-          <p>จัดเก็บพิกัดแผนที่ รูปภาพ และสรุปสภาพความเป็นอยู่รายครอบครัว</p>
-        </div>
-      </div>
-    </div>
+    </>
   )
 }
 
 /* 4. ACHIEVEMENTS VIEW */
-function AchievementsView({ achievements, isLoggedIn, setAchievements, openLightbox }) {
+function AchievementsView({ hero, achievements, isLoggedIn, setAchievements, openLightbox }) {
   const [activeSubTab, setActiveSubTab] = useState('all')
 
   const filteredAchievements =
@@ -597,112 +679,120 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
       : achievements.filter((item) => item.category === activeSubTab)
 
   return (
-    <div className="container section">
-      <div className="section-title">
-        <h2>🏆 ผลงานและรางวัล (Achievements & Awards)</h2>
-        <p>รายละเอียดข้อความอยู่ใต้ภาพ / ภาพคงอัตราส่วนตามต้นฉบับ คลิกภาพเพื่อขยายเต็มจอ</p>
-      </div>
+    <>
+      <PageHeroBanner banner={hero} />
 
-      {/* Sub-Menu Glow Navigation Bar with "ทั้งหมด" */}
-      <div className="sub-glow-container">
-        <nav className="sub-glow-nav" aria-label="หมวดหมู่ผลงาน">
-          {achievementSubTabs.map((tab) => {
-            const Icon = tab.icon
-            const isActive = activeSubTab === tab.id
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                className={`sub-glow-item ${isActive ? 'active' : ''}`}
-                onClick={() => setActiveSubTab(tab.id)}
-              >
-                <Icon size={18} />
-                <span>{tab.label}</span>
-              </button>
-            )
-          })}
-        </nav>
-      </div>
+      <div className="container section">
+        <div className="section-title">
+          <h2>🏆 ผลงานและรางวัล (Achievements & Awards)</h2>
+          <p>รายละเอียดข้อความอยู่ใต้ภาพ / ภาพคงอัตราส่วนตามต้นฉบับ คลิกภาพเพื่อขยายเต็มจอ</p>
+        </div>
 
-      {/* Media Card Grid */}
-      {filteredAchievements.length > 0 ? (
-        <div className="media-card-grid">
-          {filteredAchievements.map((item, index) => (
-            <div key={item.id} className="media-card">
-              {/* Image Box */}
-              <div
-                className="media-card__img-box"
-                onClick={() => openLightbox(filteredAchievements, index)}
-              >
-                <img
-                  src={item.image || '/B1.jpg'}
-                  alt={item.title}
-                  className="media-card__img-original"
-                />
-                <div className="media-card__zoom-badge">
-                  <Maximize2 size={16} />
+        {/* Sub-Menu Glow Navigation Bar with "ทั้งหมด" */}
+        <div className="sub-glow-container">
+          <nav className="sub-glow-nav" aria-label="หมวดหมู่ผลงาน">
+            {achievementSubTabs.map((tab) => {
+              const Icon = tab.icon
+              const isActive = activeSubTab === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={`sub-glow-item ${isActive ? 'active' : ''}`}
+                  onClick={() => setActiveSubTab(tab.id)}
+                >
+                  <Icon size={18} />
+                  <span>{tab.label}</span>
+                </button>
+              )
+            })}
+          </nav>
+        </div>
+
+        {/* Media Card Grid */}
+        {filteredAchievements.length > 0 ? (
+          <div className="media-card-grid">
+            {filteredAchievements.map((item, index) => (
+              <div key={item.id} className="media-card">
+                {/* Image Box */}
+                <div
+                  className="media-card__img-box"
+                  onClick={() => openLightbox(filteredAchievements, index)}
+                >
+                  <img
+                    src={item.image || '/B1.jpg'}
+                    alt={item.title}
+                    className="media-card__img-original"
+                  />
+                  <div className="media-card__zoom-badge">
+                    <Maximize2 size={16} />
+                  </div>
+                </div>
+
+                {/* Text Details Section UNDERNEATH */}
+                <div className="media-card__body">
+                  <span className="media-card__category">
+                    {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : 'งานวิชาการ')}
+                  </span>
+                  <h3 className="media-card__title">{item.title}</h3>
+                  {item.description && <p className="media-card__desc">{item.description}</p>}
+                  
+                  <div className="media-card__meta">
+                    {item.owner && (
+                      <span>
+                        <User size={13} /> {item.owner}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="media-card__action">
+                    <button
+                      type="button"
+                      className="media-card__btn"
+                      onClick={() => openLightbox(filteredAchievements, index)}
+                    >
+                      ขยายภาพ <Maximize2 size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              {/* Text Details Section UNDERNEATH */}
-              <div className="media-card__body">
-                <span className="media-card__category">
-                  {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : 'งานวิชาการ')}
-                </span>
-                <h3 className="media-card__title">{item.title}</h3>
-                {item.description && <p className="media-card__desc">{item.description}</p>}
-                
-                <div className="media-card__meta">
-                  {item.owner && (
-                    <span>
-                      <User size={13} /> {item.owner}
-                    </span>
-                  )}
-                </div>
-
-                <div className="media-card__action">
-                  <button
-                    type="button"
-                    className="media-card__btn"
-                    onClick={() => openLightbox(filteredAchievements, index)}
-                  >
-                    ขยายภาพ <Maximize2 size={14} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
-          <p>ยังไม่มีรายการในหมวดหมู่นี้</p>
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
+            <p>ยังไม่มีรายการในหมวดหมู่นี้</p>
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 
 /* 5. ACTIVITIES VIEW (Details UNDERNEATH, 4:3 for Google Photos, 5-Second Slideshow with Real Auto Extraction) */
-function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox }) {
+function ActivitiesView({ hero, activities, isLoggedIn, setActivities, openLightbox }) {
   return (
-    <div className="container section">
-      <div className="section-title">
-        <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้</h2>
-        <p>ซิงค์ภาพจาก Google Photos สไลด์หมุนอัตโนมัติทุก 5 วินาที พร้อมลูกศรซ้าย/ขวา ให้กดเลื่อนเองได้</p>
-      </div>
+    <>
+      <PageHeroBanner banner={hero} />
 
-      <div className="media-card-grid">
-        {activities.map((item, index) => (
-          <ActivityCardWithCarousel
-            key={item.id}
-            item={item}
-            index={index}
-            allActivities={activities}
-            openLightbox={openLightbox}
-          />
-        ))}
+      <div className="container section">
+        <div className="section-title">
+          <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้</h2>
+          <p>ซิงค์ภาพจาก Google Photos สไลด์หมุนอัตโนมัติทุก 5 วินาที พร้อมลูกศรซ้าย/ขวา ให้กดเลื่อนเองได้</p>
+        </div>
+
+        <div className="media-card-grid">
+          {activities.map((item, index) => (
+            <ActivityCardWithCarousel
+              key={item.id}
+              item={item}
+              index={index}
+              allActivities={activities}
+              openLightbox={openLightbox}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -901,40 +991,46 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
 }
 
 /* 6. PA VIEW */
-function PaView() {
+function PaView({ hero, navigateTo }) {
   return (
-    <div className="container section">
-      <div className="section-title">
-        <h2>📋 ข้อตกลงในการพัฒนางาน (PA)</h2>
-        <p>สรุปผลการพัฒนางานตามข้อตกลงสำหรับข้าราชการครู เอกสารร่องรอย และวิดีโอคลิปการสอน</p>
-      </div>
+    <>
+      <PageHeroBanner banner={hero} navigateTo={navigateTo} />
 
-      <div className="card-grid">
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <FileCheck size={32} />
-          </div>
-          <h3>รายงาน PA ประจำปีงบประมาณ 2569</h3>
-          <p>สรุปผลการปฏิบัติตามข้อตกลงในการพัฒนางาน ทั้ง 2 ส่วน พร้อมเอกสารหลักฐาน</p>
+      <div className="container section">
+        <div className="section-title">
+          <h2>📋 ข้อตกลงในการพัฒนางาน (PA)</h2>
+          <p>สรุปผลการพัฒนางานตามข้อตกลงสำหรับข้าราชการครู เอกสารร่องรอย และวิดีโอคลิปการสอน</p>
         </div>
 
-        <div className="feature-card">
-          <div className="feature-card__icon">
-            <BookOpen size={32} />
+        <div className="card-grid">
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <FileCheck size={32} />
+            </div>
+            <h3>รายงาน PA ประจำปีงบประมาณ 2569</h3>
+            <p>สรุปผลการปฏิบัติตามข้อตกลงในการพัฒนางาน ทั้ง 2 ส่วน พร้อมเอกสารหลักฐาน</p>
           </div>
-          <h3>แผนการจัดการเรียนรู้ & คลิปการสอน</h3>
-          <p>วิดีโอบันทึกการสอน บันทึกหลังการสอน และประเด็นท้าทายเพื่อพัฒนาผู้เรียน</p>
+
+          <div className="feature-card">
+            <div className="feature-card__icon">
+              <BookOpen size={32} />
+            </div>
+            <h3>แผนการจัดการเรียนรู้ & คลิปการสอน</h3>
+            <p>วิดีโอบันทึกการสอน บันทึกหลังการสอน และประเด็นท้าทายเพื่อพัฒนาผู้เรียน</p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
-/* DEDICATED ADMIN PAGE */
+/* DEDICATED ADMIN PAGE (Includes Hero Banners Management System) */
 function DedicatedAdminPage({
   isLoggedIn,
   onLoginSuccess,
   onLogout,
+  heroBanners,
+  setHeroBanners,
   achievements,
   setAchievements,
   activities,
@@ -945,7 +1041,23 @@ function DedicatedAdminPage({
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const [adminTab, setAdminTab] = useState('achievements_list')
+  const [adminTab, setAdminTab] = useState('hero_banners')
+
+  // Selected Page Key for Hero Banner Editing
+  const [selectedHeroPage, setSelectedHeroPage] = useState('home')
+  const [heroBadge, setHeroBadge] = useState('')
+  const [heroTitle, setHeroTitle] = useState('')
+  const [heroSubtitle, setHeroSubtitle] = useState('')
+  const [heroImage, setHeroImage] = useState('')
+
+  // Load selected hero banner data into form
+  useEffect(() => {
+    const currentBanner = heroBanners[selectedHeroPage] || {}
+    setHeroBadge(currentBanner.badge || '')
+    setHeroTitle(currentBanner.title || '')
+    setHeroSubtitle(currentBanner.subtitle || '')
+    setHeroImage(currentBanner.image || '')
+  }, [selectedHeroPage, heroBanners])
 
   const [editingAchId, setEditingAchId] = useState(null)
   const [achOwner, setAchOwner] = useState('นายนิรุทธิ์ เสวะนา')
@@ -993,6 +1105,20 @@ function DedicatedAdminPage({
       setImgCallback(event.target.result)
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleSaveHeroBanner = (e) => {
+    e.preventDefault()
+    setHeroBanners((prev) => ({
+      ...prev,
+      [selectedHeroPage]: {
+        badge: heroBadge,
+        title: heroTitle,
+        subtitle: heroSubtitle,
+        image: heroImage,
+      },
+    }))
+    alert(`บันทึกภาพปกและข้อความสำหรับหน้า "${selectedHeroPage}" เรียบร้อยแล้ว!`)
   }
 
   const handleSaveAchievement = (e) => {
@@ -1137,10 +1263,12 @@ function DedicatedAdminPage({
     setSyncMessage('')
 
     const fullData = {
+      heroBanners,
       achievements,
       activities,
     }
 
+    localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
     localStorage.setItem('site_achievements', JSON.stringify(achievements))
     localStorage.setItem('site_activities', JSON.stringify(activities))
     if (ghToken) localStorage.setItem('gh_sync_token', ghToken)
@@ -1185,7 +1313,7 @@ function DedicatedAdminPage({
         setSyncMessage('✅ บันทึกลงในระบบเรียบร้อยแล้ว!')
       }
     } else {
-      setSyncMessage('✅ บันทึกข้อมูลและจัดเรียงลำดับลงในระบบเรียบร้อยแล้ว!')
+      setSyncMessage('✅ บันทึกข้อมูลภาพปกและเนื้อหาลงในระบบเรียบร้อยแล้ว!')
     }
 
     setIsSyncing(false)
@@ -1291,7 +1419,7 @@ function DedicatedAdminPage({
               <Github size={18} /> ระบบซิงค์ข้อมูลตรงสู่ GitHub & Vercel
             </strong>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              บันทึกการจัดเรียงลำดับ แก้ไข และลบข้อมูล แล้วกดปุ่มซิงค์เพื่ออัปเดตเว็บทันที
+              บันทึกการจัดเรียงลำดับ แก้ไขภาพปก และลบข้อมูล แล้วกดปุ่มซิงค์เพื่ออัปเดตเว็บทันที
             </p>
           </div>
           <button
@@ -1313,6 +1441,13 @@ function DedicatedAdminPage({
 
         {/* Navigation Tabs for Admin */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className={`btn ${adminTab === 'hero_banners' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setAdminTab('hero_banners')}
+          >
+            <ImageIcon size={16} /> จัดการภาพปก (Hero Banners)
+          </button>
           <button
             type="button"
             className={`btn ${adminTab === 'achievements_list' ? 'btn-primary' : 'btn-outline'}`}
@@ -1353,7 +1488,116 @@ function DedicatedAdminPage({
           </button>
         </div>
 
-        {/* 1. Achievements List & Drag Reordering */}
+        {/* 1. Manage Hero Banners Section */}
+        {adminTab === 'hero_banners' && (
+          <div style={{ maxWidth: '800px' }}>
+            <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              🖼️ จัดการภาพปก (Hero Banner) และข้อความในหน้าต่าง ๆ
+            </h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '20px' }}>
+              เลือกหน้าที่ต้องการแก้ไขภาพปก แล้วปรับเปลี่ยนป้ายข้อความ หัวข้อ ข้อความอธิบาย และอัปโหลดภาพปกใหม่ได้ทันที
+            </p>
+
+            {/* Sub-tab selection for Page selection */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+              {[
+                { key: 'home', label: '🏠 หน้าหลัก' },
+                { key: 'classroom', label: '💻 ห้องเรียนออนไลน์' },
+                { key: 'homeroom', label: '🏫 งานประจำชั้น' },
+                { key: 'achievements', label: '🏆 ผลงาน/รางวัล' },
+                { key: 'activities', label: '📸 ภาพกิจกรรม' },
+                { key: 'pa', label: '📋 ข้อตกลง PA' },
+              ].map((p) => (
+                <button
+                  key={p.key}
+                  type="button"
+                  className={`btn ${selectedHeroPage === p.key ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ padding: '8px 16px', fontSize: '0.88rem' }}
+                  onClick={() => setSelectedHeroPage(p.key)}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
+            <form onSubmit={handleSaveHeroBanner}>
+              <div className="admin-form-group">
+                <label>ป้ายข้อความย่อย (Hero Badge):</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={heroBadge}
+                  onChange={(e) => setHeroBadge(e.target.value)}
+                  placeholder="เช่น ศูนย์รวมการจัดการเรียนรู้ดิจิทัล..."
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label>หัวข้อหน้าปก (Hero Title):</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={heroTitle}
+                  onChange={(e) => setHeroTitle(e.target.value)}
+                  placeholder="เช่น นิรุทธิ์ เสวะนา..."
+                  required
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label>ข้อความอธิบายหน้าปก (Hero Subtitle):</label>
+                <textarea
+                  className="admin-input"
+                  style={{ height: '90px', resize: 'vertical' }}
+                  value={heroSubtitle}
+                  onChange={(e) => setHeroSubtitle(e.target.value)}
+                  placeholder="กรอกข้อความอธิบายหน้าปก..."
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label>อัปโหลดภาพปกใหม่ (จำกัดขนาดไฟล์ไม่เกิน 10MB):</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="admin-input"
+                  onChange={(e) => handleImageFileUpload(e, setHeroImage)}
+                />
+                <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  หรือกรอก Path/URL รูปภาพ:
+                </div>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={heroImage}
+                  onChange={(e) => setHeroImage(e.target.value)}
+                  placeholder="/boasnirut.png หรือ URL รูปภาพ"
+                />
+
+                {/* Live Preview Box */}
+                {heroImage && (
+                  <div style={{ marginTop: '16px', padding: '16px', border: '1px dashed var(--border-amber)', borderRadius: '12px', background: '#fafafa' }}>
+                    <strong style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--primary-navy)' }}>
+                      🔍 พรีวิวภาพปกที่เลือก:
+                    </strong>
+                    <img
+                      src={heroImage}
+                      alt="Hero Preview"
+                      style={{ maxHeight: '160px', borderRadius: '8px', objectFit: 'contain' }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '12px' }}>
+                <Save size={18} />
+                บันทึกการแก้ไขภาพปกหน้า {selectedHeroPage}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* 2. Achievements List & Drag Reordering */}
         {adminTab === 'achievements_list' && (
           <div>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
@@ -1436,7 +1680,7 @@ function DedicatedAdminPage({
           </div>
         )}
 
-        {/* 2. Activities List & Drag Reordering */}
+        {/* 3. Activities List & Drag Reordering */}
         {adminTab === 'activities_list' && (
           <div>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
@@ -1519,7 +1763,7 @@ function DedicatedAdminPage({
           </div>
         )}
 
-        {/* 3. Add / Edit Achievement Form */}
+        {/* 4. Add / Edit Achievement Form */}
         {adminTab === 'add_achievement' && (
           <form onSubmit={handleSaveAchievement} style={{ maxWidth: '650px' }}>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
@@ -1612,7 +1856,7 @@ function DedicatedAdminPage({
           </form>
         )}
 
-        {/* 4. Add / Edit Activity Form (Text Input URL Removed per User Request) */}
+        {/* 5. Add / Edit Activity Form */}
         {adminTab === 'add_activity' && (
           <form onSubmit={handleSaveActivity} style={{ maxWidth: '650px' }}>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
@@ -1664,7 +1908,6 @@ function DedicatedAdminPage({
               />
             </div>
 
-            {/* ONLY File Uploader (Text Input URL Removed per User Request) */}
             <div className="admin-form-group">
               <label>อัปโหลดภาพปกกิจกรรม (จำกัดขนาดไฟล์ไม่เกิน 10MB):</label>
               <input
