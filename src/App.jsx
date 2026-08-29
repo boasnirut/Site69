@@ -168,6 +168,7 @@ const defaultActivities = [
     id: 1,
     title: 'กิจกรรมการเรียนรู้ Active Learning วิทยาการคำนวณ',
     date: '2026-02-15',
+    category: 'academic',
     location: 'ห้องปฏิบัติการคอมพิวเตอร์ โรงเรียนบ้านน้ำพร',
     albumUrl: '',
     image: '/B1.jpg',
@@ -177,6 +178,7 @@ const defaultActivities = [
     id: 2,
     title: 'กิจกรรมส่งเสริมทักษะดิจิทัลและการโค้ดดิ้ง',
     date: '2026-01-20',
+    category: 'academic',
     location: 'อาคารเรียนดิจิทัล',
     albumUrl: '',
     image: '/B2.jpg',
@@ -186,6 +188,7 @@ const defaultActivities = [
     id: 3,
     title: 'การอบรมและพัฒนาวิชาชีพครูด้านเทคโนโลยีดิจิทัล',
     date: '2025-12-10',
+    category: 'development',
     location: 'หอประชุมใหญ่ เขตพื้นที่การศึกษา',
     albumUrl: '',
     image: '/B3.jpg',
@@ -195,6 +198,7 @@ const defaultActivities = [
     id: 4,
     title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียนโฮมรูม',
     date: '2025-11-05',
+    category: 'homeroom',
     description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
   },
 ]
@@ -585,11 +589,27 @@ function PageHeroBanner({ banner, navigateTo, isHomePage = false }) {
 
 /* 1. HOME VIEW */
 function HomeView({ hero, navigateTo, achievements, activities, openLightbox }) {
+  // Category Definitions for Achievements
+  const achievementCats = [
+    { id: 'teacher', title: '👨‍🏫 ผลงาน/รางวัลครูผู้สอน', label: 'ครูผู้สอน' },
+    { id: 'student', title: '🎓 ผลงาน/รางวัลนักเรียน', label: 'นักเรียน' },
+    { id: 'school', title: '🏫 ผลงาน/รางวัลสถานศึกษา', label: 'สถานศึกษา' },
+    { id: 'academic', title: '📄 ผลงานวิชาการ & วิจัย', label: 'งานวิชาการ' },
+  ]
+
+  // Category Definitions for Activities
+  const activityCats = [
+    { id: 'academic', title: '💻 กิจกรรมการเรียนรู้ & สื่อดิจิทัล' },
+    { id: 'homeroom', title: '🏡 กิจกรรมประจำชั้น & ดูแลช่วยเหลือนักเรียน' },
+    { id: 'development', title: '🎓 กิจกรรมพัฒนาผู้เรียน & อบรมวิชาชีพ' },
+    { id: 'general', title: '📸 กิจกรรมทั่วไป & ภาพบรรยากาศ' },
+  ]
+
   return (
     <>
       <PageHeroBanner banner={hero} navigateTo={navigateTo} isHomePage={true} />
 
-      {/* Section 1: ผลงานและรางวัล Cards */}
+      {/* Section 1: ผลงานและรางวัล Cards (Grouped by Category) */}
       <section className="section">
         <div className="container">
           <div className="section-title">
@@ -597,71 +617,169 @@ function HomeView({ hero, navigateTo, achievements, activities, openLightbox }) 
             <p>ความภาคภูมิใจ นวัตกรรมการจัดการเรียนรู้ Active Learning และรางวัลเกียรติยศ</p>
           </div>
 
-          <div className="media-card-grid">
-            {achievements.slice(0, 3).map((item, index) => (
-              <div key={item.id} className="media-card">
+          {achievementCats.map((cat) => {
+            const catItems = achievements.filter((item) => item.category === cat.id)
+            if (catItems.length === 0) return null
+
+            return (
+              <div key={cat.id} style={{ marginBottom: '40px' }}>
                 <div
-                  className="media-card__img-box"
-                  onClick={() => openLightbox(achievements, index)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justify: 'space-between',
+                    marginBottom: '16px',
+                    paddingBottom: '8px',
+                    borderBottom: '2px solid var(--border-color)',
+                  }}
                 >
-                  <img
-                    src={item.image || '/B1.jpg'}
-                    alt={item.title}
-                    className="media-card__img-original"
-                  />
-                  <div className="media-card__zoom-badge">
-                    <Maximize2 size={16} />
-                  </div>
+                  <h3
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      color: 'var(--primary-navy)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      margin: 0,
+                    }}
+                  >
+                    {cat.title}
+                  </h3>
+                  <span
+                    style={{
+                      fontSize: '0.85rem',
+                      color: 'var(--text-muted)',
+                      backgroundColor: 'var(--bg-subtle)',
+                      padding: '3px 10px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {catItems.length} รายการ
+                  </span>
                 </div>
 
-                <div className="media-card__body">
-                  <span className="media-card__category">
-                    {item.level || 'รางวัลเกียรติยศ'}
-                  </span>
-                  <h3 className="media-card__title">{item.title}</h3>
-                  {item.description && <p className="media-card__desc">{item.description}</p>}
-                  <div className="media-card__meta">
-                    {item.owner && (
-                      <span>
-                        <User size={13} /> {item.owner}
-                      </span>
-                    )}
-                  </div>
-                  <div className="media-card__action">
-                    <button
-                      type="button"
-                      className="media-card__btn"
-                      onClick={() => openLightbox(achievements, index)}
-                    >
-                      ขยายภาพ <Maximize2 size={14} />
-                    </button>
-                  </div>
+                <div className="media-card-grid">
+                  {catItems.map((item) => {
+                    const globalIndex = achievements.findIndex((a) => a.id === item.id)
+                    return (
+                      <div key={item.id} className="media-card">
+                        <div
+                          className="media-card__img-box"
+                          onClick={() => openLightbox(achievements, globalIndex >= 0 ? globalIndex : 0)}
+                        >
+                          <img
+                            src={item.image || '/B1.jpg'}
+                            alt={item.title}
+                            className="media-card__img-original"
+                          />
+                          <div className="media-card__zoom-badge">
+                            <Maximize2 size={16} />
+                          </div>
+                        </div>
+
+                        <div className="media-card__body">
+                          <span className="media-card__category">
+                            {item.level || cat.label}
+                          </span>
+                          <h3 className="media-card__title">{item.title}</h3>
+                          {item.description && <p className="media-card__desc">{item.description}</p>}
+                          <div className="media-card__meta">
+                            {item.owner && (
+                              <span>
+                                <User size={13} /> {item.owner}
+                              </span>
+                            )}
+                          </div>
+                          <div className="media-card__action">
+                            <button
+                              type="button"
+                              className="media-card__btn"
+                              onClick={() => openLightbox(achievements, globalIndex >= 0 ? globalIndex : 0)}
+                            >
+                              ขยายภาพ <Maximize2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-            ))}
-          </div>
+            )
+          })}
         </div>
       </section>
 
-      {/* Section 2: ภาพกิจกรรม Cards with Real Google Photos Extraction */}
+      {/* Section 2: ภาพกิจกรรม Cards (Grouped by Category) */}
       <section className="section" style={{ backgroundColor: 'var(--bg-subtle)' }}>
         <div className="container">
           <div className="section-title">
-            <h2>📸 ภาพกิจกรรม (Activity Gallery)</h2>
-            <p>ซิงค์ภาพจาก Google Photos สไลด์หมุนภาพอัตโนมัติ 5 วินาที พร้อมลูกศรซ้าย/ขวา</p>
+            <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้ (Activity Gallery)</h2>
+            <p>ประมวลภาพกิจกรรมการจัดการเรียนรู้ การดูแลช่วยเหลือนักเรียน และกิจกรรมพัฒนาผู้เรียน</p>
           </div>
 
-          <div className="media-card-grid">
-            {activities.map((item, index) => (
-              <ActivityCardWithCarousel
-                key={item.id}
-                item={item}
-                index={index}
-                allActivities={activities}
-                openLightbox={openLightbox}
-              />
-            ))}
-          </div>
+          {activityCats.map((cat) => {
+            const catItems = activities.filter((item) => (item.category || 'academic') === cat.id)
+            if (catItems.length === 0) return null
+
+            return (
+              <div key={cat.id} style={{ marginBottom: '40px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justify: 'space-between',
+                    marginBottom: '16px',
+                    paddingBottom: '8px',
+                    borderBottom: '2px solid var(--border-color)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      color: 'var(--primary-navy)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      margin: 0,
+                    }}
+                  >
+                    {cat.title}
+                  </h3>
+                  <span
+                    style={{
+                      fontSize: '0.85rem',
+                      color: 'var(--text-muted)',
+                      backgroundColor: 'var(--bg-card)',
+                      padding: '3px 10px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {catItems.length} รายการ
+                  </span>
+                </div>
+
+                <div className="media-card-grid">
+                  {catItems.map((item) => {
+                    const globalIndex = activities.findIndex((a) => a.id === item.id)
+                    return (
+                      <ActivityCardWithCarousel
+                        key={item.id}
+                        item={item}
+                        index={globalIndex >= 0 ? globalIndex : 0}
+                        allActivities={activities}
+                        openLightbox={openLightbox}
+                      />
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </section>
     </>
@@ -1162,6 +1280,7 @@ function DedicatedAdminPage({
 
   const [editingActId, setEditingActId] = useState(null)
   const [actTitle, setActTitle] = useState('')
+  const [actCategory, setActCategory] = useState('academic')
   const [actDate, setActDate] = useState(new Date().toISOString().split('T')[0])
   const [actLocation, setActLocation] = useState('โรงเรียนบ้านน้ำพร')
   const [actAlbumUrl, setActAlbumUrl] = useState('')
@@ -1383,6 +1502,7 @@ function DedicatedAdminPage({
             ? {
                 ...item,
                 title: actTitle,
+                category: actCategory || 'academic',
                 date: actDate,
                 location: actLocation,
                 albumUrl: actAlbumUrl,
@@ -1399,6 +1519,7 @@ function DedicatedAdminPage({
       const newItem = {
         id: Date.now(),
         title: actTitle,
+        category: actCategory || 'academic',
         date: actDate,
         location: actLocation,
         albumUrl: actAlbumUrl,
@@ -1411,6 +1532,7 @@ function DedicatedAdminPage({
     }
 
     setActTitle('')
+    setActCategory('academic')
     setActDesc('')
     setActAlbumUrl('')
     setActImg('/B1.jpg')
@@ -1422,6 +1544,7 @@ function DedicatedAdminPage({
   const startEditActivity = (item) => {
     setEditingActId(item.id)
     setActTitle(item.title || '')
+    setActCategory(item.category || 'academic')
     setActDate(item.date || '')
     setActLocation(item.location || '')
     setActAlbumUrl(item.albumUrl || '')
@@ -2159,6 +2282,20 @@ function DedicatedAdminPage({
                 placeholder="เช่น กิจกรรมการเรียนรู้ Active Learning..."
                 required
               />
+            </div>
+
+            <div className="admin-form-group">
+              <label>หมวดหมู่กิจกรรม:</label>
+              <select
+                className="admin-input"
+                value={actCategory}
+                onChange={(e) => setActCategory(e.target.value)}
+              >
+                <option value="academic">💻 กิจกรรมการเรียนรู้ & สื่อดิจิทัล</option>
+                <option value="homeroom">🏡 กิจกรรมประจำชั้น & ดูแลช่วยเหลือนักเรียน</option>
+                <option value="development">🎓 กิจกรรมพัฒนาผู้เรียน & อบรมวิชาชีพ</option>
+                <option value="general">📸 กิจกรรมทั่วไป & ภาพบรรยากาศ</option>
+              </select>
             </div>
 
             <div className="admin-form-group">
