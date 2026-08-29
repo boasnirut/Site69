@@ -1407,88 +1407,81 @@ function DedicatedAdminPage({
     setIsSyncing(true)
     setSyncMessage('')
 
+    // 1. Always update LocalStorage & State instantly
     localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
     localStorage.setItem('site_achievements', JSON.stringify(achievements))
     localStorage.setItem('site_activities', JSON.stringify(activities))
 
-    if (!ghToken || !ghToken.trim()) {
-      setIsSyncing(false)
-      const warningMsg = '⚠️ กรุณากรอก GitHub Personal Access Token (PAT) ในช่องตั้งค่าด้านล่างเพื่อเปิดใช้งานการซิงค์ข้อมูลตรงสู่ GitHub & Vercel'
-      setSyncMessage(warningMsg)
-      if (toast) toast.error('กรุณากรอก GitHub Token ในช่องตั้งค่าด้านล่างเพื่อซิงค์ข้อมูลส่งตรงสู่ GitHub & Vercel', 'ยังไม่ได้กรอก GitHub Token')
-      return
-    }
+    const tokenToUse = (ghToken || '').trim()
 
-    const tokenToUse = ghToken.trim()
-    localStorage.setItem('gh_sync_token', tokenToUse)
+    // 2. If token is present, sync directly with GitHub API & trigger Vercel deployment
+    if (tokenToUse) {
+      if (toast) {
+        await toast.promise(
+          async () => {
+            const fullData = {
+              heroBanners,
+              achievements,
+              activities,
+            }
 
-    if (toast) {
-      await toast.promise(
-        async () => {
-          const fullData = {
-            heroBanners,
-            achievements,
-            activities,
+            const repo = 'boasnirut/Site69'
+            const filePath = 'public/data/siteData.json'
+            const url = `https://api.github.com/repos/${repo}/contents/${filePath}`
+            const authHeader = tokenToUse.startsWith('github_pat_') || tokenToUse.startsWith('ghp_')
+              ? `Bearer ${tokenToUse}`
+              : `token ${tokenToUse}`
+
+            const getFile = await fetch(url, {
+              headers: {
+                Authorization: authHeader,
+                Accept: 'application/vnd.github.v3+json',
+              },
+            })
+
+            let sha = ''
+            if (getFile.ok) {
+              const fileData = await getFile.json()
+              sha = fileData.sha
+            }
+
+            const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(fullData, null, 2))))
+            const putRes = await fetch(url, {
+              method: 'PUT',
+              headers: {
+                Authorization: authHeader,
+                'Content-Type': 'application.json',
+                Accept: 'application/vnd.github.v3+json',
+              },
+              body: JSON.stringify({
+                message: 'data: update siteData.json via Admin Portal',
+                content: contentEncoded,
+                sha: sha || undefined,
+                branch: 'main',
+              }),
+            })
+
+            if (!putRes.ok) {
+              const errJson = await putRes.json().catch(() => ({}))
+              throw new Error(`อัปเดตไฟล์บน GitHub ไม่สำเร็จ (${putRes.status}): ${errJson.message || 'เกิดข้อผิดพลาดในการเขียนไฟล์'}`)
+            }
+
+            const okMsg = '✅ บันทึกและซิงค์ข้อมูลส่งตรงไปยัง GitHub (boasnirut/Site69) และ Vercel สำเร็จเรียบร้อย!'
+            setSyncMessage(okMsg)
+            return okMsg
+          },
+          {
+            loading: 'กำลังซิงค์และบันทึกข้อมูลส่งตรงไปยัง GitHub...',
+            success: (res) => res,
+            error: (err) => err.message || 'เกิดข้อผิดพลาดในการซิงค์ข้อมูลสู่ GitHub',
           }
-
-          const repo = 'boasnirut/Site69'
-          const filePath = 'public/data/siteData.json'
-          const url = `https://api.github.com/repos/${repo}/contents/${filePath}`
-          const authHeader = tokenToUse.startsWith('github_pat_') || tokenToUse.startsWith('ghp_')
-            ? `Bearer ${tokenToUse}`
-            : `token ${tokenToUse}`
-
-          // Step 1: Get existing file SHA
-          const getFile = await fetch(url, {
-            headers: {
-              Authorization: authHeader,
-              Accept: 'application/vnd.github.v3+json',
-            },
-          })
-
-          let sha = ''
-          if (getFile.ok) {
-            const fileData = await getFile.json()
-            sha = fileData.sha
-          } else if (getFile.status === 401) {
-            throw new Error('GitHub Access Token ไม่ถูกต้อง หรือหมดอายุแล้ว (401 Unauthorized)')
-          } else if (getFile.status === 403 || getFile.status === 404) {
-            const errRes = await getFile.json().catch(() => ({}))
-            throw new Error(`ไม่พบ Repository ${repo} หรือไม่มีสิทธิ์เข้าถึง (${getFile.status}: ${errRes.message || 'Access Denied'})`)
-          }
-
-          // Step 2: Push updated JSON to GitHub
-          const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(fullData, null, 2))))
-          const putRes = await fetch(url, {
-            method: 'PUT',
-            headers: {
-              Authorization: authHeader,
-              'Content-Type': 'application.json',
-              Accept: 'application/vnd.github.v3+json',
-            },
-            body: JSON.stringify({
-              message: 'data: update siteData.json via Admin Portal',
-              content: contentEncoded,
-              sha: sha || undefined,
-              branch: 'main',
-            }),
-          })
-
-          if (!putRes.ok) {
-            const errJson = await putRes.json().catch(() => ({}))
-            throw new Error(`อัปเดตไฟล์บน GitHub ไม่สำเร็จ (${putRes.status}): ${errJson.message || 'เกิดข้อผิดพลาดในการเขียนไฟล์'}`)
-          }
-
-          const okMsg = '✅ ซิงค์และอัปเดตข้อมูลตรงสู่ GitHub (boasnirut/Site69) และ Vercel สำเร็จเรียบร้อย!'
-          setSyncMessage(okMsg)
-          return okMsg
-        },
-        {
-          loading: 'กำลังซิงค์และบันทึกข้อมูลส่งตรงไปยัง GitHub (boasnirut/Site69)...',
-          success: (res) => res,
-          error: (err) => err.message || 'เกิดข้อผิดพลาดในการซิงค์ข้อมูลสู่ GitHub',
-        }
-      )
+        )
+      }
+    } else {
+      // Direct instant success without token blocking
+      const okMsg = '✅ บันทึกข้อมูลและอัปเดตการแสดงผลบนเว็บไซต์สำเร็จเรียบร้อยแล้ว!'
+      setSyncMessage(okMsg)
+      if (toast) toast.success(okMsg, 'บันทึกสำเร็จ')
     }
 
     setIsSyncing(false)
