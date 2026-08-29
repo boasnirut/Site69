@@ -1157,7 +1157,10 @@ function DedicatedAdminPage({
         image: heroImage,
       },
     }))
-    alert(`บันทึกภาพปกและข้อความสำหรับหน้า "${selectedHeroPage}" เรียบร้อยแล้ว!`)
+    setUploadStatuses((prev) => ({ ...prev, hero: null }))
+    setSyncMessage(`✅ บันทึกภาพปกและข้อความสำหรับหน้า "${selectedHeroPage}" เรียบร้อยแล้ว!`)
+    setAdminTab('hero_banners')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleSaveAchievement = (e) => {
@@ -1181,7 +1184,7 @@ function DedicatedAdminPage({
         )
       )
       setEditingAchId(null)
-      alert('อัปเดตข้อมูลผลงานเรียบร้อยแล้ว!')
+      setSyncMessage('✅ อัปเดตข้อมูลผลงานและรางวัลเรียบร้อยแล้ว!')
     } else {
       const newItem = {
         id: Date.now(),
@@ -1193,12 +1196,15 @@ function DedicatedAdminPage({
         image: achImg || '/B1.jpg',
       }
       setAchievements((prev) => [newItem, ...prev])
-      alert('เพิ่มผลงานใหม่เรียบร้อยแล้ว!')
+      setSyncMessage('✅ เพิ่มผลงานและรางวัลใหม่เรียบร้อยแล้ว!')
     }
 
     setAchTitle('')
     setAchDesc('')
+    setAchImg('/B1.jpg')
+    setUploadStatuses((prev) => ({ ...prev, achievement: null }))
     setAdminTab('achievements_list')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const startEditAchievement = (item) => {
@@ -1209,12 +1215,15 @@ function DedicatedAdminPage({
     setAchCategory(item.category || 'teacher')
     setAchDesc(item.description || '')
     setAchImg(item.image || '/B1.jpg')
+    setUploadStatuses((prev) => ({ ...prev, achievement: null }))
     setAdminTab('add_achievement')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const deleteAchievement = (id) => {
     if (window.confirm('คุณต้องการลบผลงานนี้ใช่หรือไม่?')) {
       setAchievements((prev) => prev.filter((item) => item.id !== id))
+      setSyncMessage('🗑️ ลบผลงานเรียบร้อยแล้ว!')
     }
   }
 
@@ -1249,7 +1258,7 @@ function DedicatedAdminPage({
         )
       )
       setEditingActId(null)
-      alert('อัปเดตข้อมูลภาพกิจกรรมเรียบร้อยแล้ว!')
+      setSyncMessage('✅ อัปเดตข้อมูลภาพกิจกรรมเรียบร้อยแล้ว!')
     } else {
       const newItem = {
         id: Date.now(),
@@ -1261,13 +1270,16 @@ function DedicatedAdminPage({
         image: actImg || '/B1.jpg',
       }
       setActivities((prev) => [newItem, ...prev])
-      alert('เพิ่มภาพกิจกรรมเรียบร้อยแล้ว!')
+      setSyncMessage('✅ เพิ่มภาพกิจกรรมใหม่เรียบร้อยแล้ว!')
     }
 
     setActTitle('')
     setActDesc('')
     setActAlbumUrl('')
+    setActImg('/B1.jpg')
+    setUploadStatuses((prev) => ({ ...prev, activity: null }))
     setAdminTab('activities_list')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const startEditActivity = (item) => {
@@ -1278,12 +1290,15 @@ function DedicatedAdminPage({
     setActAlbumUrl(item.albumUrl || '')
     setActDesc(item.description || '')
     setActImg(item.image || '/B1.jpg')
+    setUploadStatuses((prev) => ({ ...prev, activity: null }))
     setAdminTab('add_activity')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const deleteActivity = (id) => {
     if (window.confirm('คุณต้องการลบภาพกิจกรรมนี้ใช่หรือไม่?')) {
       setActivities((prev) => prev.filter((item) => item.id !== id))
+      setSyncMessage('🗑️ ลบภาพกิจกรรมเรียบร้อยแล้ว!')
     }
   }
 
