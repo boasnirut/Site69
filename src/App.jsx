@@ -507,11 +507,11 @@ function About() {
     <section className="section about" id="about">
       <div className="container about__grid">
         <div className="about__visual reveal">
-          <div className="about__image about__image--director">
-            <img src="/PO.png" alt="นางศิวาลัย แก้วเขียว ผู้อำนวยการโรงเรียนบ้านน้ำพร" />
+          <div className="about__image about__image--director" style={{ background: 'transparent' }}>
+            <img src="/boasnirut.png" alt="นิรุทธิ์ เสวะนา (Nirut Sewana)" style={{ objectFit: 'contain', width: 'auto', height: '100%', maxHeight: '420px' }} />
             <div className="about__image-overlay">
-              <span>ผู้อำนวยการโรงเรียน</span>
-              <AutoFitText as="strong" minSize={13}>นางศิวาลัย แก้วเขียว</AutoFitText>
+              <span>นิรุทธิ์ เสวะนา</span>
+              <AutoFitText as="strong" minSize={13}>Nirut Sewana</AutoFitText>
             </div>
           </div>
           <div className="about__seal" aria-label="โรงเรียนบ้านน้ำพร">
@@ -3152,20 +3152,18 @@ function DirectorMessage() {
           <Quote />
         </div>
         <div className="director__logo">
-          <img src="/np.png" alt="" aria-hidden="true" />
+          <img src="/8045.png" alt="" aria-hidden="true" />
         </div>
         <div className="director__copy">
           <span className="eyebrow eyebrow--light">
             <span className="eyebrow__dot" />
-            สารจากโรงเรียน
+            ค่านิยมและการจัดการเรียนรู้
           </span>
           <blockquote>
-            “เราเชื่อว่าเด็กทุกคนเรียนรู้และเติบโตได้ เมื่อได้รับโอกาส
-            ความเข้าใจ และแรงสนับสนุนที่เหมาะสม”
+            “การเรียนรู้ที่มีความหมาย เกิดจากการเปิดโอกาสให้ผู้เรียนได้คิด ลงมือทำด้วยตนเอง และได้รับการดูแลช่วยเหลืออย่างรอบด้าน 100%”
           </blockquote>
           <p>
-            โรงเรียนบ้านน้ำพรพร้อมทำงานร่วมกับครอบครัวและชุมชน
-            เพื่อสร้างการศึกษาที่มีความหมายและความสุขให้กับเด็กทุกคน
+            นิรุทธิ์ เสวะนา (Nirut Sewana) — มุ่งมั่นพัฒนาสื่อการสอนดิจิทัล ระบบดูแลช่วยเหลือนักเรียนรายบุคคล และรายงานผลการพัฒนางานตามข้อตกลง (PA)
           </p>
         </div>
         <div className="director__roots" aria-hidden="true">
