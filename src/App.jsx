@@ -324,11 +324,13 @@ export default function App() {
       setIsLoggedIn(true)
     }
 
-    const handlePopState = () => {
+    const handlePathSync = () => {
       setCurrentPath(window.location.pathname)
     }
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
+
+    handlePathSync()
+    window.addEventListener('popstate', handlePathSync)
+    return () => window.removeEventListener('popstate', handlePathSync)
   }, [])
 
   useEffect(() => {
@@ -351,14 +353,15 @@ export default function App() {
   }
 
   const getActiveTab = () => {
-    const rawPath = currentPath || (typeof window !== 'undefined' ? window.location.pathname : '')
-    const path = rawPath.toLowerCase().replace(/\/$/, '')
-    if (path === '/classroom' || path.startsWith('/classroom')) return 'classroom'
-    if (path === '/homeroom' || path.startsWith('/homeroom')) return 'homeroom'
-    if (path === '/achievements' || path.startsWith('/achievements')) return 'achievements'
-    if (path === '/activities' || path.startsWith('/activities')) return 'activities'
-    if (path === '/pa' || path.startsWith('/pa')) return 'pa'
-    if (path === '/admin' || path.startsWith('/admin')) return 'admin'
+    const rawPath = currentPath || (typeof window !== 'undefined' ? window.location.pathname : '') || '/'
+    const cleanPath = rawPath.toLowerCase().trim().split('?')[0].replace(/\/+$/, '') || '/'
+
+    if (cleanPath === '/classroom' || cleanPath.startsWith('/classroom/')) return 'classroom'
+    if (cleanPath === '/homeroom' || cleanPath.startsWith('/homeroom/')) return 'homeroom'
+    if (cleanPath === '/achievements' || cleanPath.startsWith('/achievements/')) return 'achievements'
+    if (cleanPath === '/activities' || cleanPath.startsWith('/activities/')) return 'activities'
+    if (cleanPath === '/pa' || cleanPath.startsWith('/pa/')) return 'pa'
+    if (cleanPath === '/admin' || cleanPath.startsWith('/admin/')) return 'admin'
     return 'home'
   }
 

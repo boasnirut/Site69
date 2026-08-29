@@ -1,32 +1,9 @@
 {
   "framework": "vite",
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/classroom",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/homeroom",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/achievements",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/activities",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/pa",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/((?!assets/|data/|.*\\..*).*)",
+      "source": "/((?!assets/|data/|api/|.*\\..*).*)",
       "destination": "/index.html"
     }
   ]
