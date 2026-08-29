@@ -186,8 +186,8 @@ export default function App() {
             </span>
           </a>
 
-          {/* Glow Menu Bar Navigation */}
-          <nav className="glow-menu-nav" aria-label="เมนูหลัก">
+          {/* Reverted Clean Animated Tab Bar Navigation */}
+          <nav className="tab-bar-nav" aria-label="เมนูหลัก">
             {menuTabs.map((tab) => {
               const Icon = tab.icon
               const isActive = activeTab === tab.id
@@ -196,7 +196,7 @@ export default function App() {
                   key={tab.id}
                   href={tab.href}
                   onClick={(e) => navigateTo(tab.href, e)}
-                  className={`glow-menu-item ${isActive ? 'active' : ''}`}
+                  className={`tab-bar-item ${isActive ? 'active' : ''}`}
                 >
                   <Icon size={16} />
                   <span>{tab.label}</span>
@@ -208,7 +208,7 @@ export default function App() {
             {isLoggedIn ? (
               <button
                 type="button"
-                className="glow-menu-login"
+                className="tab-bar-login"
                 onClick={() => setShowAdminPanel(true)}
                 title="จัดการระบบหลังบ้าน"
               >
@@ -218,7 +218,7 @@ export default function App() {
             ) : (
               <button
                 type="button"
-                className="glow-menu-login"
+                className="tab-bar-login"
                 onClick={() => setShowLoginModal(true)}
               >
                 <LogIn size={16} />
