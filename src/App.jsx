@@ -108,48 +108,9 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="site-footer">
-        <div className="container">
-          <div className="footer__grid">
-            <div>
-              <div className="footer__brand">
-                <img src="/8045.png" alt="Nirut Sewana Logo" />
-                <strong>นิรุทธิ์ เสวะนา (Nirut Sewana)</strong>
-              </div>
-              <p className="footer__desc">
-                ศูนย์รวมข้อมูลสารสนเทศการจัดการเรียนรู้ดิจิทัล สื่อการสอน งานประจำชั้น
-                และรายงานผลการพัฒนางานตามข้อตกลง (PA)
-              </p>
-            </div>
-            <div>
-              <h4 style={{ color: '#fff', marginBottom: '16px' }}>เมนูหลัก</h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {menuTabs.map((tab) => (
-                  <li key={tab.id}>
-                    <a
-                      href={tab.href}
-                      onClick={(e) => navigateTo(tab.href, e)}
-                      style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '0.9rem' }}
-                    >
-                      {tab.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 style={{ color: '#fff', marginBottom: '16px' }}>ติดต่อ</h4>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '8px' }}>
-                โรงเรียนบ้านน้ำพร สพป.เลย เขต 1
-              </p>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
-                โทร: 06-2546-1959
-              </p>
-            </div>
-          </div>
-          <div className="footer__bottom">
-            <p>© {new Date().getFullYear()} นิรุทธิ์ เสวะนา | Nirut Sewana. All rights reserved.</p>
-          </div>
+      <footer className="site-footer" style={{ padding: '24px 0', marginTop: '60px' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <p>© {new Date().getFullYear()} นิรุทธิ์ เสวะนา | Nirut Sewana. All rights reserved.</p>
         </div>
       </footer>
     </div>
@@ -178,18 +139,18 @@ function HomeView({ navigateTo }) {
             <div className="hero__actions">
               <a
                 className="btn btn-primary"
-                href="/classroom"
-                onClick={(e) => navigateTo('/classroom', e)}
+                href="/achievements"
+                onClick={(e) => navigateTo('/achievements', e)}
               >
-                💻 ห้องเรียนออนไลน์
+                🏆 ผลงานและรางวัล
                 <ArrowRight size={18} />
               </a>
               <a
                 className="btn btn-outline"
-                href="/pa"
-                onClick={(e) => navigateTo('/pa', e)}
+                href="/activities"
+                onClick={(e) => navigateTo('/activities', e)}
               >
-                📋 ดูข้อตกลง PA
+                📸 ภาพกิจกรรม
               </a>
             </div>
           </div>
@@ -200,35 +161,82 @@ function HomeView({ navigateTo }) {
         </div>
       </section>
 
+      {/* Section 1: ผลงานและรางวัล */}
       <section className="section">
         <div className="container">
           <div className="section-title">
-            <h2>บริการและหมวดหมู่สารสนเทศ</h2>
-            <p>เลือกเข้าใช้งานระบบและหมวดหมู่ข้อมูลที่ต้องการ</p>
+            <h2>🏆 ผลงานและรางวัล (Achievements & Awards)</h2>
+            <p>ความภาคภูมิใจ นวัตกรรมการจัดการเรียนรู้ Active Learning และรางวัลเกียรติยศ</p>
           </div>
 
           <div className="card-grid">
-            {menuTabs.slice(1).map((item) => {
-              const Icon = item.icon
-              return (
-                <div key={item.id} className="feature-card">
-                  <div className="feature-card__icon">
-                    <Icon size={24} />
-                  </div>
-                  <h3>{item.label}</h3>
-                  <p>
-                    เข้าสู่หมวดหมู่ {item.label} เพื่อรับชมข้อมูลและดาวน์โหลดสื่อสารสนเทศ
-                  </p>
-                  <a
-                    href={item.href}
-                    onClick={(e) => navigateTo(item.href, e)}
-                    className="feature-card__link"
-                  >
-                    เข้าสู่หมวดหมู่ <ArrowRight size={16} />
-                  </a>
-                </div>
-              )
-            })}
+            <div className="feature-card">
+              <div className="feature-card__icon">
+                <Award size={24} />
+              </div>
+              <h3>รางวัลนวัตกรรมการจัดการเรียนรู้ Active Learning</h3>
+              <p>รางวัลยกย่องเชิดชูเกียรติด้านการสร้างสรรค์สื่อและการจัดการเรียนรู้ดิจิทัล</p>
+              <a
+                href="/achievements"
+                onClick={(e) => navigateTo('/achievements', e)}
+                className="feature-card__link"
+              >
+                ดูผลงานทั้งหมด <ArrowRight size={16} />
+              </a>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-card__icon">
+                <Trophy size={24} />
+              </div>
+              <h3>รางวัลการแข่งขันของนักเรียน</h3>
+              <p>ผลงานการส่งเสริมและฝึกหัดนักเรียนเข้าร่วมการแข่งขันระดับเขตและระดับภาค</p>
+              <a
+                href="/achievements"
+                onClick={(e) => navigateTo('/achievements', e)}
+                className="feature-card__link"
+              >
+                ดูผลงานทั้งหมด <ArrowRight size={16} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 2: ภาพกิจกรรม */}
+      <section className="section" style={{ backgroundColor: 'var(--bg-subtle)' }}>
+        <div className="container">
+          <div className="section-title">
+            <h2>📸 ภาพกิจกรรม (Activity Gallery)</h2>
+            <p>ภาพบรรยากาศการเรียนรู้ กิจกรรมพัฒนาผู้เรียน และการทำงานร่วมกับชุมชน</p>
+          </div>
+
+          <div className="card-grid">
+            <div className="feature-card">
+              <img src="/B1.jpg" alt="ภาพกิจกรรม" style={{ width: '100%', borderRadius: '12px', marginBottom: '16px', height: '200px', objectFit: 'cover' }} />
+              <h3>กิจกรรมการเรียนรู้ Active Learning</h3>
+              <p>บรรยากาศการลงมือปฏิบัติจริงและการนำเสนอผลงานของนักเรียนในชั้นเรียน</p>
+              <a
+                href="/activities"
+                onClick={(e) => navigateTo('/activities', e)}
+                className="feature-card__link"
+              >
+                ดูภาพกิจกรรมทั้งหมด <ArrowRight size={16} />
+              </a>
+            </div>
+
+            <div className="feature-card">
+              <img src="/B2.jpg" alt="ภาพกิจกรรม" style={{ width: '100%', borderRadius: '12px', marginBottom: '16px', height: '200px', objectFit: 'cover' }} />
+              <h3>กิจกรรมส่งเสริมทักษะดิจิทัล</h3>
+              <p>การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้</p>
+              <a
+                href="/activities"
+                onClick={(e) => navigateTo('/activities', e)}
+                className="feature-card__link"
+              >
+                ดูภาพกิจกรรมทั้งหมด <ArrowRight size={16} />
+              </a>
+            </div>
           </div>
         </div>
       </section>
