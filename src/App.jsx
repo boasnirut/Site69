@@ -351,12 +351,14 @@ export default function App() {
   }
 
   const getActiveTab = () => {
-    if (currentPath === '/classroom') return 'classroom'
-    if (currentPath === '/homeroom') return 'homeroom'
-    if (currentPath === '/achievements') return 'achievements'
-    if (currentPath === '/activities') return 'activities'
-    if (currentPath === '/pa') return 'pa'
-    if (currentPath === '/admin') return 'admin'
+    const rawPath = currentPath || (typeof window !== 'undefined' ? window.location.pathname : '')
+    const path = rawPath.toLowerCase().replace(/\/$/, '')
+    if (path === '/classroom' || path.startsWith('/classroom')) return 'classroom'
+    if (path === '/homeroom' || path.startsWith('/homeroom')) return 'homeroom'
+    if (path === '/achievements' || path.startsWith('/achievements')) return 'achievements'
+    if (path === '/activities' || path.startsWith('/activities')) return 'activities'
+    if (path === '/pa' || path.startsWith('/pa')) return 'pa'
+    if (path === '/admin' || path.startsWith('/admin')) return 'admin'
     return 'home'
   }
 
