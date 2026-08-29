@@ -318,9 +318,9 @@ function Header({ menuOpen, setMenuOpen }) {
 
       <header className={`site-header ${scrolled ? 'site-header--scrolled' : ''}`}>
         <div className="container site-header__inner">
-          <a className="brand" href="/" onClick={closeMenu} aria-label="โรงเรียนบ้านน้ำพร หน้าแรก">
+          <a className="brand" href="/" onClick={closeMenu} aria-label="Nirut Sewana หน้าแรก">
             <span className="brand__logo">
-              <img src="/np.png" alt="ตราสัญลักษณ์โรงเรียนบ้านน้ำพร" />
+              <img src="/8045.png" alt="Nirut Sewana Logo" />
             </span>
             <span className="brand__text">
               <AutoFitText as="strong">{schoolInfo.thaiName}</AutoFitText>
@@ -3307,7 +3307,7 @@ function Footer() {
           <div className="footer__brand">
             <a className="brand brand--footer" href="/">
               <span className="brand__logo">
-                <img src="/np.png" alt="ตราสัญลักษณ์โรงเรียนบ้านน้ำพร" />
+                <img src="/8045.png" alt="Nirut Sewana Logo" />
               </span>
               <span className="brand__text">
                 <AutoFitText as="strong">{schoolInfo.thaiName}</AutoFitText>

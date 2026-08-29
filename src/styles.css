@@ -515,20 +515,20 @@ body.welcome-open {
 }
 
 .brand__logo {
-  display: grid;
-  width: 58px;
-  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
   flex: 0 0 auto;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 50%;
-  background: var(--white);
-  box-shadow: 0 6px 18px rgba(9, 38, 79, 0.13);
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
 }
 
 .brand__logo img {
-  width: 52px;
-  height: 52px;
+  height: 48px;
+  width: auto;
+  max-width: 100%;
   object-fit: contain;
 }
 

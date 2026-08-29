@@ -179,13 +179,13 @@ export const schoolHighlights = [
 ]
 
 export const schoolInfo = {
-  thaiName: 'โรงเรียนบ้านน้ำพร',
-  englishName: 'Bannamporn School',
-  educationLevels: 'อนุบาล 2 - ม.3',
-  schoolType: 'โรงเรียนขยายโอกาส',
-  affiliation: 'สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1',
+  thaiName: 'Nirut Sewana',
+  englishName: 'Nirut Sewana Digital Hub',
+  educationLevels: 'สื่อการเรียนรู้ • งานประจำชั้น • PA',
+  schoolType: 'Personal Portfolio & Learning Hub',
+  affiliation: 'โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1',
   summary:
-    'โรงเรียนบ้านน้ำพร Bannamporn School เปิดสอนตั้งแต่ชั้นอนุบาล 2 - ม.3 เป็นโรงเรียนขยายโอกาส สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1',
+    'Nirut Sewana - เว็บไซต์ผลงาน คลังบทเรียนดิจิทัล งานประจำชั้น และรายงานผลการพัฒนางานตามข้อตกลง (PA)',
 }
 
 export const contactDetails = {
