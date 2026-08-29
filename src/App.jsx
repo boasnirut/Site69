@@ -63,7 +63,7 @@ const achievementSubTabs = [
   { id: 'academic', label: 'งานวิชาการ', icon: FileText },
 ]
 
-// Fallback Initial Data if siteData.json is loading
+// Fallback Initial Data
 const defaultAchievements = [
   {
     id: 1,
@@ -127,7 +127,7 @@ const defaultActivities = [
     title: 'กิจกรรมการเรียนรู้ Active Learning วิทยาการคำนวณ',
     date: '2026-02-15',
     location: 'ห้องปฏิบัติการคอมพิวเตอร์ โรงเรียนบ้านน้ำพร',
-    albumUrl: 'https://photos.google.com/album/example1',
+    albumUrl: 'https://photos.app.goo.gl/example1',
     image: '/B1.jpg',
     description: 'บรรยากาศการลงมือปฏิบัติจริงและการนำเสนอผลงานของนักเรียนในชั้นเรียน',
   },
@@ -136,7 +136,7 @@ const defaultActivities = [
     title: 'กิจกรรมส่งเสริมทักษะดิจิทัลและการโค้ดดิ้ง',
     date: '2026-01-20',
     location: 'อาคารเรียนดิจิทัล',
-    albumUrl: 'https://photos.google.com/album/example2',
+    albumUrl: 'https://photos.app.goo.gl/example2',
     image: '/B2.jpg',
     description: 'การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้',
   },
@@ -145,7 +145,7 @@ const defaultActivities = [
     title: 'การอบรมและพัฒนาวิชาชีพครูด้านเทคโนโลยีดิจิทัล',
     date: '2025-12-10',
     location: 'หอประชุมใหญ่ เขตพื้นที่การศึกษา',
-    albumUrl: 'https://photos.google.com/album/example3',
+    albumUrl: 'https://photos.app.goo.gl/example3',
     image: '/B3.jpg',
     description: 'การเข้าร่วมอบรมและแบ่งปันความรู้เทคโนโลยีดิจิทัลเพื่อการศึกษา',
   },
@@ -154,7 +154,7 @@ const defaultActivities = [
     title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียนโฮมรูม',
     date: '2025-11-05',
     location: 'ห้องเรียนประจำชั้น',
-    albumUrl: 'https://photos.google.com/album/example4',
+    albumUrl: 'https://photos.app.goo.gl/example4',
     image: '/B4.jpg',
     description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
   },
@@ -423,7 +423,7 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
         </div>
       </section>
 
-      {/* Section 1: ผลงานและรางวัล 16:9 Cards */}
+      {/* Section 1: ผลงานและรางวัล Cards (Details UNDERNEATH, Original Image Ratio) */}
       <section className="section">
         <div className="container">
           <div className="section-title">
@@ -433,17 +433,27 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
 
           <div className="media-card-grid">
             {achievements.slice(0, 3).map((item, index) => (
-              <div
-                key={item.id}
-                className="media-card"
-                onClick={() => openLightbox(achievements, index)}
-              >
-                <img src={item.image || '/B1.jpg'} alt={item.title} className="media-card__bg" />
-                <div className="media-card__overlay">
+              <div key={item.id} className="media-card">
+                <div
+                  className="media-card__img-box"
+                  onClick={() => openLightbox(achievements, index)}
+                >
+                  <img
+                    src={item.image || '/B1.jpg'}
+                    alt={item.title}
+                    className="media-card__img-original"
+                  />
+                  <div className="media-card__zoom-badge">
+                    <Maximize2 size={16} />
+                  </div>
+                </div>
+
+                <div className="media-card__body">
                   <span className="media-card__category">
                     {item.level || 'รางวัลเกียรติยศ'}
                   </span>
                   <h3 className="media-card__title">{item.title}</h3>
+                  {item.description && <p className="media-card__desc">{item.description}</p>}
                   <div className="media-card__meta">
                     {item.owner && (
                       <span>
@@ -451,10 +461,14 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
                       </span>
                     )}
                   </div>
-                  <div className="media-card__footer">
-                    <span className="media-card__btn">
-                      ดูภาพขยาย <Maximize2 size={14} />
-                    </span>
+                  <div className="media-card__action">
+                    <button
+                      type="button"
+                      className="media-card__btn"
+                      onClick={() => openLightbox(achievements, index)}
+                    >
+                      ขยายภาพ <Maximize2 size={14} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -463,7 +477,7 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
         </div>
       </section>
 
-      {/* Section 2: ภาพกิจกรรม 16:9 Cards */}
+      {/* Section 2: ภาพกิจกรรม Cards */}
       <section className="section" style={{ backgroundColor: 'var(--bg-subtle)' }}>
         <div className="container">
           <div className="section-title">
@@ -473,15 +487,27 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
 
           <div className="media-card-grid">
             {activities.map((item, index) => (
-              <div
-                key={item.id}
-                className="media-card"
-                onClick={() => openLightbox(activities, index)}
-              >
-                <img src={item.image || '/B1.jpg'} alt={item.title} className="media-card__bg" />
-                <div className="media-card__overlay">
-                  <span className="media-card__category">กิจกรรม</span>
+              <div key={item.id} className="media-card">
+                <div
+                  className="media-card__img-box"
+                  onClick={() => openLightbox(activities, index)}
+                >
+                  <img
+                    src={item.image || '/B1.jpg'}
+                    alt={item.title}
+                    className={item.albumUrl ? 'media-card__img-gphotos' : 'media-card__img-original'}
+                  />
+                  <div className="media-card__zoom-badge">
+                    <Maximize2 size={16} />
+                  </div>
+                </div>
+
+                <div className="media-card__body">
+                  <span className="media-card__category">
+                    {item.albumUrl ? ' Google Photos อัลบั้ม' : 'กิจกรรม'}
+                  </span>
                   <h3 className="media-card__title">{item.title}</h3>
+                  {item.description && <p className="media-card__desc">{item.description}</p>}
                   <div className="media-card__meta">
                     {item.date && (
                       <span>
@@ -494,10 +520,25 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
                       </span>
                     )}
                   </div>
-                  <div className="media-card__footer">
-                    <span className="media-card__btn">
-                      ดูภาพขยาย <Maximize2 size={14} />
-                    </span>
+                  <div className="media-card__action">
+                    {item.albumUrl ? (
+                      <a
+                        href={item.albumUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="media-card__btn"
+                      >
+                        <ExternalLink size={14} /> ดูอัลบั้ม Google Photos
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        className="media-card__btn"
+                        onClick={() => openLightbox(activities, index)}
+                      >
+                        ขยายภาพ <Maximize2 size={14} />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -594,7 +635,7 @@ function HomeroomView() {
   )
 }
 
-/* 4. ACHIEVEMENTS VIEW WITH 16:9 CARDS & LIGHTBOX */
+/* 4. ACHIEVEMENTS VIEW (Details UNDERNEATH, Original Aspect Ratio) */
 function AchievementsView({ achievements, isLoggedIn, setAchievements, openLightbox }) {
   const [activeSubTab, setActiveSubTab] = useState('all')
 
@@ -607,7 +648,7 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
     <div className="container section">
       <div className="section-title">
         <h2>🏆 ผลงานและรางวัล (Achievements & Awards)</h2>
-        <p>คลิกการ์ดภาพ 16:9 เพื่อเปิดดูภาพขนาดเต็ม (ขยาย ซูม และเลื่อนดูได้)</p>
+        <p>รายละเอียดข้อความอยู่ใต้ภาพ / ภาพคงอัตราส่วนตามต้นฉบับ คลิกภาพเพื่อขยายเต็มจอ</p>
       </div>
 
       {/* Sub-Menu Glow Navigation Bar with "ทั้งหมด" */}
@@ -631,25 +672,34 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
         </nav>
       </div>
 
-      {/* 16:9 Media Card Grid */}
+      {/* Media Card Grid (Details UNDERNEATH, Original Aspect Ratio Image) */}
       {filteredAchievements.length > 0 ? (
         <div className="media-card-grid">
           {filteredAchievements.map((item, index) => (
-            <div
-              key={item.id}
-              className="media-card"
-              onClick={() => openLightbox(filteredAchievements, index)}
-            >
-              <img
-                src={item.image || '/B1.jpg'}
-                alt={item.title}
-                className="media-card__bg"
-              />
-              <div className="media-card__overlay">
+            <div key={item.id} className="media-card">
+              {/* Image Box */}
+              <div
+                className="media-card__img-box"
+                onClick={() => openLightbox(filteredAchievements, index)}
+              >
+                <img
+                  src={item.image || '/B1.jpg'}
+                  alt={item.title}
+                  className="media-card__img-original"
+                />
+                <div className="media-card__zoom-badge">
+                  <Maximize2 size={16} />
+                </div>
+              </div>
+
+              {/* Text Details Section UNDERNEATH */}
+              <div className="media-card__body">
                 <span className="media-card__category">
                   {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : 'งานวิชาการ')}
                 </span>
                 <h3 className="media-card__title">{item.title}</h3>
+                {item.description && <p className="media-card__desc">{item.description}</p>}
+                
                 <div className="media-card__meta">
                   {item.owner && (
                     <span>
@@ -657,10 +707,15 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
                     </span>
                   )}
                 </div>
-                <div className="media-card__footer">
-                  <span className="media-card__btn">
+
+                <div className="media-card__action">
+                  <button
+                    type="button"
+                    className="media-card__btn"
+                    onClick={() => openLightbox(filteredAchievements, index)}
+                  >
                     ขยายภาพ <Maximize2 size={14} />
-                  </span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -675,43 +730,56 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
   )
 }
 
-/* 5. ACTIVITIES VIEW WITH 5-SECOND AUTO SLIDESHOW & GOOGLE PHOTOS */
+/* 5. ACTIVITIES VIEW (Details UNDERNEATH, 4:3 for Google Photos, 5-Second Slideshow) */
 function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox }) {
-  // 5-Second Auto-Slideshow Carousel index for active activity cards
+  // Sample Google Photos Album cover photos array for auto-slideshow
+  const gphotosSampleCovers = ['/B1.jpg', '/B2.jpg', '/B3.jpg', '/B4.jpg', '/TC01.png']
   const [slideshowIndex, setSlideshowIndex] = useState(0)
 
   useEffect(() => {
-    if (activities.length <= 1) return
     const interval = setInterval(() => {
-      setSlideshowIndex((prev) => (prev + 1) % activities.length)
-    }, 5000) // Auto rotate photo every 5 seconds
+      setSlideshowIndex((prev) => (prev + 1) % gphotosSampleCovers.length)
+    }, 5000) // Auto-slideshow every 5 seconds for Google Photos
     return () => clearInterval(interval)
-  }, [activities.length])
+  }, [gphotosSampleCovers.length])
 
   return (
     <div className="container section">
       <div className="section-title">
         <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้</h2>
-        <p>ประมวลภาพกิจกรรม (สไลด์ภาพอัตโนมัติทุกๆ 5 วินาที พร้อมลิงก์ Google Photos)</p>
+        <p>รายละเอียดข้อความอยู่ใต้ภาพ / Google Photos ล็อค 4:3 พร้อมสไลด์ภาพอัตโนมัติ 5 วินาที</p>
       </div>
 
       <div className="media-card-grid">
         {activities.map((item, index) => {
-          const isCurrentActive = index === slideshowIndex
+          const isGPhotos = Boolean(item.albumUrl)
+          const displayImg = isGPhotos ? gphotosSampleCovers[slideshowIndex % gphotosSampleCovers.length] : (item.image || '/B1.jpg')
+
           return (
-            <div
-              key={item.id}
-              className="media-card"
-              style={{
-                borderColor: isCurrentActive ? 'var(--accent-gold)' : 'transparent',
-                boxShadow: isCurrentActive ? '0 14px 32px rgba(229, 146, 71, 0.3)' : undefined,
-              }}
-              onClick={() => openLightbox(activities, index)}
-            >
-              <img src={item.image || '/B1.jpg'} alt={item.title} className="media-card__bg" />
-              <div className="media-card__overlay">
-                <span className="media-card__category">กิจกรรม</span>
+            <div key={item.id} className="media-card">
+              {/* Image Box */}
+              <div
+                className="media-card__img-box"
+                onClick={() => openLightbox(activities, index)}
+              >
+                <img
+                  src={displayImg}
+                  alt={item.title}
+                  className={isGPhotos ? 'media-card__img-gphotos' : 'media-card__img-original'}
+                />
+                <div className="media-card__zoom-badge">
+                  <Maximize2 size={16} />
+                </div>
+              </div>
+
+              {/* Text Details Section UNDERNEATH */}
+              <div className="media-card__body">
+                <span className="media-card__category">
+                  {isGPhotos ? '📸 Google Photos อัลบั้ม (4:3)' : 'กิจกรรม'}
+                </span>
                 <h3 className="media-card__title">{item.title}</h3>
+                {item.description && <p className="media-card__desc">{item.description}</p>}
+
                 <div className="media-card__meta">
                   {item.date && (
                     <span>
@@ -724,21 +792,25 @@ function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox })
                     </span>
                   )}
                 </div>
-                <div className="media-card__footer">
-                  {item.albumUrl ? (
+
+                <div className="media-card__action">
+                  {isGPhotos ? (
                     <a
                       href={item.albumUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="media-card__btn"
-                      onClick={(e) => e.stopPropagation()}
                     >
-                      <ExternalLink size={14} /> ดูอัลบั้ม Google Photos
+                      <ExternalLink size={14} /> เปิดอัลบั้ม Google Photos
                     </a>
                   ) : (
-                    <span className="media-card__btn">
+                    <button
+                      type="button"
+                      className="media-card__btn"
+                      onClick={() => openLightbox(activities, index)}
+                    >
                       ขยายภาพ <Maximize2 size={14} />
-                    </span>
+                    </button>
                   )}
                 </div>
               </div>
@@ -780,7 +852,7 @@ function PaView() {
   )
 }
 
-/* DEDICATED ADMIN PAGE WITH GITHUB DIRECT SYNC, DRAG REORDERING & EDIT/DELETE */
+/* DEDICATED ADMIN PAGE */
 function DedicatedAdminPage({
   isLoggedIn,
   onLoginSuccess,
@@ -797,7 +869,6 @@ function DedicatedAdminPage({
 
   const [adminTab, setAdminTab] = useState('achievements_list')
 
-  // Achievement Form State (Add / Edit)
   const [editingAchId, setEditingAchId] = useState(null)
   const [achOwner, setAchOwner] = useState('นายนิรุทธิ์ เสวะนา')
   const [achTitle, setAchTitle] = useState('')
@@ -806,7 +877,6 @@ function DedicatedAdminPage({
   const [achDesc, setAchDesc] = useState('')
   const [achImg, setAchImg] = useState('/B1.jpg')
 
-  // Activity Form State (Add / Edit)
   const [editingActId, setEditingActId] = useState(null)
   const [actTitle, setActTitle] = useState('')
   const [actDate, setActDate] = useState(new Date().toISOString().split('T')[0])
@@ -815,12 +885,10 @@ function DedicatedAdminPage({
   const [actDesc, setActDesc] = useState('')
   const [actImg, setActImg] = useState('/B1.jpg')
 
-  // GitHub Sync Token State
   const [ghToken, setGhToken] = useState(() => localStorage.getItem('gh_sync_token') || '')
   const [isSyncing, setIsSyncing] = useState(false)
   const [syncMessage, setSyncMessage] = useState('')
 
-  // Drag State
   const [draggedIndex, setDraggedIndex] = useState(null)
 
   const handleLoginSubmit = (e) => {
@@ -832,12 +900,10 @@ function DedicatedAdminPage({
     }
   }
 
-  // Handle 10MB Image File Upload with Validation
   const handleImageFileUpload = (e, setImgCallback) => {
     const file = e.target.files[0]
     if (!file) return
 
-    // 10MB Limit Validation
     if (file.size > 10 * 1024 * 1024) {
       alert('ไฟล์รูปภาพมีขนาดเกิน 10MB! กรุณาเลือกไฟล์ภาพที่มีขนาดไม่เกิน 10MB')
       e.target.value = null
@@ -851,13 +917,11 @@ function DedicatedAdminPage({
     reader.readAsDataURL(file)
   }
 
-  // Save / Edit Achievement
   const handleSaveAchievement = (e) => {
     e.preventDefault()
     if (!achTitle) return
 
     if (editingAchId) {
-      // Edit mode
       setAchievements((prev) =>
         prev.map((item) =>
           item.id === editingAchId
@@ -876,7 +940,6 @@ function DedicatedAdminPage({
       setEditingAchId(null)
       alert('อัปเดตข้อมูลผลงานเรียบร้อยแล้ว!')
     } else {
-      // Add mode
       const newItem = {
         id: Date.now(),
         owner: achOwner || 'นายนิรุทธิ์ เสวะนา',
@@ -890,13 +953,11 @@ function DedicatedAdminPage({
       alert('เพิ่มผลงานใหม่เรียบร้อยแล้ว!')
     }
 
-    // Reset Form
     setAchTitle('')
     setAchDesc('')
     setAdminTab('achievements_list')
   }
 
-  // Edit Achievement Click
   const startEditAchievement = (item) => {
     setEditingAchId(item.id)
     setAchOwner(item.owner || 'นายนิรุทธิ์ เสวะนา')
@@ -908,14 +969,12 @@ function DedicatedAdminPage({
     setAdminTab('add_achievement')
   }
 
-  // Delete Achievement Click
   const deleteAchievement = (id) => {
     if (window.confirm('คุณต้องการลบผลงานนี้ใช่หรือไม่?')) {
       setAchievements((prev) => prev.filter((item) => item.id !== id))
     }
   }
 
-  // Reorder Achievements (Move Up / Down)
   const moveAchievement = (index, direction) => {
     const targetIndex = index + direction
     if (targetIndex < 0 || targetIndex >= achievements.length) return
@@ -926,7 +985,6 @@ function DedicatedAdminPage({
     setAchievements(newItems)
   }
 
-  // Save / Edit Activity
   const handleSaveActivity = (e) => {
     e.preventDefault()
     if (!actTitle) return
@@ -969,7 +1027,6 @@ function DedicatedAdminPage({
     setAdminTab('activities_list')
   }
 
-  // Edit Activity Click
   const startEditActivity = (item) => {
     setEditingActId(item.id)
     setActTitle(item.title || '')
@@ -981,14 +1038,12 @@ function DedicatedAdminPage({
     setAdminTab('add_activity')
   }
 
-  // Delete Activity Click
   const deleteActivity = (id) => {
     if (window.confirm('คุณต้องการลบภาพกิจกรรมนี้ใช่หรือไม่?')) {
       setActivities((prev) => prev.filter((item) => item.id !== id))
     }
   }
 
-  // Reorder Activities (Move Up / Down)
   const moveActivity = (index, direction) => {
     const targetIndex = index + direction
     if (targetIndex < 0 || targetIndex >= activities.length) return
@@ -999,7 +1054,6 @@ function DedicatedAdminPage({
     setActivities(newItems)
   }
 
-  // Direct GitHub Sync to Repository
   const handleGitHubSync = async () => {
     setIsSyncing(true)
     setSyncMessage('')
@@ -1009,19 +1063,16 @@ function DedicatedAdminPage({
       activities,
     }
 
-    // Save to localStorage
     localStorage.setItem('site_achievements', JSON.stringify(achievements))
     localStorage.setItem('site_activities', JSON.stringify(activities))
     if (ghToken) localStorage.setItem('gh_sync_token', ghToken)
 
-    // Trigger GitHub API Direct Commit if Token Available
     if (ghToken) {
       try {
         const repo = 'boasnirut/Site69'
         const filePath = 'public/data/siteData.json'
         const url = `https://api.github.com/repos/${repo}/contents/${filePath}`
 
-        // 1. Get SHA of existing file
         const getFile = await fetch(url, {
           headers: { Authorization: `token ${ghToken}` },
         })
@@ -1032,7 +1083,6 @@ function DedicatedAdminPage({
           sha = fileData.sha
         }
 
-        // 2. Put updated file to GitHub repo main branch
         const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(fullData, null, 2))))
         const putRes = await fetch(url, {
           method: 'PUT',
@@ -1346,7 +1396,7 @@ function DedicatedAdminPage({
                     <div className="admin-item-row__text">
                       <strong>{item.title}</strong>
                       <small>
-                        วันที่: {item.date || '-'} | สถานที่: {item.location || '-'}
+                        วันที่: {item.date || '-'} | สถานที่: {item.location || '-'} {item.albumUrl ? '| Google Photos (4:3)' : ''}
                       </small>
                     </div>
                   </div>
@@ -1448,7 +1498,7 @@ function DedicatedAdminPage({
             </div>
 
             <div className="admin-form-group">
-              <label>อัปโหลดภาพประกอบ (จำกัดไม่เกิน 10MB):</label>
+              <label>อัปโหลดภาพประกอบ (ยึดอัตราส่วนภาพต้นฉบับ - จำกัดไม่เกิน 10MB):</label>
               <input
                 type="file"
                 accept="image/*"
@@ -1536,13 +1586,13 @@ function DedicatedAdminPage({
             </div>
 
             <div className="admin-form-group">
-              <label>ลิงก์ไฟล์แนบ / Google Photos Album URL (สำหรับสไลด์ 5 วินาทีอัตโนมัติ):</label>
+              <label>ลิงก์ไฟล์แนบ / Google Photos Album URL (ล็อคอัตราส่วนภาพ 4:3 และสไลด์ 5 วินาที):</label>
               <input
                 type="url"
                 className="admin-input"
                 value={actAlbumUrl}
                 onChange={(e) => setActAlbumUrl(e.target.value)}
-                placeholder="https://photos.google.com/share/..."
+                placeholder="https://photos.app.goo.gl/..."
               />
             </div>
 
