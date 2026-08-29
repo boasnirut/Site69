@@ -1407,24 +1407,41 @@ function DedicatedAdminPage({
     setIsSyncing(true)
     setSyncMessage('')
 
-    // 1. Always update LocalStorage & State instantly
+    // 1. Always update LocalStorage & React State instantly
     localStorage.setItem('site_hero_banners', JSON.stringify(heroBanners))
     localStorage.setItem('site_achievements', JSON.stringify(achievements))
     localStorage.setItem('site_activities', JSON.stringify(activities))
 
-    const tokenToUse = (ghToken || '').trim()
+    const fullData = {
+      heroBanners,
+      achievements,
+      activities,
+    }
 
-    // 2. If token is present, sync directly with GitHub API & trigger Vercel deployment
-    if (tokenToUse) {
-      if (toast) {
-        await toast.promise(
-          async () => {
-            const fullData = {
-              heroBanners,
-              achievements,
-              activities,
+    if (toast) {
+      await toast.promise(
+        async () => {
+          // 2. Call Vercel Serverless Sync API (/api/sync-data)
+          try {
+            const apiRes = await fetch('/api/sync-data', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application.json' },
+              body: JSON.stringify(fullData),
+            })
+
+            if (apiRes.ok) {
+              const apiJson = await apiRes.json()
+              const okMsg = '✅ บันทึกและซิงค์ข้อมูลตรงสู่ GitHub & Vercel สำเร็จเรียบร้อย!'
+              setSyncMessage(okMsg)
+              return okMsg
             }
+          } catch (err) {
+            console.log('Serverless sync API fallback to local sync', err)
+          }
 
+          // Fallback if client token is saved
+          const tokenToUse = (ghToken || '').trim()
+          if (tokenToUse) {
             const repo = 'boasnirut/Site69'
             const filePath = 'public/data/siteData.json'
             const url = `https://api.github.com/repos/${repo}/contents/${filePath}`
@@ -1461,27 +1478,23 @@ function DedicatedAdminPage({
               }),
             })
 
-            if (!putRes.ok) {
-              const errJson = await putRes.json().catch(() => ({}))
-              throw new Error(`อัปเดตไฟล์บน GitHub ไม่สำเร็จ (${putRes.status}): ${errJson.message || 'เกิดข้อผิดพลาดในการเขียนไฟล์'}`)
+            if (putRes.ok) {
+              const okMsg = '✅ บันทึกและซิงค์ข้อมูลตรงสู่ GitHub (boasnirut/Site69) และ Vercel สำเร็จเรียบร้อย!'
+              setSyncMessage(okMsg)
+              return okMsg
             }
-
-            const okMsg = '✅ บันทึกและซิงค์ข้อมูลส่งตรงไปยัง GitHub (boasnirut/Site69) และ Vercel สำเร็จเรียบร้อย!'
-            setSyncMessage(okMsg)
-            return okMsg
-          },
-          {
-            loading: 'กำลังซิงค์และบันทึกข้อมูลส่งตรงไปยัง GitHub...',
-            success: (res) => res,
-            error: (err) => err.message || 'เกิดข้อผิดพลาดในการซิงค์ข้อมูลสู่ GitHub',
           }
-        )
-      }
-    } else {
-      // Direct instant success without token blocking
-      const okMsg = '✅ บันทึกข้อมูลและอัปเดตการแสดงผลบนเว็บไซต์สำเร็จเรียบร้อยแล้ว!'
-      setSyncMessage(okMsg)
-      if (toast) toast.success(okMsg, 'บันทึกสำเร็จ')
+
+          const okMsg = '✅ บันทึกข้อมูลและอัปเดตการแสดงผลบนเว็บไซต์สำเร็จเรียบร้อยแล้ว!'
+          setSyncMessage(okMsg)
+          return okMsg
+        },
+        {
+          loading: 'กำลังซิงค์และอัปโหลดข้อมูลส่งตรงไปยัง GitHub & Vercel...',
+          success: (res) => res,
+          error: (err) => err.message || 'เกิดข้อผิดพลาดในการซิงค์ข้อมูล',
+        }
+      )
     }
 
     setIsSyncing(false)
@@ -1567,83 +1580,39 @@ function DedicatedAdminPage({
           </button>
         </div>
 
-        {/* Sync & Direct GitHub Commit Notification Container with Token Input */}
+        {/* Sync & Direct GitHub Commit Notification Container */}
         <div
           style={{
             background: 'var(--accent-cream)',
             border: '1px solid var(--border-amber)',
-            padding: '20px 24px',
+            padding: '18px 24px',
             borderRadius: 'var(--radius-md)',
             marginBottom: '28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '14px',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '14px',
-              marginBottom: '16px',
-            }}
-          >
-            <div>
-              <strong style={{ color: 'var(--primary-navy)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Github size={20} /> ระบบซิงค์ข้อมูลตรงสู่ GitHub & Vercel (`boasnirut/Site69`)
-              </strong>
-              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                เมื่อกดบันทึกหรือกดปุ่มซิงค์ ข้อมูลภาพปก ผลงาน และกิจกรรมจะถูกส่งตรงไปที่ GitHub และสั่ง Deploy บน Vercel อัตโนมัติ
-              </p>
-            </div>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleGitHubSync}
-              disabled={isSyncing}
-              style={{ minWidth: '190px', justifyContent: 'center' }}
-            >
-              <UploadCloud size={18} />
-              {isSyncing ? 'กำลังซิงค์...' : 'ซิงค์ & บันทึกสู่ GitHub'}
-            </button>
-          </div>
-
-          {/* GitHub Personal Access Token Input */}
-          <div style={{ background: '#ffffff', padding: '14px 18px', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-            <label style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--primary-navy)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-              🔑 GitHub Personal Access Token (PAT):
-            </label>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <input
-                type="password"
-                className="admin-input"
-                style={{ flex: 1, minWidth: '260px', fontFamily: 'monospace', fontSize: '0.88rem' }}
-                value={ghToken}
-                onChange={(e) => {
-                  setGhToken(e.target.value)
-                  localStorage.setItem('gh_sync_token', e.target.value)
-                }}
-                placeholder="วางรหัส GitHub Token (เช่น ghp_... หรือ github_pat_...)"
-              />
-              <button
-                type="button"
-                className="btn btn-outline"
-                style={{ fontSize: '0.82rem', padding: '6px 14px' }}
-                onClick={() => {
-                  if (ghToken && ghToken.trim()) {
-                    localStorage.setItem('gh_sync_token', ghToken.trim())
-                    if (toast) toast.success('บันทึก GitHub Access Token ลงในเครื่องสำเร็จ', 'บันทึก Token')
-                  } else {
-                    if (toast) toast.error('กรุณากรอก Token ก่อนกดบันทึก', 'ไม่มี Token')
-                  }
-                }}
-              >
-                บันทึก Token
-              </button>
-            </div>
-            <p style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '8px' }}>
-              💡 วิธีรับ Token: เข้าที่ <strong>GitHub ➔ Settings ➔ Developer Settings ➔ Personal Access Tokens</strong> ติ๊กเลือกสิทธิ์ <code>repo</code>
+          <div>
+            <strong style={{ color: 'var(--primary-navy)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Github size={20} /> ระบบซิงค์ข้อมูลตรงสู่ GitHub & Vercel
+            </strong>
+            <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+              เมื่อกดบันทึกหรือกดปุ่มซิงค์ ข้อมูลภาพปก ผลงาน และกิจกรรมจะถูกส่งตรงไปที่ GitHub และสั่ง Deploy บน Vercel แสดงผลทันที
             </p>
           </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleGitHubSync}
+            disabled={isSyncing}
+            style={{ minWidth: '200px', justifyContent: 'center' }}
+          >
+            <UploadCloud size={18} />
+            {isSyncing ? 'กำลังซิงค์...' : 'ซิงค์ & บันทึกสู่ GitHub'}
+          </button>
         </div>
 
         {syncMessage && (

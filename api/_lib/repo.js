@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 
 const owner = process.env.GITHUB_OWNER || 'boasnirut'
-const repository = process.env.GITHUB_REPO || 'np'
+const repository = process.env.GITHUB_REPO || 'Site69'
 const branch = process.env.GITHUB_BRANCH || 'main'
 
 export class RepositoryConfigError extends Error {
