@@ -477,7 +477,7 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
         </div>
       </section>
 
-      {/* Section 2: ภาพกิจกรรม Cards with Real Google Photos Auto Extraction */}
+      {/* Section 2: ภาพกิจกรรม Cards with Real Google Photos Extraction */}
       <section className="section" style={{ backgroundColor: 'var(--bg-subtle)' }}>
         <div className="container">
           <div className="section-title">
@@ -706,7 +706,7 @@ function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox })
   )
 }
 
-/* CAROUSEL CARD COMPONENT WITH DYNAMIC GOOGLE PHOTOS ALBUM EXTRACTION */
+/* CAROUSEL CARD COMPONENT WITH DYNAMIC GOOGLE PHOTOS ALBUM EXTRACTION VIA CORS PROXIES */
 function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) {
   const isGPhotos = Boolean(item.albumUrl)
   
@@ -714,30 +714,15 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
   const [isLoadingGPhotos, setIsLoadingGPhotos] = useState(false)
   const [currentImgIndex, setCurrentImgIndex] = useState(0)
 
-  // Dynamically extract photos from Google Photos album URL
+  // Dynamically extract photos from Google Photos album URL using CORS proxy
   useEffect(() => {
     if (!item.albumUrl) return
 
     let isMounted = true
     setIsLoadingGPhotos(true)
 
-    // Call serverless api/gphotos endpoint or fallback to CORS proxy
     const extractPhotos = async () => {
-      try {
-        const apiRes = await fetch(`/api/gphotos?url=${encodeURIComponent(item.albumUrl)}`)
-        if (apiRes.ok) {
-          const data = await apiRes.json()
-          if (isMounted && data.images && data.images.length > 0) {
-            setGphotosImages(data.images)
-            setIsLoadingGPhotos(false)
-            return
-          }
-        }
-      } catch (e) {
-        console.warn('API fetch error, trying CORS proxy fallback...', e)
-      }
-
-      // Fallback CORS proxy extraction
+      // Proxy Strategy 1: allorigins raw proxy
       try {
         const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(item.albumUrl)}`
         const proxyRes = await fetch(proxyUrl)
@@ -752,10 +737,33 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
           )
           if (isMounted && cleanImages.length > 0) {
             setGphotosImages(cleanImages)
+            setIsLoadingGPhotos(false)
+            return
           }
         }
       } catch (err) {
-        console.error('Failed to extract Google Photos via proxy:', err)
+        console.warn('Proxy 1 fetch error, trying Proxy 2...', err)
+      }
+
+      // Proxy Strategy 2: corsproxy.io fallback
+      try {
+        const proxyUrl2 = `https://corsproxy.io/?${encodeURIComponent(item.albumUrl)}`
+        const proxyRes2 = await fetch(proxyUrl2)
+        if (proxyRes2.ok) {
+          const html2 = await proxyRes2.text()
+          const matches2 =
+            html2.match(/https:\/\/lh3\.googleusercontent\.com\/pw\/[a-zA-Z0-9_\-]+/gi) ||
+            html2.match(/https:\/\/lh3\.googleusercontent\.com\/[a-zA-Z0-9_\-]+/gi) ||
+            []
+          const cleanImages2 = Array.from(new Set(matches2)).map(
+            (u) => u.replace(/=w\d+-h\d+.*$/, '') + '=w1000-h750-no'
+          )
+          if (isMounted && cleanImages2.length > 0) {
+            setGphotosImages(cleanImages2)
+          }
+        }
+      } catch (err2) {
+        console.error('Failed to extract Google Photos via proxy 2:', err2)
       } finally {
         if (isMounted) setIsLoadingGPhotos(false)
       }
