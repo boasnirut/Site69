@@ -2,46 +2,9 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "functions": {
-    "api/**/*.js": {
-      "includeFiles": "data/**"
-    }
-  },
   "rewrites": [
     {
-      "source": "/login",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/register",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/about/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/operations/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/news/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/services/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/achievements",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/contact",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
