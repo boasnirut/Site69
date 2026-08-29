@@ -330,9 +330,18 @@ function Header({ menuOpen, setMenuOpen }) {
             </span>
           </a>
 
-          <div className="desktop-nav-wrapper hidden md:flex items-center">
-            <AnimatedTabBar currentPath={currentPath} />
-          </div>
+          <nav className="desktop-nav" aria-label="เมนูหลัก">
+            {navItems.map((item) => (
+              <a
+                className={isItemActive(item) ? 'is-active' : ''}
+                key={item.href}
+                href={item.href}
+                onClick={closeMenu}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
 
           <a className="header-contact" href="/login" onClick={closeMenu}>
             เข้าสู่ระบบ
@@ -417,34 +426,33 @@ function Hero() {
           <div className="hero__content">
             <div className="hero__badge">
               <Sparkles size={16} aria-hidden="true" />
-              พื้นที่แห่งการเรียนรู้ของชุมชน
+              ศูนย์รวมการจัดการเรียนรู้ดิจิทัล
             </div>
             <AutoFitText as="p" className="hero__kicker">
-              WELCOME TO BANNAMPORN SCHOOL
+              NIRUT SEWANA PORTFOLIO & DIGITAL HUB
             </AutoFitText>
             <h1>
               <AutoFitText as="span" className="hero__title-line" minSize={20}>
-                เรียนรู้อย่างมีความสุข
+                นิรุทธิ์ เสวะนา
               </AutoFitText>
               <AutoFitText
                 as="span"
                 className="hero__title-line hero__title-line--accent"
                 minSize={20}
               >
-                เติบโตอย่างมีคุณภาพ
+                Nirut Sewana
               </AutoFitText>
             </h1>
             <AutoFitText as="p" className="hero__lead" minSize={6}>
-              เปิดสอนตั้งแต่ชั้นอนุบาล 2 - ม.3 เป็นโรงเรียนขยายโอกาส
-              สังกัดสำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1
+              ศูนย์รวมข้อมูลสารสนเทศการจัดการเรียนรู้ สื่อดิจิทัล งานประจำชั้น และการพัฒนางานตามข้อตกลง (PA)
             </AutoFitText>
             <div className="hero__actions">
-              <a className="button button--gold" href="#news">
-                ดูข่าวสารล่าสุด
+              <a className="button button--gold" href="/classroom">
+                ห้องเรียนออนไลน์
                 <ArrowRight size={19} aria-hidden="true" />
               </a>
-              <a className="button button--ghost" href="#about">
-                รู้จักโรงเรียน
+              <a className="button button--ghost" href="/pa">
+                ข้อตกลง PA
               </a>
             </div>
             <div className="hero__trust">
@@ -457,12 +465,11 @@ function Hero() {
             </div>
           </div>
 
-          <div className="hero__visual" aria-label="ตราสัญลักษณ์โรงเรียนบ้านน้ำพร">
+          <div className="hero__visual" aria-label="นิรุทธิ์ เสวะนา">
             <div className="hero__ring hero__ring--outer" />
             <div className="hero__ring hero__ring--inner" />
-            <div className="hero__logo-card">
-              <div className="hero__logo-glow" />
-              <img src="/np.png" alt="ตราสัญลักษณ์โรงเรียนบ้านน้ำพร" />
+            <div className="hero__logo-card" style={{ background: 'transparent', boxShadow: 'none', border: 'none' }}>
+              <img src="/boasnirut.png" alt="นิรุทธิ์ เสวะนา" style={{ objectFit: 'contain', width: 'auto', height: '100%', maxHeight: '420px' }} />
             </div>
             <div className="hero__floating hero__floating--top">
               <span className="hero__floating-icon">
@@ -3532,7 +3539,21 @@ function App() {
     <>
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       {isHome ? (
-        <LandingPage />
+        <>
+          <Hero />
+          <Billboard slides={pageSlides.billboard} />
+          <About />
+          <Achievements awards={publicContent.awards} />
+          <HomeOperations />
+          <SarDocuments documents={publicContent.sarDocuments} compact />
+          <News liveNews={publicContent.news} />
+          <Newsletters newsletters={publicContent.newsletters} />
+          <PublicVideos news={publicContent.news} compact />
+          <Activities liveEvents={publicContent.events} />
+          <Services />
+          <DirectorMessage />
+          <Contact />
+        </>
       ) : (
         <main className="subpage-main">
           <PublicSubPage path={path} publicContent={publicContent} />
