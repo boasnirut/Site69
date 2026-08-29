@@ -37,7 +37,7 @@
   line-height: 1.6;
 }
 
-/* 5. Unified Font Family Across All Elements, Buttons, Inputs & Forms */
+/* Unified Font Family Across All Elements, Buttons, Inputs & Forms */
 *, *::before, *::after, input, select, textarea, button, label, optgroup, option {
   font-family: 'Anuphan', system-ui, -apple-system, sans-serif !important;
   box-sizing: border-box;
@@ -370,7 +370,7 @@ body {
   font-size: 1rem;
 }
 
-/* 16:9 Card Design Grid (Matching media_1787991226220.png) */
+/* 16:9 Card Design Grid */
 .media-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -442,6 +442,22 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.media-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.media-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .media-card__footer {
@@ -563,7 +579,7 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Dedicated Admin Page Card Styling */
+/* Dedicated Admin Page Card & Drag-and-Drop Item List */
 .admin-page-card {
   background: #ffffff;
   border-radius: var(--radius-lg);
@@ -614,6 +630,7 @@ body {
   font-size: 0.95rem;
   outline: none;
   transition: all 0.2s ease;
+  background: #ffffff;
 }
 
 .admin-input:focus {
@@ -632,23 +649,97 @@ body {
   margin-bottom: 16px;
 }
 
-.delete-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(239, 68, 68, 0.85);
-  color: #ffffff;
-  border: none;
-  padding: 8px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 10;
+/* Admin Item Drag-and-Drop List */
+.admin-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.admin-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-subtle);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  gap: 16px;
   transition: all 0.2s ease;
 }
 
-.delete-btn:hover {
+.admin-item-row:hover {
+  background: #ffffff;
+  border-color: var(--accent-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-item-row__info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-grow: 1;
+}
+
+.admin-item-row__drag {
+  cursor: grab;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+}
+
+.admin-item-row__img {
+  width: 60px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.admin-item-row__text strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--primary-navy);
+}
+
+.admin-item-row__text small {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.admin-item-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-action-btn {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.admin-action-btn:hover {
+  border-color: var(--primary-navy);
+  color: var(--primary-navy);
+}
+
+.admin-action-btn.delete {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.admin-action-btn.delete:hover {
   background: #ef4444;
-  transform: scale(1.1);
+  color: #ffffff;
 }
 
 /* Lightbox Fullscreen Modal with Zoom & Pan */
@@ -808,5 +899,10 @@ body {
 
   .media-card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-item-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

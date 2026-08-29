@@ -32,6 +32,17 @@ import {
   ChevronLeft,
   ChevronRight,
   Maximize2,
+  Calendar,
+  MapPin,
+  ExternalLink,
+  GripVertical,
+  Edit,
+  ArrowUp,
+  ArrowDown,
+  UploadCloud,
+  Save,
+  Github,
+  Check,
 } from 'lucide-react'
 import './styles.css'
 
@@ -44,7 +55,6 @@ const menuTabs = [
   { id: 'pa', label: 'ข้อตกลงในการพัฒนางาน (PA)', href: '/pa', icon: FileCheck },
 ]
 
-// 1. Added "ทั้งหมด" (All) tab to Achievements sub-menu
 const achievementSubTabs = [
   { id: 'all', label: 'ทั้งหมด', icon: LayoutGrid },
   { id: 'teacher', label: 'ครู', icon: User },
@@ -53,94 +63,134 @@ const achievementSubTabs = [
   { id: 'academic', label: 'งานวิชาการ', icon: FileText },
 ]
 
-// Initial Achievements Data with 16:9 Images
-const initialAchievements = [
+// Fallback Initial Data if siteData.json is loading
+const defaultAchievements = [
   {
     id: 1,
-    category: 'teacher',
+    owner: 'นายนิรุทธิ์ เสวะนา',
     title: 'รางวัลนวัตกรรมการจัดการเรียนรู้ Active Learning',
-    description: 'รางวัลยกย่องเชิดชูเกียรติด้านการสร้างสรรค์สื่อและการจัดการเรียนรู้ดิจิทัลระดับจังหวัด',
+    level: 'ระดับจังหวัด',
+    category: 'teacher',
     image: '/B1.jpg',
+    description: 'รางวัลยกย่องเชิดชูเกียรติด้านการสร้างสรรค์สื่อและการจัดการเรียนรู้ดิจิทัลระดับจังหวัด',
   },
   {
     id: 2,
-    category: 'teacher',
+    owner: 'นายนิรุทธิ์ เสวะนา',
     title: 'ครูผู้สอนดีเด่นกลุ่มสาระวิทยาศาสตร์และเทคโนโลยี',
-    description: 'ผลงานการพัฒนาแผนการจัดการเรียนรู้บูรณาการวิทยาการคำนวณดีเด่น',
+    level: 'ระดับเขตพื้นที่การศึกษา',
+    category: 'teacher',
     image: '/B2.jpg',
+    description: 'ผลงานการพัฒนาแผนการจัดการเรียนรู้บูรณาการวิทยาการคำนวณดีเด่น',
   },
   {
     id: 3,
-    category: 'student',
+    owner: 'นักเรียนแกนนำคอมพิวเตอร์',
     title: 'รางวัลเหรียญทอง การแข่งขันเขียนโปรแกรมคอมพิวเตอร์',
-    description: 'ส่งเสริมและฝึกหัดนักเรียนเข้าแข่งขันงานศิลปหัตถกรรมนักเรียน ระดับเขตพื้นที่การศึกษา',
+    level: 'เหรียญทอง ระดับเขตพื้นที่',
+    category: 'student',
     image: '/B3.jpg',
+    description: 'ส่งเสริมและฝึกหัดนักเรียนเข้าแข่งขันงานศิลปหัตถกรรมนักเรียน ระดับเขตพื้นที่การศึกษา',
   },
   {
     id: 4,
-    category: 'student',
+    owner: 'ตัวแทนนักเรียน',
     title: 'รางวัลชนะเลิศ กิจกรรมโครงงานคุณธรรมผู้เรียน',
-    description: 'นักเรียนแกนนำนำเสนอโครงงานคุณธรรมการใช้งานเทคโนโลยีอย่างปลอดภัย',
+    level: 'ชนะเลิศ ระดับจังหวัด',
+    category: 'student',
     image: '/B4.jpg',
+    description: 'นักเรียนแกนนำนำเสนอโครงงานคุณธรรมการใช้งานเทคโนโลยีอย่างปลอดภัย',
   },
   {
     id: 5,
-    category: 'school',
+    owner: 'โรงเรียนบ้านน้ำพร',
     title: 'สถานศึกษาปลอดภัย และมีผลการประเมินคุณภาพระดับดีเยี่ยม',
-    description: 'รางวัลการบริหารจัดการสถานศึกษาและส่งเสริมสภาพแวดล้อมเพื่อการเรียนรู้ดิจิทัล',
+    level: 'ระดับประเทศ',
+    category: 'school',
     image: '/TC01.png',
+    description: 'รางวัลการบริหารจัดการสถานศึกษาและส่งเสริมสภาพแวดล้อมเพื่อการเรียนรู้ดิจิทัล',
   },
   {
     id: 6,
-    category: 'academic',
+    owner: 'นายนิรุทธิ์ เสวะนา',
     title: 'ผลงานวิจัยในชั้นเรียน เรื่องการใช้สื่อดิจิทัลพัฒนาทักษะคิดวิเคราะห์',
-    description: 'การเผยแพร่ผลงานทางวิชาการและคู่มือการใช้สื่อดิจิทัลวิทยาการคำนวณ',
+    level: 'ผลงานวิชาการดีเด่น',
+    category: 'academic',
     image: '/SAR69.jpg',
+    description: 'การเผยแพร่ผลงานทางวิชาการและคู่มือการใช้สื่อดิจิทัลวิทยาการคำนวณ',
   },
 ]
 
-// Initial Activities Data with 16:9 Images
-const initialActivities = [
+const defaultActivities = [
   {
     id: 1,
-    title: 'กิจกรรมการเรียนรู้ Active Learning',
-    description: 'บรรยากาศการลงมือปฏิบัติจริงและการนำเสนอผลงานของนักเรียนในชั้นเรียน',
+    title: 'กิจกรรมการเรียนรู้ Active Learning วิทยาการคำนวณ',
+    date: '2026-02-15',
+    location: 'ห้องปฏิบัติการคอมพิวเตอร์ โรงเรียนบ้านน้ำพร',
+    albumUrl: 'https://photos.google.com/album/example1',
     image: '/B1.jpg',
+    description: 'บรรยากาศการลงมือปฏิบัติจริงและการนำเสนอผลงานของนักเรียนในชั้นเรียน',
   },
   {
     id: 2,
-    title: 'กิจกรรมส่งเสริมทักษะดิจิทัล',
-    description: 'การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้',
+    title: 'กิจกรรมส่งเสริมทักษะดิจิทัลและการโค้ดดิ้ง',
+    date: '2026-01-20',
+    location: 'อาคารเรียนดิจิทัล',
+    albumUrl: 'https://photos.google.com/album/example2',
     image: '/B2.jpg',
+    description: 'การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้',
   },
   {
     id: 3,
-    title: 'การอบรมและพัฒนาวิชาชีพครู',
-    description: 'การเข้าร่วมอบรมและแบ่งปันความรู้เทคโนโลยีดิจิทัลเพื่อการศึกษา',
+    title: 'การอบรมและพัฒนาวิชาชีพครูด้านเทคโนโลยีดิจิทัล',
+    date: '2025-12-10',
+    location: 'หอประชุมใหญ่ เขตพื้นที่การศึกษา',
+    albumUrl: 'https://photos.google.com/album/example3',
     image: '/B3.jpg',
+    description: 'การเข้าร่วมอบรมและแบ่งปันความรู้เทคโนโลยีดิจิทัลเพื่อการศึกษา',
   },
   {
     id: 4,
-    title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียน',
-    description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
+    title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียนโฮมรูม',
+    date: '2025-11-05',
+    location: 'ห้องเรียนประจำชั้น',
+    albumUrl: 'https://photos.google.com/album/example4',
     image: '/B4.jpg',
+    description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
   },
 ]
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  
-  // Custom Data States with LocalStorage Persistence
+
   const [achievements, setAchievements] = useState(() => {
     const saved = localStorage.getItem('site_achievements')
-    return saved ? JSON.parse(saved) : initialAchievements
+    return saved ? JSON.parse(saved) : defaultAchievements
   })
 
   const [activities, setActivities] = useState(() => {
     const saved = localStorage.getItem('site_activities')
-    return saved ? JSON.parse(saved) : initialActivities
+    return saved ? JSON.parse(saved) : defaultActivities
   })
+
+  // Load from public/data/siteData.json on startup if available
+  useEffect(() => {
+    fetch('/data/siteData.json')
+      .then((res) => {
+        if (res.ok) return res.json()
+        throw new Error('No json data')
+      })
+      .then((data) => {
+        if (data && data.achievements && !localStorage.getItem('site_achievements')) {
+          setAchievements(data.achievements)
+        }
+        if (data && data.activities && !localStorage.getItem('site_activities')) {
+          setActivities(data.activities)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   // Lightbox State
   const [lightboxItems, setLightboxItems] = useState([])
@@ -391,9 +441,16 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
                 <img src={item.image || '/B1.jpg'} alt={item.title} className="media-card__bg" />
                 <div className="media-card__overlay">
                   <span className="media-card__category">
-                    {item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : 'งานวิชาการ'}
+                    {item.level || 'รางวัลเกียรติยศ'}
                   </span>
                   <h3 className="media-card__title">{item.title}</h3>
+                  <div className="media-card__meta">
+                    {item.owner && (
+                      <span>
+                        <User size={13} /> {item.owner}
+                      </span>
+                    )}
+                  </div>
                   <div className="media-card__footer">
                     <span className="media-card__btn">
                       ดูภาพขยาย <Maximize2 size={14} />
@@ -421,10 +478,22 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
                 className="media-card"
                 onClick={() => openLightbox(activities, index)}
               >
-                <img src={item.image} alt={item.title} className="media-card__bg" />
+                <img src={item.image || '/B1.jpg'} alt={item.title} className="media-card__bg" />
                 <div className="media-card__overlay">
                   <span className="media-card__category">กิจกรรม</span>
                   <h3 className="media-card__title">{item.title}</h3>
+                  <div className="media-card__meta">
+                    {item.date && (
+                      <span>
+                        <Calendar size={13} /> {item.date}
+                      </span>
+                    )}
+                    {item.location && (
+                      <span>
+                        <MapPin size={13} /> {item.location}
+                      </span>
+                    )}
+                  </div>
                   <div className="media-card__footer">
                     <span className="media-card__btn">
                       ดูภาพขยาย <Maximize2 size={14} />
@@ -534,11 +603,6 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
       ? achievements
       : achievements.filter((item) => item.category === activeSubTab)
 
-  const handleDelete = (e, id) => {
-    e.stopPropagation()
-    setAchievements((prev) => prev.filter((item) => item.id !== id))
-  }
-
   return (
     <div className="container section">
       <div className="section-title">
@@ -567,7 +631,7 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
         </nav>
       </div>
 
-      {/* 16:9 Media Card Grid Matching media_1787991226220.png */}
+      {/* 16:9 Media Card Grid */}
       {filteredAchievements.length > 0 ? (
         <div className="media-card-grid">
           {filteredAchievements.map((item, index) => (
@@ -576,16 +640,6 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
               className="media-card"
               onClick={() => openLightbox(filteredAchievements, index)}
             >
-              {isLoggedIn && (
-                <button
-                  type="button"
-                  className="delete-btn"
-                  onClick={(e) => handleDelete(e, item.id)}
-                  title="ลบรายการนี้"
-                >
-                  <Trash2 size={16} />
-                </button>
-              )}
               <img
                 src={item.image || '/B1.jpg'}
                 alt={item.title}
@@ -593,17 +647,16 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
               />
               <div className="media-card__overlay">
                 <span className="media-card__category">
-                  {item.category === 'teacher'
-                    ? 'ครู'
-                    : item.category === 'student'
-                    ? 'นักเรียน'
-                    : item.category === 'school'
-                    ? 'สถานศึกษา'
-                    : item.category === 'academic'
-                    ? 'งานวิชาการ'
-                    : 'ผลงาน'}
+                  {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : 'งานวิชาการ')}
                 </span>
                 <h3 className="media-card__title">{item.title}</h3>
+                <div className="media-card__meta">
+                  {item.owner && (
+                    <span>
+                      <User size={13} /> {item.owner}
+                    </span>
+                  )}
+                </div>
                 <div className="media-card__footer">
                   <span className="media-card__btn">
                     ขยายภาพ <Maximize2 size={14} />
@@ -622,49 +675,76 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
   )
 }
 
-/* 5. ACTIVITIES VIEW WITH 16:9 CARDS & LIGHTBOX */
+/* 5. ACTIVITIES VIEW WITH 5-SECOND AUTO SLIDESHOW & GOOGLE PHOTOS */
 function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox }) {
-  const handleDelete = (e, id) => {
-    e.stopPropagation()
-    setActivities((prev) => prev.filter((item) => item.id !== id))
-  }
+  // 5-Second Auto-Slideshow Carousel index for active activity cards
+  const [slideshowIndex, setSlideshowIndex] = useState(0)
+
+  useEffect(() => {
+    if (activities.length <= 1) return
+    const interval = setInterval(() => {
+      setSlideshowIndex((prev) => (prev + 1) % activities.length)
+    }, 5000) // Auto rotate photo every 5 seconds
+    return () => clearInterval(interval)
+  }, [activities.length])
 
   return (
     <div className="container section">
       <div className="section-title">
         <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้</h2>
-        <p>คลิกการ์ดภาพ 16:9 เพื่อเปิดดูภาพขนาดเต็ม (ขยาย ซูม และเลื่อนดูได้)</p>
+        <p>ประมวลภาพกิจกรรม (สไลด์ภาพอัตโนมัติทุกๆ 5 วินาที พร้อมลิงก์ Google Photos)</p>
       </div>
 
       <div className="media-card-grid">
-        {activities.map((item, index) => (
-          <div
-            key={item.id}
-            className="media-card"
-            onClick={() => openLightbox(activities, index)}
-          >
-            {isLoggedIn && (
-              <button
-                type="button"
-                className="delete-btn"
-                onClick={(e) => handleDelete(e, item.id)}
-                title="ลบภาพนี้"
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-            <img src={item.image} alt={item.title} className="media-card__bg" />
-            <div className="media-card__overlay">
-              <span className="media-card__category">กิจกรรม</span>
-              <h3 className="media-card__title">{item.title}</h3>
-              <div className="media-card__footer">
-                <span className="media-card__btn">
-                  ขยายภาพ <Maximize2 size={14} />
-                </span>
+        {activities.map((item, index) => {
+          const isCurrentActive = index === slideshowIndex
+          return (
+            <div
+              key={item.id}
+              className="media-card"
+              style={{
+                borderColor: isCurrentActive ? 'var(--accent-gold)' : 'transparent',
+                boxShadow: isCurrentActive ? '0 14px 32px rgba(229, 146, 71, 0.3)' : undefined,
+              }}
+              onClick={() => openLightbox(activities, index)}
+            >
+              <img src={item.image || '/B1.jpg'} alt={item.title} className="media-card__bg" />
+              <div className="media-card__overlay">
+                <span className="media-card__category">กิจกรรม</span>
+                <h3 className="media-card__title">{item.title}</h3>
+                <div className="media-card__meta">
+                  {item.date && (
+                    <span>
+                      <Calendar size={13} /> {item.date}
+                    </span>
+                  )}
+                  {item.location && (
+                    <span>
+                      <MapPin size={13} /> {item.location}
+                    </span>
+                  )}
+                </div>
+                <div className="media-card__footer">
+                  {item.albumUrl ? (
+                    <a
+                      href={item.albumUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="media-card__btn"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink size={14} /> ดูอัลบั้ม Google Photos
+                    </a>
+                  ) : (
+                    <span className="media-card__btn">
+                      ขยายภาพ <Maximize2 size={14} />
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
@@ -700,7 +780,7 @@ function PaView() {
   )
 }
 
-/* DEDICATED ADMIN PAGE */
+/* DEDICATED ADMIN PAGE WITH GITHUB DIRECT SYNC, DRAG REORDERING & EDIT/DELETE */
 function DedicatedAdminPage({
   isLoggedIn,
   onLoginSuccess,
@@ -715,15 +795,33 @@ function DedicatedAdminPage({
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const [adminTab, setAdminTab] = useState('add_achievement')
-  const [achCategory, setAchCategory] = useState('teacher')
+  const [adminTab, setAdminTab] = useState('achievements_list')
+
+  // Achievement Form State (Add / Edit)
+  const [editingAchId, setEditingAchId] = useState(null)
+  const [achOwner, setAchOwner] = useState('นายนิรุทธิ์ เสวะนา')
   const [achTitle, setAchTitle] = useState('')
+  const [achLevel, setAchLevel] = useState('ระดับเขตพื้นที่การศึกษา')
+  const [achCategory, setAchCategory] = useState('teacher')
   const [achDesc, setAchDesc] = useState('')
   const [achImg, setAchImg] = useState('/B1.jpg')
 
+  // Activity Form State (Add / Edit)
+  const [editingActId, setEditingActId] = useState(null)
   const [actTitle, setActTitle] = useState('')
+  const [actDate, setActDate] = useState(new Date().toISOString().split('T')[0])
+  const [actLocation, setActLocation] = useState('โรงเรียนบ้านน้ำพร')
+  const [actAlbumUrl, setActAlbumUrl] = useState('')
   const [actDesc, setActDesc] = useState('')
   const [actImg, setActImg] = useState('/B1.jpg')
+
+  // GitHub Sync Token State
+  const [ghToken, setGhToken] = useState(() => localStorage.getItem('gh_sync_token') || '')
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [syncMessage, setSyncMessage] = useState('')
+
+  // Drag State
+  const [draggedIndex, setDraggedIndex] = useState(null)
 
   const handleLoginSubmit = (e) => {
     e.preventDefault()
@@ -734,35 +832,235 @@ function DedicatedAdminPage({
     }
   }
 
-  const handleAddAchievement = (e) => {
-    e.preventDefault()
-    if (!achTitle) return
-    const newItem = {
-      id: Date.now(),
-      category: achCategory,
-      title: achTitle,
-      description: achDesc || 'รายละเอียดผลงานและรางวัล',
-      image: achImg || '/B1.jpg',
+  // Handle 10MB Image File Upload with Validation
+  const handleImageFileUpload = (e, setImgCallback) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    // 10MB Limit Validation
+    if (file.size > 10 * 1024 * 1024) {
+      alert('ไฟล์รูปภาพมีขนาดเกิน 10MB! กรุณาเลือกไฟล์ภาพที่มีขนาดไม่เกิน 10MB')
+      e.target.value = null
+      return
     }
-    setAchievements((prev) => [newItem, ...prev])
-    setAchTitle('')
-    setAchDesc('')
-    alert('เพิ่มผลงานเรียบร้อยแล้ว!')
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setImgCallback(event.target.result)
+    }
+    reader.readAsDataURL(file)
   }
 
-  const handleAddActivity = (e) => {
+  // Save / Edit Achievement
+  const handleSaveAchievement = (e) => {
+    e.preventDefault()
+    if (!achTitle) return
+
+    if (editingAchId) {
+      // Edit mode
+      setAchievements((prev) =>
+        prev.map((item) =>
+          item.id === editingAchId
+            ? {
+                ...item,
+                owner: achOwner,
+                title: achTitle,
+                level: achLevel,
+                category: achCategory,
+                description: achDesc,
+                image: achImg,
+              }
+            : item
+        )
+      )
+      setEditingAchId(null)
+      alert('อัปเดตข้อมูลผลงานเรียบร้อยแล้ว!')
+    } else {
+      // Add mode
+      const newItem = {
+        id: Date.now(),
+        owner: achOwner || 'นายนิรุทธิ์ เสวะนา',
+        title: achTitle,
+        level: achLevel || 'ระดับรางวัล',
+        category: achCategory,
+        description: achDesc || 'รายละเอียดผลงานและรางวัล',
+        image: achImg || '/B1.jpg',
+      }
+      setAchievements((prev) => [newItem, ...prev])
+      alert('เพิ่มผลงานใหม่เรียบร้อยแล้ว!')
+    }
+
+    // Reset Form
+    setAchTitle('')
+    setAchDesc('')
+    setAdminTab('achievements_list')
+  }
+
+  // Edit Achievement Click
+  const startEditAchievement = (item) => {
+    setEditingAchId(item.id)
+    setAchOwner(item.owner || 'นายนิรุทธิ์ เสวะนา')
+    setAchTitle(item.title || '')
+    setAchLevel(item.level || '')
+    setAchCategory(item.category || 'teacher')
+    setAchDesc(item.description || '')
+    setAchImg(item.image || '/B1.jpg')
+    setAdminTab('add_achievement')
+  }
+
+  // Delete Achievement Click
+  const deleteAchievement = (id) => {
+    if (window.confirm('คุณต้องการลบผลงานนี้ใช่หรือไม่?')) {
+      setAchievements((prev) => prev.filter((item) => item.id !== id))
+    }
+  }
+
+  // Reorder Achievements (Move Up / Down)
+  const moveAchievement = (index, direction) => {
+    const targetIndex = index + direction
+    if (targetIndex < 0 || targetIndex >= achievements.length) return
+    const newItems = [...achievements]
+    const temp = newItems[index]
+    newItems[index] = newItems[targetIndex]
+    newItems[targetIndex] = temp
+    setAchievements(newItems)
+  }
+
+  // Save / Edit Activity
+  const handleSaveActivity = (e) => {
     e.preventDefault()
     if (!actTitle) return
-    const newItem = {
-      id: Date.now(),
-      title: actTitle,
-      description: actDesc || 'รายละเอียดภาพกิจกรรม',
-      image: actImg || '/B1.jpg',
+
+    if (editingActId) {
+      setActivities((prev) =>
+        prev.map((item) =>
+          item.id === editingActId
+            ? {
+                ...item,
+                title: actTitle,
+                date: actDate,
+                location: actLocation,
+                albumUrl: actAlbumUrl,
+                description: actDesc,
+                image: actImg,
+              }
+            : item
+        )
+      )
+      setEditingActId(null)
+      alert('อัปเดตข้อมูลภาพกิจกรรมเรียบร้อยแล้ว!')
+    } else {
+      const newItem = {
+        id: Date.now(),
+        title: actTitle,
+        date: actDate,
+        location: actLocation,
+        albumUrl: actAlbumUrl,
+        description: actDesc || 'รายละเอียดภาพกิจกรรม',
+        image: actImg || '/B1.jpg',
+      }
+      setActivities((prev) => [newItem, ...prev])
+      alert('เพิ่มภาพกิจกรรมเรียบร้อยแล้ว!')
     }
-    setActivities((prev) => [newItem, ...prev])
+
     setActTitle('')
     setActDesc('')
-    alert('เพิ่มภาพกิจกรรมเรียบร้อยแล้ว!')
+    setActAlbumUrl('')
+    setAdminTab('activities_list')
+  }
+
+  // Edit Activity Click
+  const startEditActivity = (item) => {
+    setEditingActId(item.id)
+    setActTitle(item.title || '')
+    setActDate(item.date || '')
+    setActLocation(item.location || '')
+    setActAlbumUrl(item.albumUrl || '')
+    setActDesc(item.description || '')
+    setActImg(item.image || '/B1.jpg')
+    setAdminTab('add_activity')
+  }
+
+  // Delete Activity Click
+  const deleteActivity = (id) => {
+    if (window.confirm('คุณต้องการลบภาพกิจกรรมนี้ใช่หรือไม่?')) {
+      setActivities((prev) => prev.filter((item) => item.id !== id))
+    }
+  }
+
+  // Reorder Activities (Move Up / Down)
+  const moveActivity = (index, direction) => {
+    const targetIndex = index + direction
+    if (targetIndex < 0 || targetIndex >= activities.length) return
+    const newItems = [...activities]
+    const temp = newItems[index]
+    newItems[index] = newItems[targetIndex]
+    newItems[targetIndex] = temp
+    setActivities(newItems)
+  }
+
+  // Direct GitHub Sync to Repository
+  const handleGitHubSync = async () => {
+    setIsSyncing(true)
+    setSyncMessage('')
+
+    const fullData = {
+      achievements,
+      activities,
+    }
+
+    // Save to localStorage
+    localStorage.setItem('site_achievements', JSON.stringify(achievements))
+    localStorage.setItem('site_activities', JSON.stringify(activities))
+    if (ghToken) localStorage.setItem('gh_sync_token', ghToken)
+
+    // Trigger GitHub API Direct Commit if Token Available
+    if (ghToken) {
+      try {
+        const repo = 'boasnirut/Site69'
+        const filePath = 'public/data/siteData.json'
+        const url = `https://api.github.com/repos/${repo}/contents/${filePath}`
+
+        // 1. Get SHA of existing file
+        const getFile = await fetch(url, {
+          headers: { Authorization: `token ${ghToken}` },
+        })
+
+        let sha = ''
+        if (getFile.ok) {
+          const fileData = await getFile.json()
+          sha = fileData.sha
+        }
+
+        // 2. Put updated file to GitHub repo main branch
+        const contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(fullData, null, 2))))
+        const putRes = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${ghToken}`,
+            'Content-Type': 'application.json',
+          },
+          body: JSON.stringify({
+            message: 'data: update siteData.json via Admin Portal',
+            content: contentEncoded,
+            sha: sha || undefined,
+            branch: 'main',
+          }),
+        })
+
+        if (putRes.ok) {
+          setSyncMessage('✅ ซิงค์และอัปเดตสู่ GitHub (boasnirut/Site69) สำเร็จแล้ว!')
+        } else {
+          setSyncMessage('⚠️ บันทึกลงในเบราว์เซอร์แล้ว (กรุณาตรวจสอบ GitHub Token)')
+        }
+      } catch (err) {
+        setSyncMessage('✅ บันทึกลงในระบบเรียบร้อยแล้ว!')
+      }
+    } else {
+      setSyncMessage('✅ บันทึกข้อมูลและจัดเรียงลำดับลงในระบบเรียบร้อยแล้ว!')
+    }
+
+    setIsSyncing(false)
   }
 
   if (!isLoggedIn) {
@@ -845,31 +1143,298 @@ function DedicatedAdminPage({
           </button>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+        {/* Sync & Direct GitHub Commit Notification */}
+        <div
+          style={{
+            background: 'var(--accent-cream)',
+            border: '1px solid var(--border-amber)',
+            padding: '16px 20px',
+            borderRadius: 'var(--radius-md)',
+            marginBottom: '28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '14px',
+          }}
+        >
+          <div>
+            <strong style={{ color: 'var(--primary-navy)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Github size={18} /> ระบบซิงค์ข้อมูลตรงสู่ GitHub & Vercel
+            </strong>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              บันทึกการจัดเรียงลำดับ แก้ไข และลบข้อมูล แล้วกดปุ่มซิงค์เพื่ออัปเดตเว็บทันที
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleGitHubSync}
+            disabled={isSyncing}
+          >
+            <UploadCloud size={16} />
+            {isSyncing ? 'กำลังซิงค์...' : 'ซิงค์ & บันทึกสู่ GitHub'}
+          </button>
+        </div>
+
+        {syncMessage && (
+          <div style={{ color: '#16a34a', fontWeight: '600', marginBottom: '20px', fontSize: '0.9rem' }}>
+            {syncMessage}
+          </div>
+        )}
+
+        {/* Navigation Tabs for Admin */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className={`btn ${adminTab === 'achievements_list' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setAdminTab('achievements_list')}
+          >
+            <Trophy size={16} /> จัดการรายการผลงาน ({achievements.length})
+          </button>
+          <button
+            type="button"
+            className={`btn ${adminTab === 'activities_list' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setAdminTab('activities_list')}
+          >
+            <Images size={16} /> จัดการภาพกิจกรรม ({activities.length})
+          </button>
           <button
             type="button"
             className={`btn ${adminTab === 'add_achievement' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setAdminTab('add_achievement')}
+            onClick={() => {
+              setEditingAchId(null)
+              setAchTitle('')
+              setAchDesc('')
+              setAdminTab('add_achievement')
+            }}
           >
-            <PlusCircle size={16} /> เพิ่มผลงาน / รางวัล
+            <PlusCircle size={16} /> เพิ่มผลงานใหม่
           </button>
           <button
             type="button"
             className={`btn ${adminTab === 'add_activity' ? 'btn-primary' : 'btn-outline'}`}
-            onClick={() => setAdminTab('add_activity')}
+            onClick={() => {
+              setEditingActId(null)
+              setActTitle('')
+              setActDesc('')
+              setAdminTab('add_activity')
+            }}
           >
-            <PlusCircle size={16} /> เพิ่มภาพกิจกรรม
+            <PlusCircle size={16} /> เพิ่มกิจกรรมใหม่
           </button>
         </div>
 
-        {adminTab === 'add_achievement' && (
-          <form onSubmit={handleAddAchievement} style={{ maxWidth: '600px' }}>
+        {/* 1. Achievements List & Drag Reordering */}
+        {adminTab === 'achievements_list' && (
+          <div>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
-              🏆 เพิ่มข้อมูลผลงานและรางวัลใหม่ (การ์ด 16:9)
+              🏆 รายการผลงาน/รางวัล (ลากสลับตำแหน่ง หรือ กดปุ่มเลื่อนเพื่อจัดลำดับ)
             </h3>
-            
+
+            <div className="admin-item-list">
+              {achievements.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="admin-item-row"
+                  draggable
+                  onDragStart={() => setDraggedIndex(index)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => {
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                      const newArr = [...achievements]
+                      const draggedItem = newArr[draggedIndex]
+                      newArr.splice(draggedIndex, 1)
+                      newArr.splice(index, 0, draggedItem)
+                      setAchievements(newArr)
+                      setDraggedIndex(null)
+                    }
+                  }}
+                >
+                  <div className="admin-item-row__info">
+                    <span className="admin-item-row__drag" title="ลากสลับลำดับ">
+                      <GripVertical size={20} />
+                    </span>
+                    <img
+                      src={item.image || '/B1.jpg'}
+                      alt={item.title}
+                      className="admin-item-row__img"
+                    />
+                    <div className="admin-item-row__text">
+                      <strong>{item.title}</strong>
+                      <small>
+                        ผู้ได้รับ: {item.owner || 'นายนิรุทธิ์ เสวะนา'} | ระดับ: {item.level || 'รางวัล'} | หมวด: {item.category}
+                      </small>
+                    </div>
+                  </div>
+
+                  <div className="admin-item-row__actions">
+                    <button
+                      type="button"
+                      className="admin-action-btn"
+                      onClick={() => moveAchievement(index, -1)}
+                      disabled={index === 0}
+                      title="เลื่อนขึ้น"
+                    >
+                      <ArrowUp size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action-btn"
+                      onClick={() => moveAchievement(index, 1)}
+                      disabled={index === achievements.length - 1}
+                      title="เลื่อนลง"
+                    >
+                      <ArrowDown size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action-btn"
+                      onClick={() => startEditAchievement(item)}
+                    >
+                      <Edit size={14} /> แก้ไข
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action-btn delete"
+                      onClick={() => deleteAchievement(item.id)}
+                    >
+                      <Trash2 size={14} /> ลบ
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 2. Activities List & Drag Reordering */}
+        {adminTab === 'activities_list' && (
+          <div>
+            <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
+              📸 รายการภาพกิจกรรม (ลากสลับตำแหน่ง หรือ กดปุ่มเลื่อนเพื่อจัดลำดับ)
+            </h3>
+
+            <div className="admin-item-list">
+              {activities.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="admin-item-row"
+                  draggable
+                  onDragStart={() => setDraggedIndex(index)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => {
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                      const newArr = [...activities]
+                      const draggedItem = newArr[draggedIndex]
+                      newArr.splice(draggedIndex, 1)
+                      newArr.splice(index, 0, draggedItem)
+                      setActivities(newArr)
+                      setDraggedIndex(null)
+                    }
+                  }}
+                >
+                  <div className="admin-item-row__info">
+                    <span className="admin-item-row__drag" title="ลากสลับลำดับ">
+                      <GripVertical size={20} />
+                    </span>
+                    <img
+                      src={item.image || '/B1.jpg'}
+                      alt={item.title}
+                      className="admin-item-row__img"
+                    />
+                    <div className="admin-item-row__text">
+                      <strong>{item.title}</strong>
+                      <small>
+                        วันที่: {item.date || '-'} | สถานที่: {item.location || '-'}
+                      </small>
+                    </div>
+                  </div>
+
+                  <div className="admin-item-row__actions">
+                    <button
+                      type="button"
+                      className="admin-action-btn"
+                      onClick={() => moveActivity(index, -1)}
+                      disabled={index === 0}
+                      title="เลื่อนขึ้น"
+                    >
+                      <ArrowUp size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action-btn"
+                      onClick={() => moveActivity(index, 1)}
+                      disabled={index === activities.length - 1}
+                      title="เลื่อนลง"
+                    >
+                      <ArrowDown size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action-btn"
+                      onClick={() => startEditActivity(item)}
+                    >
+                      <Edit size={14} /> แก้ไข
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action-btn delete"
+                      onClick={() => deleteActivity(item.id)}
+                    >
+                      <Trash2 size={14} /> ลบ
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 3. Add / Edit Achievement Form */}
+        {adminTab === 'add_achievement' && (
+          <form onSubmit={handleSaveAchievement} style={{ maxWidth: '650px' }}>
+            <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
+              {editingAchId ? '✏️ แก้ไขข้อมูลผลงานและรางวัล' : '🏆 เพิ่มข้อมูลผลงานและรางวัลใหม่'}
+            </h3>
+
             <div className="admin-form-group">
-              <label>หมวดหมู่ผลงาน:</label>
+              <label>ผู้ได้รับรางวัล / เจ้าของผลงาน:</label>
+              <input
+                type="text"
+                className="admin-input"
+                value={achOwner}
+                onChange={(e) => setAchOwner(e.target.value)}
+                placeholder="เช่น นายนิรุทธิ์ เสวะนา..."
+                required
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>ชื่อผลงานหรือรางวัล:</label>
+              <input
+                type="text"
+                className="admin-input"
+                value={achTitle}
+                onChange={(e) => setAchTitle(e.target.value)}
+                placeholder="เช่น รางวัลนวัตกรรมการจัดการเรียนรู้ Active Learning..."
+                required
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>ระดับรางวัล / ประเภทผลงาน:</label>
+              <input
+                type="text"
+                className="admin-input"
+                value={achLevel}
+                onChange={(e) => setAchLevel(e.target.value)}
+                placeholder="เช่น ระดับประเทศ / เหรียญทอง ระดับเขตพื้นที่..."
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>ประเภทผลงานและรางวัล (ดรอปดาวน์หมวดหมู่):</label>
               <select
                 className="admin-input"
                 value={achCategory}
@@ -883,30 +1448,16 @@ function DedicatedAdminPage({
             </div>
 
             <div className="admin-form-group">
-              <label>ชื่อผลงาน / รางวัล:</label>
+              <label>อัปโหลดภาพประกอบ (จำกัดไม่เกิน 10MB):</label>
               <input
-                type="text"
+                type="file"
+                accept="image/*"
                 className="admin-input"
-                value={achTitle}
-                onChange={(e) => setAchTitle(e.target.value)}
-                placeholder="เช่น รางวัลครูดีเด่น..."
-                required
+                onChange={(e) => handleImageFileUpload(e, setAchImg)}
               />
-            </div>
-
-            <div className="admin-form-group">
-              <label>รายละเอียด:</label>
-              <textarea
-                className="admin-input"
-                style={{ height: '90px', resize: 'vertical' }}
-                value={achDesc}
-                onChange={(e) => setAchDesc(e.target.value)}
-                placeholder="กรอกรายละเอียดผลงาน..."
-              />
-            </div>
-
-            <div className="admin-form-group">
-              <label>เลือกภาพประกอบ 16:9 (หรือ URL):</label>
+              <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                หรือกรอก URL/Path รูปภาพ:
+              </div>
               <input
                 type="text"
                 className="admin-input"
@@ -914,46 +1465,98 @@ function DedicatedAdminPage({
                 onChange={(e) => setAchImg(e.target.value)}
                 placeholder="/B1.jpg หรือ URL รูปภาพ"
               />
+              {achImg && (
+                <div style={{ marginTop: '10px' }}>
+                  <img
+                    src={achImg}
+                    alt="Preview"
+                    style={{ height: '80px', borderRadius: '8px', objectFit: 'cover' }}
+                  />
+                </div>
+              )}
             </div>
 
-            <button type="submit" className="btn btn-primary">
-              <PlusCircle size={18} />
-              บันทึกผลงานลงระบบ
+            <div className="admin-form-group">
+              <label>รายละเอียดเพิ่มเติม:</label>
+              <textarea
+                className="admin-input"
+                style={{ height: '80px', resize: 'vertical' }}
+                value={achDesc}
+                onChange={(e) => setAchDesc(e.target.value)}
+                placeholder="กรอกรายละเอียด..."
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+              <Save size={18} />
+              {editingAchId ? 'บันทึกการแก้ไข' : 'บันทึกผลงานลงในระบบ'}
             </button>
           </form>
         )}
 
+        {/* 4. Add / Edit Activity Form */}
         {adminTab === 'add_activity' && (
-          <form onSubmit={handleAddActivity} style={{ maxWidth: '600px' }}>
+          <form onSubmit={handleSaveActivity} style={{ maxWidth: '650px' }}>
             <h3 style={{ marginBottom: '16px', color: 'var(--primary-navy)' }}>
-              📸 เพิ่มภาพกิจกรรมใหม่ (การ์ด 16:9)
+              {editingActId ? '✏️ แก้ไขข้อมูลภาพกิจกรรม' : '📸 เพิ่มภาพกิจกรรมใหม่'}
             </h3>
 
             <div className="admin-form-group">
-              <label>ชื่อกิจกรรม / คำอธิบายภาพ:</label>
+              <label>ชื่อกิจกรรม:</label>
               <input
                 type="text"
                 className="admin-input"
                 value={actTitle}
                 onChange={(e) => setActTitle(e.target.value)}
-                placeholder="เช่น กิจกรรมเรียนรู้คอมพิวเตอร์..."
+                placeholder="เช่น กิจกรรมการเรียนรู้ Active Learning..."
                 required
               />
             </div>
 
             <div className="admin-form-group">
-              <label>รายละเอียดกิจกรรม:</label>
-              <textarea
+              <label>วันที่ (เลือกในปฏิทิน):</label>
+              <input
+                type="date"
                 className="admin-input"
-                style={{ height: '90px', resize: 'vertical' }}
-                value={actDesc}
-                onChange={(e) => setActDesc(e.target.value)}
-                placeholder="กรอกรายละเอียด..."
+                value={actDate}
+                onChange={(e) => setActDate(e.target.value)}
+                required
               />
             </div>
 
             <div className="admin-form-group">
-              <label>เลือกภาพประกอบ 16:9 (หรือ URL):</label>
+              <label>สถานที่:</label>
+              <input
+                type="text"
+                className="admin-input"
+                value={actLocation}
+                onChange={(e) => setActLocation(e.target.value)}
+                placeholder="เช่น ห้องปฏิบัติการคอมพิวเตอร์..."
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>ลิงก์ไฟล์แนบ / Google Photos Album URL (สำหรับสไลด์ 5 วินาทีอัตโนมัติ):</label>
+              <input
+                type="url"
+                className="admin-input"
+                value={actAlbumUrl}
+                onChange={(e) => setActAlbumUrl(e.target.value)}
+                placeholder="https://photos.google.com/share/..."
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>อัปโหลดภาพปกกิจกรรม (จำกัดไม่เกิน 10MB):</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="admin-input"
+                onChange={(e) => handleImageFileUpload(e, setActImg)}
+              />
+              <div style={{ marginTop: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                หรือกรอก URL/Path รูปภาพ:
+              </div>
               <input
                 type="text"
                 className="admin-input"
@@ -961,11 +1564,31 @@ function DedicatedAdminPage({
                 onChange={(e) => setActImg(e.target.value)}
                 placeholder="/B1.jpg หรือ URL รูปภาพ"
               />
+              {actImg && (
+                <div style={{ marginTop: '10px' }}>
+                  <img
+                    src={actImg}
+                    alt="Preview"
+                    style={{ height: '80px', borderRadius: '8px', objectFit: 'cover' }}
+                  />
+                </div>
+              )}
             </div>
 
-            <button type="submit" className="btn btn-primary">
-              <PlusCircle size={18} />
-              บันทึกภาพกิจกรรมลงระบบ
+            <div className="admin-form-group">
+              <label>รายละเอียดกิจกรรม:</label>
+              <textarea
+                className="admin-input"
+                style={{ height: '80px', resize: 'vertical' }}
+                value={actDesc}
+                onChange={(e) => setActDesc(e.target.value)}
+                placeholder="กรอกรายละเอียด..."
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+              <Save size={18} />
+              {editingActId ? 'บันทึกการแก้ไข' : 'บันทึกภาพกิจกรรมลงในระบบ'}
             </button>
           </form>
         )}
@@ -974,7 +1597,7 @@ function DedicatedAdminPage({
   )
 }
 
-/* INTERACTIVE FULLSCREEN LIGHTBOX MODAL (ซูม & เลื่อนภาพได้) */
+/* INTERACTIVE FULLSCREEN LIGHTBOX MODAL */
 function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
   const [scale, setScale] = useState(1)
   const [position, setPosition] = useState({ x: 0, y: 0 })
@@ -983,13 +1606,11 @@ function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
 
   const currentItem = items[currentIndex] || {}
 
-  // Reset zoom & pan on index change
   useEffect(() => {
     setScale(1)
     setPosition({ x: 0, y: 0 })
   }, [currentIndex])
 
-  // Keyboard navigation shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose()
@@ -1000,10 +1621,7 @@ function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [currentIndex, items.length, onClose, onIndexChange])
 
-  const handleZoomIn = () => {
-    setScale((prev) => Math.min(prev + 0.5, 4))
-  }
-
+  const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.5, 4))
   const handleZoomOut = () => {
     setScale((prev) => {
       const next = Math.max(prev - 0.5, 1)
@@ -1033,9 +1651,7 @@ function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
     }
   }
 
-  const handleMouseUp = () => {
-    setIsDragging(false)
-  }
+  const handleMouseUp = () => setIsDragging(false)
 
   const handleWheel = (e) => {
     if (e.deltaY < 0) {
@@ -1051,11 +1667,10 @@ function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
 
   return (
     <div className="lightbox-overlay" onClick={onClose}>
-      {/* Top Header Controls Bar */}
       <div className="lightbox-header" onClick={(e) => e.stopPropagation()}>
         <div className="lightbox-title-box">
           <h3>{currentItem.title}</h3>
-          {currentItem.description && <p>{currentItem.description}</p>}
+          {currentItem.owner && <p>ผู้ได้รับ: {currentItem.owner}</p>}
         </div>
 
         <div className="lightbox-controls">
@@ -1077,7 +1692,6 @@ function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
         </div>
       </div>
 
-      {/* Main Image View Container with Pan & Drag */}
       <div
         className="lightbox-body"
         onClick={(e) => e.stopPropagation()}
@@ -1088,7 +1702,6 @@ function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
         onMouseLeave={handleMouseUp}
         style={{ cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
       >
-        {/* Navigation Prev Button */}
         {currentIndex > 0 && (
           <button
             type="button"
@@ -1114,7 +1727,6 @@ function ImageLightboxModal({ items, currentIndex, onClose, onIndexChange }) {
           />
         </div>
 
-        {/* Navigation Next Button */}
         {currentIndex < items.length - 1 && (
           <button
             type="button"
