@@ -1,6 +1,6 @@
 /* ----------------------------------------------------
-   Nirut Sewana (นิรุทธิ์ เสวะนา) - Modern Design Tokens
-   Matching Logo 8045: Amber Gold & Deep Navy Theme
+   Nirut Sewana (นิรุทธิ์ เสวะนา) - Unified Design System
+   Font: Single Unified Font Family 'Anuphan' Across All Elements & Inputs
    ---------------------------------------------------- */
 :root {
   --primary-navy: #12366d;
@@ -31,13 +31,15 @@
   --radius-md: 14px;
   --radius-lg: 24px;
   
-  font-family: 'IBM Plex Sans Thai', 'Anuphan', system-ui, -apple-system, sans-serif;
+  font-family: 'Anuphan', system-ui, -apple-system, sans-serif;
   color: var(--text-main);
   background-color: var(--bg-page);
   line-height: 1.6;
 }
 
-* {
+/* 5. Unified Font Family Across All Elements, Buttons, Inputs & Forms */
+*, *::before, *::after, input, select, textarea, button, label, optgroup, option {
+  font-family: 'Anuphan', system-ui, -apple-system, sans-serif !important;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -80,7 +82,7 @@ body {
   gap: 16px;
 }
 
-/* Brand Logo Container (Fixed flex-shrink & white-space to prevent wrapping) */
+/* Brand Logo Container */
 .brand {
   display: flex;
   align-items: center;
@@ -166,27 +168,30 @@ body {
   box-shadow: 0 4px 14px rgba(212, 132, 67, 0.35);
 }
 
-/* Login Button on Far Right of Tab Bar */
-.tab-bar-login {
+/* 3. Standalone Icon-only Login/Admin Button in Same Header Row */
+.header-icon-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--primary-navy) 0%, var(--primary-navy-dark) 100%);
-  color: #ffffff;
-  font-size: 0.88rem;
-  font-weight: 600;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(18, 54, 109, 0.06);
+  border: 1.5px solid rgba(18, 54, 109, 0.14);
+  color: var(--primary-navy);
+  transition: all 0.25s ease;
   text-decoration: none;
   cursor: pointer;
-  border: none;
-  transition: all 0.25s ease;
-  margin-left: 4px;
+  flex-shrink: 0;
 }
 
-.tab-bar-login:hover {
+.header-icon-btn:hover,
+.header-icon-btn.active {
   background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
+  color: #ffffff;
+  border-color: var(--accent-gold-dark);
   box-shadow: 0 4px 14px rgba(212, 132, 67, 0.35);
+  transform: translateY(-1px);
 }
 
 /* Sub-Menu Navigation for Achievements */
@@ -199,7 +204,7 @@ body {
 .sub-glow-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: #ffffff;
   padding: 6px;
   border-radius: 9999px;
@@ -211,7 +216,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 22px;
+  padding: 10px 20px;
   border-radius: 9999px;
   color: var(--primary-navy);
   font-size: 0.92rem;
@@ -390,16 +395,25 @@ body {
   border-color: var(--accent-gold);
 }
 
+/* 2. Vector Monochrome Clean Icons (Uncolored / Transparent Badge) */
 .feature-card__icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  background: var(--accent-gold-light);
-  color: var(--accent-gold-dark);
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
+  justify-content: flex-start;
+  color: var(--primary-navy);
+  background: transparent;
+  border: none;
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+.feature-card__icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--primary-navy);
+  stroke-width: 2px;
 }
 
 .feature-card h3 {
@@ -430,13 +444,13 @@ body {
   gap: 10px;
 }
 
-/* 2. Theme-matched Footer Bar */
+/* 4. Footer 50% Narrower */
 .site-footer {
   background: var(--primary-navy-dark);
-  border-top: 3px solid var(--accent-gold);
+  border-top: 2px solid var(--accent-gold);
   color: #ffffff;
-  padding: 24px 0;
-  margin-top: 60px;
+  padding: 10px 0;
+  margin-top: 40px;
   box-shadow: 0 -4px 20px rgba(18, 54, 109, 0.15);
   text-align: center;
 }
@@ -444,11 +458,11 @@ body {
 .site-footer p {
   color: #cbd5e1;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   letter-spacing: 0.02em;
 }
 
-/* 1. Dedicated Admin Page Card Styling */
+/* Dedicated Admin Page Card Styling */
 .admin-page-card {
   background: #ffffff;
   border-radius: var(--radius-lg);

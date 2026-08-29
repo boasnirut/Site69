@@ -24,7 +24,7 @@ import {
   Trash2,
   ShieldCheck,
   ArrowLeft,
-  Settings,
+  LayoutGrid,
 } from 'lucide-react'
 import './styles.css'
 
@@ -37,7 +37,9 @@ const menuTabs = [
   { id: 'pa', label: 'ข้อตกลงในการพัฒนางาน (PA)', href: '/pa', icon: FileCheck },
 ]
 
+// 1. Added "ทั้งหมด" (All) tab to Achievements sub-menu
 const achievementSubTabs = [
+  { id: 'all', label: 'ทั้งหมด', icon: LayoutGrid },
   { id: 'teacher', label: 'ครู', icon: User },
   { id: 'student', label: 'นักเรียน', icon: GraduationCap },
   { id: 'school', label: 'สถานศึกษา', icon: School },
@@ -203,29 +205,32 @@ export default function App() {
                 </a>
               )
             })}
+          </nav>
 
-            {/* Login / Admin Page Link on Far Right */}
+          {/* 3. Standalone Icon-Only Login / Admin Link on Far Right (Same Header Row) */}
+          <div className="header-actions">
             {isLoggedIn ? (
               <a
                 href="/admin"
                 onClick={(e) => navigateTo('/admin', e)}
-                className={`tab-bar-login ${activeTab === 'admin' ? 'active' : ''}`}
-                title="ระบบหลังบ้านแอดมิน"
+                className={`header-icon-btn ${activeTab === 'admin' ? 'active' : ''}`}
+                title="ระบบหลังบ้านแอดมิน (boasnirut)"
+                aria-label="ระบบหลังบ้านแอดมิน"
               >
-                <ShieldCheck size={16} />
-                <span>แอดมิน</span>
+                <ShieldCheck size={20} />
               </a>
             ) : (
               <a
                 href="/admin"
                 onClick={(e) => navigateTo('/admin', e)}
-                className={`tab-bar-login ${activeTab === 'admin' ? 'active' : ''}`}
+                className={`header-icon-btn ${activeTab === 'admin' ? 'active' : ''}`}
+                title="เข้าสู่ระบบแอดมิน"
+                aria-label="เข้าสู่ระบบแอดมิน"
               >
-                <LogIn size={16} />
-                <span>เข้าสู่ระบบ</span>
+                <LogIn size={20} />
               </a>
             )}
-          </nav>
+          </div>
         </div>
       </header>
 
@@ -272,7 +277,7 @@ export default function App() {
         )}
       </main>
 
-      {/* 2. Theme-matched Footer Bar */}
+      {/* 4. Footer 50% Narrower */}
       <footer className="site-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} นิรุทธิ์ เสวะนา | Nirut Sewana. All rights reserved.</p>
@@ -337,8 +342,9 @@ function HomeView({ navigateTo, achievements, activities }) {
           <div className="card-grid">
             {achievements.slice(0, 3).map((item) => (
               <div key={item.id} className="feature-card">
+                {/* 2. Vector Monochrome Icon */}
                 <div className="feature-card__icon">
-                  <Award size={24} />
+                  <Award size={32} />
                 </div>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
@@ -401,7 +407,7 @@ function ClassroomView() {
       <div className="card-grid">
         <div className="feature-card">
           <div className="feature-card__icon">
-            <BookOpen size={24} />
+            <BookOpen size={32} />
           </div>
           <h3>สื่อการสอนวิทยาการคำนวณ</h3>
           <p>บทเรียนการเขียนโปรแกรม อัลกอริทึม และทักษะดิจิทัลสำหรับนักเรียนทุกระดับชั้น</p>
@@ -412,7 +418,7 @@ function ClassroomView() {
 
         <div className="feature-card">
           <div className="feature-card__icon">
-            <CheckCircle2 size={24} />
+            <CheckCircle2 size={32} />
           </div>
           <h3>คลังข้อสอบ & ควิซย่อยออนไลน์</h3>
           <p>ระบบประเมินผลการเรียนรู้ออนไลน์ ตรวจผลอัตโนมัติ 24 ชั่วโมง</p>
@@ -423,7 +429,7 @@ function ClassroomView() {
 
         <div className="feature-card">
           <div className="feature-card__icon">
-            <Download size={24} />
+            <Download size={32} />
           </div>
           <h3>ดาวน์โหลดใบงาน & สื่อการเรียน</h3>
           <p>เอกสารใบงาน แบบฝึกหัด และสื่อประกอบการสอนดิจิทัลครบครัน</p>
@@ -448,7 +454,7 @@ function HomeroomView() {
       <div className="card-grid">
         <div className="feature-card">
           <div className="feature-card__icon">
-            <Users size={24} />
+            <Users size={32} />
           </div>
           <h3>ระบบคัดกรองนักเรียนรายบุคคล</h3>
           <p>บันทึกและวิเคราะห์ข้อมูลความต้องการของนักเรียนประจำชั้น 100%</p>
@@ -456,7 +462,7 @@ function HomeroomView() {
 
         <div className="feature-card">
           <div className="feature-card__icon">
-            <CheckCircle2 size={24} />
+            <CheckCircle2 size={32} />
           </div>
           <h3>แบบประเมินพฤติกรรม SDQ</h3>
           <p>ประเมินพฤติกรรม 5 ด้าน สรุปผลวิเคราะห์ความเสี่ยงและแนวทางการช่วยเหลือ</p>
@@ -464,7 +470,7 @@ function HomeroomView() {
 
         <div className="feature-card">
           <div className="feature-card__icon">
-            <Search size={24} />
+            <Search size={32} />
           </div>
           <h3>บันทึกเยี่ยมบ้านพิกัด GPS</h3>
           <p>จัดเก็บพิกัดแผนที่ รูปภาพ และสรุปสภาพความเป็นอยู่รายครอบครัว</p>
@@ -474,13 +480,15 @@ function HomeroomView() {
   )
 }
 
-/* 4. ACHIEVEMENTS VIEW WITH SUB-MENU GLOW TABS */
+/* 4. ACHIEVEMENTS VIEW WITH "ทั้งหมด" & SUB-MENU TABS */
 function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
-  const [activeSubTab, setActiveSubTab] = useState('teacher')
+  // Initial active sub-tab set to "all" (ทั้งหมด)
+  const [activeSubTab, setActiveSubTab] = useState('all')
 
-  const filteredAchievements = achievements.filter(
-    (item) => item.category === activeSubTab
-  )
+  const filteredAchievements =
+    activeSubTab === 'all'
+      ? achievements
+      : achievements.filter((item) => item.category === activeSubTab)
 
   const handleDelete = (id) => {
     setAchievements((prev) => prev.filter((item) => item.id !== id))
@@ -490,10 +498,10 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
     <div className="container section">
       <div className="section-title">
         <h2>🏆 ผลงานและรางวัล (Achievements & Awards)</h2>
-        <p>คลิกปุ่มเลือกดูรายการผลงานตามหมวดหมู่ ครู, นักเรียน, สถานศึกษา และงานวิชาการ</p>
+        <p>เลือกดูรายการผลงานในหมวดทั้งหมด, ครู, นักเรียน, สถานศึกษา หรือ งานวิชาการ</p>
       </div>
 
-      {/* Sub-Menu Glow Navigation Bar */}
+      {/* Sub-Menu Glow Navigation Bar with "ทั้งหมด" */}
       <div className="sub-glow-container">
         <nav className="sub-glow-nav" aria-label="หมวดหมู่ผลงาน">
           {achievementSubTabs.map((tab) => {
@@ -529,8 +537,9 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements }) {
                   <Trash2 size={16} />
                 </button>
               )}
+              {/* 2. Vector Monochrome Icon */}
               <div className="feature-card__icon">
-                <Award size={24} />
+                <Award size={32} />
               </div>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
@@ -598,7 +607,7 @@ function PaView() {
       <div className="card-grid">
         <div className="feature-card">
           <div className="feature-card__icon">
-            <FileCheck size={24} />
+            <FileCheck size={32} />
           </div>
           <h3>รายงาน PA ประจำปีงบประมาณ 2569</h3>
           <p>สรุปผลการปฏิบัติตามข้อตกลงในการพัฒนางาน ทั้ง 2 ส่วน พร้อมเอกสารหลักฐาน</p>
@@ -606,7 +615,7 @@ function PaView() {
 
         <div className="feature-card">
           <div className="feature-card__icon">
-            <BookOpen size={24} />
+            <BookOpen size={32} />
           </div>
           <h3>แผนการจัดการเรียนรู้ & คลิปการสอน</h3>
           <p>วิดีโอบันทึกการสอน บันทึกหลังการสอน และประเด็นท้าทายเพื่อพัฒนาผู้เรียน</p>
@@ -616,7 +625,7 @@ function PaView() {
   )
 }
 
-/* 1. DEDICATED ADMIN PAGE (หน้าแยกสำหรับระบบหลังบ้าน) */
+/* DEDICATED ADMIN PAGE (หน้าแยกสำหรับระบบหลังบ้าน) */
 function DedicatedAdminPage({
   isLoggedIn,
   onLoginSuccess,
