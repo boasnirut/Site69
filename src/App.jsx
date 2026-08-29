@@ -62,6 +62,7 @@ const achievementSubTabs = [
   { id: 'student', label: 'นักเรียน', icon: GraduationCap },
   { id: 'school', label: 'สถานศึกษา', icon: School },
   { id: 'academic', label: 'งานวิชาการ', icon: FileText },
+  { id: 'self_dev', label: 'พัฒนาตนเอง', icon: Award },
 ]
 
 // Default Hero Banners for All Pages
@@ -595,6 +596,7 @@ function HomeView({ hero, navigateTo, achievements, activities, openLightbox }) 
     { id: 'student', title: '🎓 ผลงาน/รางวัลนักเรียน', label: 'นักเรียน' },
     { id: 'school', title: '🏫 ผลงาน/รางวัลสถานศึกษา', label: 'สถานศึกษา' },
     { id: 'academic', title: '📄 ผลงานวิชาการ & วิจัย', label: 'งานวิชาการ' },
+    { id: 'self_dev', title: '💡 การพัฒนาตนเอง & อบรมสัมมนา', label: 'พัฒนาตนเอง' },
   ]
 
   // Category Definitions for Activities
@@ -942,7 +944,7 @@ function AchievementsView({ hero, achievements, isLoggedIn, setAchievements, ope
                 {/* Text Details Section UNDERNEATH */}
                 <div className="media-card__body">
                   <span className="media-card__category">
-                    {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : 'งานวิชาการ')}
+                    {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : item.category === 'self_dev' ? 'พัฒนาตนเอง' : 'งานวิชาการ')}
                   </span>
                   <h3 className="media-card__title">{item.title}</h3>
                   {item.description && <p className="media-card__desc">{item.description}</p>}
@@ -2202,6 +2204,7 @@ function DedicatedAdminPage({
                 <option value="student">นักเรียน</option>
                 <option value="school">สถานศึกษา</option>
                 <option value="academic">งานวิชาการ</option>
+                <option value="self_dev">พัฒนาตนเอง</option>
               </select>
             </div>
 
