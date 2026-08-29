@@ -42,7 +42,7 @@ import {
   UploadCloud,
   Save,
   Github,
-  Check,
+  Loader2,
 } from 'lucide-react'
 import './styles.css'
 
@@ -127,9 +127,8 @@ const defaultActivities = [
     title: 'กิจกรรมการเรียนรู้ Active Learning วิทยาการคำนวณ',
     date: '2026-02-15',
     location: 'ห้องปฏิบัติการคอมพิวเตอร์ โรงเรียนบ้านน้ำพร',
-    albumUrl: 'https://photos.app.goo.gl/example1',
+    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz4',
     image: '/B1.jpg',
-    images: ['/B1.jpg', '/B2.jpg', '/B3.jpg', '/B4.jpg', '/TC01.png'],
     description: 'บรรยากาศการลงมือปฏิบัติจริงและการนำเสนอผลงานของนักเรียนในชั้นเรียน',
   },
   {
@@ -137,9 +136,8 @@ const defaultActivities = [
     title: 'กิจกรรมส่งเสริมทักษะดิจิทัลและการโค้ดดิ้ง',
     date: '2026-01-20',
     location: 'อาคารเรียนดิจิทัล',
-    albumUrl: 'https://photos.app.goo.gl/example2',
+    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz5',
     image: '/B2.jpg',
-    images: ['/B2.jpg', '/B3.jpg', '/B4.jpg', '/B1.jpg'],
     description: 'การฝึกทักษะคอมพิวเตอร์และการใช้งานเทคโนโลยีเพื่อการเรียนรู้',
   },
   {
@@ -147,9 +145,8 @@ const defaultActivities = [
     title: 'การอบรมและพัฒนาวิชาชีพครูด้านเทคโนโลยีดิจิทัล',
     date: '2025-12-10',
     location: 'หอประชุมใหญ่ เขตพื้นที่การศึกษา',
-    albumUrl: 'https://photos.app.goo.gl/example3',
+    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz6',
     image: '/B3.jpg',
-    images: ['/B3.jpg', '/B4.jpg', '/TC01.png', '/SAR69.jpg'],
     description: 'การเข้าร่วมอบรมและแบ่งปันความรู้เทคโนโลยีดิจิทัลเพื่อการศึกษา',
   },
   {
@@ -157,9 +154,8 @@ const defaultActivities = [
     title: 'กิจกรรมแนะแนวและดูแลช่วยเหลือนักเรียนโฮมรูม',
     date: '2025-11-05',
     location: 'ห้องเรียนประจำชั้น',
-    albumUrl: 'https://photos.app.goo.gl/example4',
+    albumUrl: 'https://photos.app.goo.gl/uXpB9JqGz7',
     image: '/B4.jpg',
-    images: ['/B4.jpg', '/B1.jpg', '/B2.jpg'],
     description: 'การติดตามดูแลพฤติกรรมและการจัดกิจกรรมโฮมรูมสร้างสรรค์',
   },
 ]
@@ -481,12 +477,12 @@ function HomeView({ navigateTo, achievements, activities, openLightbox }) {
         </div>
       </section>
 
-      {/* Section 2: ภาพกิจกรรม Cards with Interactive Carousel */}
+      {/* Section 2: ภาพกิจกรรม Cards with Real Google Photos Auto Extraction */}
       <section className="section" style={{ backgroundColor: 'var(--bg-subtle)' }}>
         <div className="container">
           <div className="section-title">
             <h2>📸 ภาพกิจกรรม (Activity Gallery)</h2>
-            <p>ภาพบรรยากาศการเรียนรู้ สไลด์หมุนภาพอัตโนมัติ 5 วินาที พร้อมลูกศรซ้าย/ขวา</p>
+            <p>ซิงค์ภาพจาก Google Photos สไลด์หมุนภาพอัตโนมัติ 5 วินาที พร้อมลูกศรซ้าย/ขวา</p>
           </div>
 
           <div className="media-card-grid">
@@ -686,13 +682,13 @@ function AchievementsView({ achievements, isLoggedIn, setAchievements, openLight
   )
 }
 
-/* 5. ACTIVITIES VIEW (Details UNDERNEATH, 4:3 for Google Photos, 5-Second Slideshow with Manual Arrows) */
+/* 5. ACTIVITIES VIEW (Details UNDERNEATH, 4:3 for Google Photos, 5-Second Slideshow with Real Auto Extraction) */
 function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox }) {
   return (
     <div className="container section">
       <div className="section-title">
         <h2>📸 ภาพกิจกรรม & บรรยากาศการเรียนรู้</h2>
-        <p>ดึงภาพ Google Photos สไลด์หมุนอัตโนมัติทุก 5 วินาที พร้อมลูกศรซ้าย/ขวา ให้กดเลื่อนเองได้</p>
+        <p>ซิงค์ภาพจาก Google Photos สไลด์หมุนอัตโนมัติทุก 5 วินาที พร้อมลูกศรซ้าย/ขวา ให้กดเลื่อนเองได้</p>
       </div>
 
       <div className="media-card-grid">
@@ -710,38 +706,96 @@ function ActivitiesView({ activities, isLoggedIn, setActivities, openLightbox })
   )
 }
 
-/* CAROUSEL CARD COMPONENT FOR ACTIVITIES (5-Second Auto-Rotate + Left/Right Arrows) */
+/* CAROUSEL CARD COMPONENT WITH DYNAMIC GOOGLE PHOTOS ALBUM EXTRACTION */
 function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) {
   const isGPhotos = Boolean(item.albumUrl)
   
-  // Gallery images array for the activity
-  const galleryImages =
-    item.images && item.images.length > 0
-      ? item.images
-      : [item.image || '/B1.jpg', '/B2.jpg', '/B3.jpg', '/B4.jpg', '/TC01.png']
-
+  const [gphotosImages, setGphotosImages] = useState(() => item.images || [])
+  const [isLoadingGPhotos, setIsLoadingGPhotos] = useState(false)
   const [currentImgIndex, setCurrentImgIndex] = useState(0)
 
-  // 5-Second Auto-Slideshow Timer per Card
+  // Dynamically extract photos from Google Photos album URL
   useEffect(() => {
-    if (!isGPhotos || galleryImages.length <= 1) return
+    if (!item.albumUrl) return
+
+    let isMounted = true
+    setIsLoadingGPhotos(true)
+
+    // Call serverless api/gphotos endpoint or fallback to CORS proxy
+    const extractPhotos = async () => {
+      try {
+        const apiRes = await fetch(`/api/gphotos?url=${encodeURIComponent(item.albumUrl)}`)
+        if (apiRes.ok) {
+          const data = await apiRes.json()
+          if (isMounted && data.images && data.images.length > 0) {
+            setGphotosImages(data.images)
+            setIsLoadingGPhotos(false)
+            return
+          }
+        }
+      } catch (e) {
+        console.warn('API fetch error, trying CORS proxy fallback...', e)
+      }
+
+      // Fallback CORS proxy extraction
+      try {
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(item.albumUrl)}`
+        const proxyRes = await fetch(proxyUrl)
+        if (proxyRes.ok) {
+          const html = await proxyRes.text()
+          const matches =
+            html.match(/https:\/\/lh3\.googleusercontent\.com\/pw\/[a-zA-Z0-9_\-]+/gi) ||
+            html.match(/https:\/\/lh3\.googleusercontent\.com\/[a-zA-Z0-9_\-]+/gi) ||
+            []
+          const cleanImages = Array.from(new Set(matches)).map(
+            (u) => u.replace(/=w\d+-h\d+.*$/, '') + '=w1000-h750-no'
+          )
+          if (isMounted && cleanImages.length > 0) {
+            setGphotosImages(cleanImages)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to extract Google Photos via proxy:', err)
+      } finally {
+        if (isMounted) setIsLoadingGPhotos(false)
+      }
+    }
+
+    extractPhotos()
+
+    return () => {
+      isMounted = false
+    }
+  }, [item.albumUrl])
+
+  // Effective gallery images list
+  const activeGallery =
+    gphotosImages.length > 0
+      ? gphotosImages
+      : item.images && item.images.length > 0
+      ? item.images
+      : [item.image || '/B1.jpg']
+
+  // 5-Second Auto-Slideshow Timer
+  useEffect(() => {
+    if (activeGallery.length <= 1) return
     const timer = setInterval(() => {
-      setCurrentImgIndex((prev) => (prev + 1) % galleryImages.length)
+      setCurrentImgIndex((prev) => (prev + 1) % activeGallery.length)
     }, 5000)
     return () => clearInterval(timer)
-  }, [isGPhotos, galleryImages.length])
+  }, [activeGallery.length])
 
   const handlePrevClick = (e) => {
     e.stopPropagation()
-    setCurrentImgIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1))
+    setCurrentImgIndex((prev) => (prev === 0 ? activeGallery.length - 1 : prev - 1))
   }
 
   const handleNextClick = (e) => {
     e.stopPropagation()
-    setCurrentImgIndex((prev) => (prev + 1) % galleryImages.length)
+    setCurrentImgIndex((prev) => (prev + 1) % activeGallery.length)
   }
 
-  const activeImg = isGPhotos ? galleryImages[currentImgIndex] : (item.image || '/B1.jpg')
+  const activeImg = activeGallery[currentImgIndex % activeGallery.length] || item.image || '/B1.jpg'
 
   return (
     <div className="media-card">
@@ -749,7 +803,6 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
       <div
         className="media-card__img-box"
         onClick={() => {
-          // Open lightbox with current active image list
           const activeItemForLightbox = { ...item, image: activeImg }
           const updatedList = [...allActivities]
           updatedList[index] = activeItemForLightbox
@@ -762,15 +815,23 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
           className={isGPhotos ? 'media-card__img-gphotos' : 'media-card__img-original'}
         />
 
-        {/* Counter Badge Overlaid on Image */}
-        {isGPhotos && galleryImages.length > 1 && (
+        {/* Counter Badge / Loading Status */}
+        {isGPhotos && (
           <div className="media-card__counter">
-            <Images size={12} /> {currentImgIndex + 1} / {galleryImages.length}
+            {isLoadingGPhotos ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <Loader2 size={12} className="spin" /> ซิงค์ Google Photos...
+              </span>
+            ) : (
+              <span>
+                <Images size={12} /> {currentImgIndex + 1} / {activeGallery.length}
+              </span>
+            )}
           </div>
         )}
 
         {/* Left Arrow Button */}
-        {isGPhotos && galleryImages.length > 1 && (
+        {isGPhotos && activeGallery.length > 1 && (
           <button
             type="button"
             className="media-card__nav-btn prev"
@@ -782,7 +843,7 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
         )}
 
         {/* Right Arrow Button */}
-        {isGPhotos && galleryImages.length > 1 && (
+        {isGPhotos && activeGallery.length > 1 && (
           <button
             type="button"
             className="media-card__nav-btn next"
@@ -794,9 +855,9 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
         )}
 
         {/* Dot Indicators */}
-        {isGPhotos && galleryImages.length > 1 && (
+        {isGPhotos && activeGallery.length > 1 && (
           <div className="media-card__dots">
-            {galleryImages.map((_, i) => (
+            {activeGallery.slice(0, 10).map((_, i) => (
               <span
                 key={i}
                 className={`media-card__dot ${i === currentImgIndex ? 'active' : ''}`}
@@ -818,7 +879,7 @@ function ActivityCardWithCarousel({ item, index, allActivities, openLightbox }) 
       {/* Details Section UNDERNEATH */}
       <div className="media-card__body">
         <span className="media-card__category">
-          {isGPhotos ? '📸 Google Photos อัลบั้ม (4:3)' : 'กิจกรรม'}
+          {isGPhotos ? '📸 Google Photos ซิงค์ภาพสด (4:3)' : 'กิจกรรม'}
         </span>
         <h3 className="media-card__title">{item.title}</h3>
         {item.description && <p className="media-card__desc">{item.description}</p>}
@@ -1435,7 +1496,7 @@ function DedicatedAdminPage({
                     <div className="admin-item-row__text">
                       <strong>{item.title}</strong>
                       <small>
-                        วันที่: {item.date || '-'} | สถานที่: {item.location || '-'} {item.albumUrl ? '| Google Photos (4:3 สไลด์ 5 วิ)' : ''}
+                        วันที่: {item.date || '-'} | สถานที่: {item.location || '-'} {item.albumUrl ? '| Google Photos (4:3 ซิงค์สด)' : ''}
                       </small>
                     </div>
                   </div>
@@ -1625,7 +1686,7 @@ function DedicatedAdminPage({
             </div>
 
             <div className="admin-form-group">
-              <label>ลิงก์ไฟล์แนบ / Google Photos Album URL (สไลด์ 5 วินาที + ปุ่มกดเลื่อนลูกศร ซ้าย/ขวา):</label>
+              <label>ลิงก์ไฟล์แนบ / Google Photos Album URL (ระบบจะดึงภาพจาก Google Photos อัตโนมัติ):</label>
               <input
                 type="url"
                 className="admin-input"
