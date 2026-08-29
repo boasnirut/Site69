@@ -62,7 +62,7 @@ const achievementSubTabs = [
   { id: 'student', label: 'นักเรียน', icon: GraduationCap },
   { id: 'school', label: 'สถานศึกษา', icon: School },
   { id: 'academic', label: 'งานวิชาการ', icon: FileText },
-  { id: 'self_dev', label: 'พัฒนาตนเอง', icon: Award },
+  { id: 'self_dev', label: 'การพัฒนาตนเอง', icon: Award },
 ]
 
 // Default Hero Banners for All Pages
@@ -944,7 +944,7 @@ function AchievementsView({ hero, achievements, isLoggedIn, setAchievements, ope
                 {/* Text Details Section UNDERNEATH */}
                 <div className="media-card__body">
                   <span className="media-card__category">
-                    {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : item.category === 'self_dev' ? 'พัฒนาตนเอง' : 'งานวิชาการ')}
+                    {item.level || (item.category === 'teacher' ? 'ครู' : item.category === 'student' ? 'นักเรียน' : item.category === 'school' ? 'สถานศึกษา' : item.category === 'self_dev' ? 'การพัฒนาตนเอง' : 'งานวิชาการ')}
                   </span>
                   <h3 className="media-card__title">{item.title}</h3>
                   {item.description && <p className="media-card__desc">{item.description}</p>}
@@ -2204,7 +2204,7 @@ function DedicatedAdminPage({
                 <option value="student">นักเรียน</option>
                 <option value="school">สถานศึกษา</option>
                 <option value="academic">งานวิชาการ</option>
-                <option value="self_dev">พัฒนาตนเอง</option>
+                <option value="self_dev">การพัฒนาตนเอง</option>
               </select>
             </div>
 
