@@ -3530,7 +3530,6 @@ function App() {
 
   return (
     <>
-      {isHome && <WelcomeSlider slides={pageSlides.welcome} />}
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       {isHome ? (
         <LandingPage />
