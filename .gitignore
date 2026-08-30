@@ -12,3 +12,4 @@ Thumbs.db
 /np.png
 
 .vercel
+.env*

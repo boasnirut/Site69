@@ -580,8 +580,21 @@ function PageHeroBanner({ banner, navigateTo, isHomePage = false }) {
           )}
         </div>
 
-        <div className="hero__visual">
-          <img src={banner.image || '/boasnirut.png'} alt={banner.title || 'ภาพปก'} />
+        <div className="hero__visual" style={{ background: 'transparent', padding: 0, border: 'none', boxShadow: 'none' }}>
+          <img
+            src={banner.image || '/boasnirut.png'}
+            alt={banner.title || 'ภาพปก'}
+            style={{
+              width: '100%',
+              height: 'auto',
+              maxHeight: 'none',
+              objectFit: 'contain',
+              background: 'transparent',
+              border: 'none',
+              boxShadow: 'none',
+              borderRadius: '0',
+            }}
+          />
         </div>
       </div>
     </section>
