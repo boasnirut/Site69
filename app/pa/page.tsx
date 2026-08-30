@@ -70,7 +70,7 @@ export default async function PaPage() {
   const general = paSettings.general || {};
 
   const prefaceText = general.preface || paReportGeneral.preface;
-  const reportPdfUrl = general.reportPdfUrl || "/pa-report-2569-placeholder.pdf";
+  const reportPdfUrl = general.reportPdfUrl || "/pa-report-60-68-2.pdf";
   const activeChallenges = paSettings.challenges?.length ? paSettings.challenges : paChallenges;
   const workloadHours = general.workloadHours || "43";
   const agreementGeneral = [
