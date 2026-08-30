@@ -1183,31 +1183,31 @@
       "eyebrow": "Online Learning",
       "title": "ห้องเรียนออนไลน์",
       "description": "พื้นที่รวมบทเรียน สื่อ ใบงาน แบบทดสอบ และผลประเมิน เพื่อให้การเรียนรู้ต่อเนื่องทั้งในและนอกห้องเรียน",
-      "image": "/uploads/hero-classroom-1787501478549.png"
+      "image": "/49.png"
     },
     "homeroom": {
       "eyebrow": "Student Care",
       "title": "งานประจำชั้น",
       "description": "ฐานข้อมูลดูแลช่วยเหลือนักเรียน ติดตามพฤติกรรม การมาเรียน และการประสานผู้ปกครองอย่างเป็นระบบ",
-      "image": "/uploads/hero-homeroom-1787502611146.png"
+      "image": "/50.png"
     },
     "achievements": {
       "eyebrow": "Portfolio",
       "title": "รางวัลและผลงาน",
       "description": "แฟ้มสะสมผลงานครูและนักเรียน แสดงหลักฐานเชิงประจักษ์จากการจัดการเรียนรู้และการพัฒนาวิชาชีพ",
-      "image": "/uploads/hero-achievements-1787500282229.png"
+      "image": "/48.png"
     },
     "activities": {
       "eyebrow": "Activity Gallery",
       "title": "ภาพกิจกรรม",
       "description": "รวบรวมภาพกิจกรรมการเรียนรู้ กิจกรรมพัฒนาผู้เรียน และบรรยากาศการเรียนรู้แบบดิจิทัล",
-      "image": "/uploads/hero-activities-1787499664072.png"
+      "image": "/47.png"
     },
     "pa": {
       "eyebrow": "Performance Agreement",
       "title": "การพัฒนางานตามข้อตกลง (PA)",
       "description": "จัดระบบเป้าหมาย ตัวชี้วัด วิธีดำเนินงาน และหลักฐานผลลัพธ์ให้ตรวจสอบได้ง่าย",
-      "image": "/uploads/hero-pa-1787503315145.png"
+      "image": "/51.png"
     }
   }
 }
