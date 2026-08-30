@@ -491,31 +491,31 @@ export const pageVisuals = {
     eyebrow: "Online Learning",
     title: "ห้องเรียนออนไลน์",
     description: "พื้นที่รวมบทเรียน สื่อ ใบงาน แบบทดสอบ และผลประเมิน เพื่อให้การเรียนรู้ต่อเนื่องทั้งในและนอกห้องเรียน",
-    image: "/placeholder-classroom-hero.jpg"
+    image: "/49.png"
   },
   homeroom: {
     eyebrow: "Student Care",
     title: "งานประจำชั้น",
     description: "ฐานข้อมูลดูแลช่วยเหลือนักเรียน ติดตามพฤติกรรม การมาเรียน และการประสานผู้ปกครองอย่างเป็นระบบ",
-    image: "/C1-web.jpg"
+    image: "/50.png"
   },
   achievements: {
     eyebrow: "Portfolio",
     title: "รางวัลและผลงาน",
     description: "แฟ้มสะสมผลงานครูและนักเรียน แสดงหลักฐานเชิงประจักษ์จากการจัดการเรียนรู้และการพัฒนาวิชาชีพ",
-    image: "/placeholder-achievements-hero.jpg"
+    image: "/48.png"
   },
   activities: {
     eyebrow: "Activity Gallery",
     title: "ภาพกิจกรรม",
     description: "รวบรวมภาพกิจกรรมการเรียนรู้ กิจกรรมพัฒนาผู้เรียน และบรรยากาศการเรียนรู้แบบดิจิทัล",
-    image: "/placeholder-activities-hero.jpg"
+    image: "/47.png"
   },
   pa: {
     eyebrow: "Performance Agreement",
     title: "การพัฒนางานตามข้อตกลง (PA)",
     description: "จัดระบบเป้าหมาย ตัวชี้วัด วิธีดำเนินงาน และหลักฐานผลลัพธ์ให้ตรวจสอบได้ง่าย",
-    image: "/placeholder-pa-hero.jpg"
+    image: "/51.png"
   }
 };
 
