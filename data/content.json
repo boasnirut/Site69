@@ -36,6 +36,7 @@
       "category": "การอบรมและสัมมนา",
       "content": "พัฒนาครูสู่ห้องเรียนดิจิทัล มหาวิทยาลัยราชภัฎเลย",
       "imgUrl": "/uploads/1785092633623-60.jpg",
+      "albumUrl": "",
       "date": "2026-07-26T19:03:54.716Z",
       "status": "published"
     },
@@ -45,6 +46,7 @@
       "category": "การเสริมสร้างทักษะ",
       "content": "เพิ่มทักษะครูสู่การเป็นครูแนะแนว เพื่อการป้องกันและปราบปรามการค้ามนุษย์ ประจำปี 2569",
       "imgUrl": "/uploads/1785092719791-285.jpg",
+      "albumUrl": "",
       "date": "2026-07-26T19:05:20.693Z",
       "status": "published"
     },
@@ -54,6 +56,7 @@
       "category": "การอบรมและสัมมนา",
       "content": "จรรยาบรรณของวิชาชีพทางการศึกษา สำหรับครู คุรุสภา",
       "imgUrl": "/uploads/1785093586885-932.jpg",
+      "albumUrl": "",
       "date": "2026-07-26T19:19:47.987Z",
       "status": "published"
     },
@@ -63,6 +66,7 @@
       "category": "รางวัลผลงานสถานศึกษา",
       "content": "รางวัลชนะเลิศ ภิจภรรมภาพยนต์สั้นต่อต้านทุจริต (โรงเรียนขยายโอกาส)",
       "imgUrl": "/uploads/1785091067609-763.jpg",
+      "albumUrl": "",
       "date": "2026-07-26T18:37:48.686Z",
       "status": "published"
     },
@@ -72,6 +76,7 @@
       "category": "รางวัลและผลงานตนเอง",
       "content": "ได้รับรางวัลเชิดชูเกียรติ “คุรุชนคนดี ศรีเลย 1” ประจำปี 2568",
       "imgUrl": "/uploads/1785093472328-379.png",
+      "albumUrl": "",
       "date": "2026-07-26T19:17:53.580Z",
       "status": "published"
     },
@@ -81,6 +86,7 @@
       "category": "รางวัลและผลงานตนเอง",
       "content": "รางวัลระดับดี่เยี่ยม ประเภทผู้ผลิตสื่อเทคโนโลยีดิจิทัล OBEC Content Center",
       "imgUrl": "/uploads/1785091747464-490.jpg",
+      "albumUrl": "",
       "date": "2026-07-26T18:49:08.408Z",
       "status": "published"
     },
@@ -90,16 +96,8 @@
       "category": "รางวัลผลงานสถานศึกษา",
       "content": "โรงเรียนบ้านน้ำพร ได้รับการประเมินคุณธรรมและความโปร่งใสในการดำเนินงานของสถานศึกษาออนไลน์ ปีงบประมาณ 2568 ได้คะแนน 99.00 ระดับผ่านดีเยี่ยม",
       "imgUrl": "/uploads/1785091018116-232.jpg",
+      "albumUrl": "",
       "date": "2026-07-26T18:36:59.072Z",
-      "status": "published"
-    },
-    {
-      "id": "1785082109923",
-      "title": "วิจัยในชั้นเรียน ปีการศึกษา 2568 การพัฒนาแอปพลิเคชัน โดยใช้สื่อการเรียนรู้ NFC Tag",
-      "category": "งานวิจัย",
-      "content": "วิจัยในชั้นเรียน ปีการศึกษา 2568 การพัฒนาแอปพลิเคชัน โดยใช้สื่อการเรียนรู้ NFC Tag",
-      "imgUrl": "https://drive.google.com/file/d/1JogA-yUAq1ejZ-mm2oI2WLgD7SLOhWfn/view?usp=drive_link",
-      "date": "2026-07-26T16:49:39.889Z",
       "status": "published"
     },
     {
@@ -108,7 +106,18 @@
       "category": "งานวิจัย",
       "content": "วิจัยในชั้นเรียน ปีการศึกษา 2567 การรู้เท่าทันสื่อ โดยใช้เว็บแอปเป็นสื่อการเรียนรู้",
       "imgUrl": "https://drive.google.com/file/d/18PG4f7p5W2XQPtVuES10A219Xl_xlExQ/view?usp=drive_link",
+      "albumUrl": "",
       "date": "2026-07-26T16:49:55.645Z",
+      "status": "published"
+    },
+    {
+      "id": "1785082109923",
+      "title": "วิจัยในชั้นเรียน ปีการศึกษา 2568 การพัฒนาแอปพลิเคชัน โดยใช้สื่อการเรียนรู้ NFC Tag",
+      "category": "งานวิจัย",
+      "content": "วิจัยในชั้นเรียน ปีการศึกษา 2568 การพัฒนาแอปพลิเคชัน โดยใช้สื่อการเรียนรู้ NFC Tag",
+      "imgUrl": "https://drive.google.com/file/d/1JogA-yUAq1ejZ-mm2oI2WLgD7SLOhWfn/view?usp=drive_link",
+      "albumUrl": "",
+      "date": "2026-07-26T16:49:39.889Z",
       "status": "published"
     },
     {
@@ -117,6 +126,7 @@
       "category": "งานวิจัย",
       "content": "วิจัยในชั้นเรียน ปีการศึกษา 2566 ความฉลาดรู้ดิจิทัล โดยใช้สื่อการเรียนรู้เว็บแอป",
       "imgUrl": "https://drive.google.com/file/d/11oMZt_i8Or2YYsOOST3ruA8osztOrBuM/view?usp=drive_link",
+      "albumUrl": "",
       "date": "2026-07-26T16:50:13.572Z",
       "status": "published"
     }
