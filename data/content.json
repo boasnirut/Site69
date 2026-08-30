@@ -101,16 +101,6 @@
       "status": "published"
     },
     {
-      "id": "1785082048886",
-      "title": "วิจัยในชั้นเรียน ปีการศึกษา 2567 การรู้เท่าทันสื่อ โดยใช้เว็บแอปเป็นสื่อการเรียนรู้",
-      "category": "งานวิจัย",
-      "content": "วิจัยในชั้นเรียน ปีการศึกษา 2567 การรู้เท่าทันสื่อ โดยใช้เว็บแอปเป็นสื่อการเรียนรู้",
-      "imgUrl": "https://drive.google.com/file/d/18PG4f7p5W2XQPtVuES10A219Xl_xlExQ/view?usp=drive_link",
-      "albumUrl": "",
-      "date": "2026-07-26T16:49:55.645Z",
-      "status": "published"
-    },
-    {
       "id": "1785081246543",
       "title": "วิจัยในชั้นเรียน ปีการศึกษา 2566 ความฉลาดรู้ดิจิทัล โดยใช้สื่อการเรียนรู้เว็บแอป",
       "category": "งานวิจัย",
@@ -118,6 +108,16 @@
       "imgUrl": "https://drive.google.com/file/d/11oMZt_i8Or2YYsOOST3ruA8osztOrBuM/view?usp=drive_link",
       "albumUrl": "",
       "date": "2026-07-26T16:50:13.572Z",
+      "status": "published"
+    },
+    {
+      "id": "1785082048886",
+      "title": "วิจัยในชั้นเรียน ปีการศึกษา 2567 การรู้เท่าทันสื่อ โดยใช้เว็บแอปเป็นสื่อการเรียนรู้",
+      "category": "งานวิจัย",
+      "content": "วิจัยในชั้นเรียน ปีการศึกษา 2567 การรู้เท่าทันสื่อ โดยใช้เว็บแอปเป็นสื่อการเรียนรู้",
+      "imgUrl": "https://drive.google.com/file/d/18PG4f7p5W2XQPtVuES10A219Xl_xlExQ/view?usp=drive_link",
+      "albumUrl": "",
+      "date": "2026-07-26T16:49:55.645Z",
       "status": "published"
     },
     {
