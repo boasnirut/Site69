@@ -2,21 +2,28 @@
 
 import { getGithubFileContent, updateGithubFile, uploadGithubBase64File } from "@/lib/github-api";
 import { revalidatePath } from "next/cache";
+import fallbackContent from "@/data/content.json";
 
 const CONTENT_FILE_PATH = "data/content.json";
 
 export async function fetchContent() {
+  if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_OWNER || !process.env.GITHUB_REPO) {
+    if (process.env.NODE_ENV !== "development") {
+      return fallbackContent;
+    }
+  }
+
   const fileData = await getGithubFileContent(CONTENT_FILE_PATH);
   
   if (!fileData) {
-    return { achievements: [], activities: [] };
+    return fallbackContent;
   }
 
   try {
     return JSON.parse(fileData.content);
   } catch (error) {
     console.error("Failed to parse content.json", error);
-    return { achievements: [], activities: [] };
+    return fallbackContent;
   }
 }
 
