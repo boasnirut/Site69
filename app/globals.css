@@ -2209,6 +2209,32 @@ p {
   text-align: center;
 }
 
+.pa-workload-table-wrap {
+  overflow-x: visible;
+}
+
+.pa-workload-table {
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.pa-workload-table th:first-child,
+.pa-workload-table td:first-child {
+  width: 72%;
+}
+
+.pa-workload-table th:last-child,
+.pa-workload-table td:last-child {
+  width: 28%;
+  text-align: center;
+}
+
+.pa-workload-table .schedule-cell-content strong {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
 .schedule-table tbody tr {
   background: rgba(255, 255, 255, 0.025);
 }

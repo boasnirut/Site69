@@ -68,11 +68,7 @@ export const navigation: NavItem[] = [
     href: "/pa",
     label: "การพัฒนางานตามข้อตกลง (PA)",
     description: "เป้าหมาย ตัวชี้วัด หลักฐาน และผลลัพธ์",
-    icon: BadgeCheck,
-    subItems: [
-      { href: "/pa", label: "ข้อตกลงในการพัฒนางาน (PA)", description: "กรอบข้อตกลง ภาระงาน และการประเมิน PA" },
-      { href: "/pa/report", label: "รายงานการพัฒนางาน (PA)", description: "สรุปผลการพัฒนางานตามข้อตกลง (PA)" }
-    ]
+    icon: BadgeCheck
   }
 ];
 
