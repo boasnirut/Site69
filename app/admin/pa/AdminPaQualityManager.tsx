@@ -15,50 +15,58 @@ import {
   Link2, 
   ExternalLink, 
   Images, 
-  Upload
+  BadgeCheck,
+  UserCheck,
+  Clock,
+  Target,
+  Upload,
+  BookOpenCheck
 } from "lucide-react";
 import { fetchContent, savePaRecord, deletePaRecord, savePaSettings, uploadPaPdf } from "@/app/admin/actions";
+import { paReportGeneral } from "@/lib/pa-data";
 import "../admin.css";
 
 export const paLevels = [
   {
     id: "pa_agreement",
     label: "ข้อตกลงในการพัฒนางาน (แบบ PA 1/ส)",
-    shortLabel: "ข้อตกลง PA 1/ส",
-    description: "อัปโหลดและจัดการไฟล์เอกสารข้อตกลง PA (แบบ PA 1/ส)",
+    shortLabel: "ข้อตกลง PA",
+    summary: "3 ด้าน 15 ตัวชี้วัด + ประเด็นท้าทาย",
+    description: "เอกสารและข้อตกลงในการพัฒนางานตามมาตรฐานตำแหน่งและภาระงาน ก.ค.ศ.",
     indicators: [
-      { code: "pdf_agreement", title: "อัปโหลดไฟล์เอกสารข้อตกลง PA (แบบ PA 1/ส)" }
+      { code: "general_info", title: "ข้อมูลทั่วไป & ภาระงาน ก.ค.ศ." },
+      { code: "pdf_agreement", title: "ไฟล์เอกสาร PDF ข้อตกลง PA (แบบ PA 1/ส)" },
+      { code: "1.1", title: "ด้านการจัดการเรียนรู้ 1.1 การสร้างและหรือพัฒนาหลักสูตร" },
+      { code: "1.2", title: "ด้านการจัดการเรียนรู้ 1.2 ออกแบบการจัดการเรียนรู้" },
+      { code: "1.3", title: "ด้านการจัดการเรียนรู้ 1.3 จัดกิจกรรมการเรียนรู้" },
+      { code: "1.4", title: "ด้านการจัดการเรียนรู้ 1.4 สร้างและหรือพัฒนาสื่อ นวัตกรรม เทคโนโลยี" },
+      { code: "1.5", title: "ด้านการจัดการเรียนรู้ 1.5 วัดและประเมินผลการเรียนรู้" },
+      { code: "1.6", title: "ด้านการจัดการเรียนรู้ 1.6 ศึกษา วิเคราะห์ และสังเคราะห์ เพื่อแก้ปัญหา" },
+      { code: "1.7", title: "ด้านการจัดการเรียนรู้ 1.7 จัดบรรยากาศที่ส่งเสริมและพัฒนาผู้เรียน" },
+      { code: "1.8", title: "ด้านการจัดการเรียนรู้ 1.8 อบรมและพัฒนาคุณลักษณะที่ดีของผู้เรียน" },
+      { code: "2.1", title: "ด้านการส่งเสริมและสนับสนุน 2.1 จัดทำข้อมูลสารสนเทศผู้เรียนและรายวิชา" },
+      { code: "2.2", title: "ด้านการส่งเสริมและสนับสนุน 2.2 ดำเนินการตามระบบดูแลช่วยเหลือผู้เรียน" },
+      { code: "2.3", title: "ด้านการส่งเสริมและสนับสนุน 2.3 ปฏิบัติงานวิชาการ และงานอื่น ๆ" },
+      { code: "2.4", title: "ด้านการส่งเสริมและสนับสนุน 2.4 ประสานความร่วมมือกับผู้ปกครอง ภาคีเครือข่าย" },
+      { code: "3.1", title: "ด้านการพัฒนาตนเองและวิชาชีพ 3.1 พัฒนาตนเองอย่างเป็นระบบและต่อเนื่อง" },
+      { code: "3.2", title: "ด้านการพัฒนาตนเองและวิชาชีพ 3.2 มีส่วนร่วมในการแลกเปลี่ยนเรียนรู้ทางวิชาชีพ (PLC)" },
+      { code: "3.3", title: "ด้านการพัฒนาตนเองและวิชาชีพ 3.3 นำความรู้ความสามารถทักษะที่ได้จากการพัฒนาตนเองมาใช้" },
+      { code: "challenge", title: "ส่วนที่ 2 ข้อตกลงในการพัฒนางานที่เป็นประเด็นท้าทาย" }
     ]
   },
   {
     id: "pa_report",
-    label: "รายงานการพัฒนางานตามข้อตกลง (PA)",
+    label: "รายงานการพัฒนางานตามข้อตกลง (PA / SAR)",
     shortLabel: "รายงานผล PA",
-    description: "อัปโหลดภาพ/เอกสาร/หลักฐานประกอบองค์ประกอบและตัวชี้วัดการพัฒนางาน PA",
+    summary: "คำนำ + 2 องค์ประกอบ + ภาพหลักฐานร่องรอย",
+    description: "รายงานการประเมินตนเอง (SAR) และหลักฐานร่องรอยการพัฒนางาน",
     indicators: [
-      { code: "pdf_report", title: "ไฟล์เอกสารรายงานผล PA (PDF)" },
-      // ด้านที่ 1: การจัดการเรียนรู้
-      { code: "1.1", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.1 การสร้างและหรือพัฒนาหลักสูตร" },
-      { code: "1.2", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.2 ออกแบบการจัดการเรียนรู้" },
-      { code: "1.3", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.3 จัดกิจกรรมการเรียนรู้" },
-      { code: "1.4", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.4 สร้างและหรือพัฒนาสื่อ นวัตกรรม เทคโนโลยี และแหล่งเรียนรู้" },
-      { code: "1.5", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.5 วัดและประเมินผลการเรียนรู้" },
-      { code: "1.6", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.6 ศึกษา วิเคราะห์ และสังเคราะห์ เพื่อแก้ปัญหา หรือพัฒนาการเรียนรู้" },
-      { code: "1.7", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.7 จัดบรรยากาศที่ส่งเสริมและพัฒนาผู้เรียน" },
-      { code: "1.8", title: "ด้านที่ 1 การจัดการเรียนรู้ - 1.8 อบรมและพัฒนาคุณลักษณะที่ดีของผู้เรียน" },
-      // ด้านที่ 2: การส่งเสริมและสนับสนุน
-      { code: "2.1", title: "ด้านที่ 2 การส่งเสริมและสนับสนุน - 2.1 จัดทำข้อมูลสารสนเทศผู้เรียนและรายวิชา" },
-      { code: "2.2", title: "ด้านที่ 2 การส่งเสริมและสนับสนุน - 2.2 ดำเนินการตามระบบดูแลช่วยเหลือผู้เรียน" },
-      { code: "2.3", title: "ด้านที่ 2 การส่งเสริมและสนับสนุน - 2.3 ปฏิบัติงานวิชาการ และงานอื่น ๆ ของสถานศึกษา" },
-      { code: "2.4", title: "ด้านที่ 2 การส่งเสริมและสนับสนุน - 2.4 ประสานความร่วมมือกับผู้ปกครอง ภาคีเครือข่าย และหรือสถานประกอบการ" },
-      // ด้านที่ 3: การพัฒนาตนเองและวิชาชีพ
-      { code: "3.1", title: "ด้านที่ 3 การพัฒนาตนเองและวิชาชีพ - 3.1 พัฒนาตนเองอย่างเป็นระบบและต่อเนื่อง" },
-      { code: "3.2", title: "ด้านที่ 3 การพัฒนาตนเองและวิชาชีพ - 3.2 มีส่วนร่วมในการแลกเปลี่ยนเรียนรู้ทางวิชาชีพ (PLC)" },
-      { code: "3.3", title: "ด้านที่ 3 การพัฒนาตนเองและวิชาชีพ - 3.3 นำความรู้ความสามารถทักษะที่ได้จากการพัฒนาตนเองมาใช้" },
-      // องค์ประกอบที่ 2: ประเด็นท้าทาย
-      { code: "comp2", title: "องค์ประกอบที่ 2 รายงานผลการดำเนินงานประเด็นท้าทาย" },
-      // ภาพหลักฐานร่องรอย
-      { code: "evidence_gallery", title: "แกลเลอรีภาพหลักฐานร่องรอยการพัฒนางาน (Google Photos & รูปภาพ)" }
+      { code: "preface", title: "คำนำรายงานการประเมินตนเอง (SAR)" },
+      { code: "pdf_report", title: "ไฟล์เอกสาร PDF รายงานผล PA (SAR ฉบับเต็ม)" },
+      { code: "profile_history", title: "ข้อมูลผู้จัดทำ ประวัติการศึกษา และประวัติการลา" },
+      { code: "comp1", title: "องค์ประกอบที่ 1 รายงานผลการประเมินตามมาตรฐานตำแหน่ง" },
+      { code: "comp2", title: "องค์ประกอบที่ 2 สรุปผลการดำเนินงานประเด็นท้าทาย" },
+      { code: "evidence_gallery", title: "ภาพหลักฐานร่องรอยการพัฒนางาน (Google Photos & รูปภาพ)" }
     ]
   }
 ];
@@ -71,21 +79,34 @@ export function getPaIndicator(category: string, code: string) {
 }
 
 export function AdminPaQualityManager() {
-  const [category, setCategory] = useState<string>("pa_report");
-  const [indicatorCode, setIndicatorCode] = useState<string>("1.1");
+  const [category, setCategory] = useState<string>("pa_agreement");
+  const [indicatorCode, setIndicatorCode] = useState<string>("general_info");
   const [items, setItems] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // General Settings State for PDF & Album
+  // General Settings State
   const [generalSettings, setGeneralSettings] = useState({
+    name: paReportGeneral.maker[0] || "นายนิรุทธิ์ เสวะนา",
+    position: paReportGeneral.maker[1] || "ตำแหน่งครู อันดับ คศ.1",
+    school: paReportGeneral.maker[2] || "โรงเรียนบ้านน้ำพร อำเภอเชียงคาน จังหวัดเลย",
+    affiliation: paReportGeneral.maker[3] || "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1",
+    agreementPeriod: paReportGeneral.maker[4] || "รอบรายงานปีงบประมาณ 2569",
+    workloadHours: "43",
     agreementPdfUrl: "/pa-agreement-2569-placeholder.pdf",
     reportPdfUrl: "/pa-report-2569-placeholder.pdf",
+    preface: paReportGeneral.preface || "",
     evidenceAlbumUrl: ""
   });
 
   // Dynamic Form Fields State
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [problem, setProblem] = useState("");
+  const [tasksStr, setTasksStr] = useState("");
+  const [outcomesStr, setOutcomesStr] = useState("");
+  const [indicatorsStr, setIndicatorsStr] = useState("");
+  const [methodsStr, setMethodsStr] = useState("");
+  const [expectedStr, setExpectedStr] = useState("");
   
   // Document Links
   const [docUrls, setDocUrls] = useState<string[]>([""]);
@@ -139,6 +160,12 @@ export function AdminPaQualityManager() {
     setEditingId(null);
     setTitle("");
     setDescription("");
+    setProblem("");
+    setTasksStr("");
+    setOutcomesStr("");
+    setIndicatorsStr("");
+    setMethodsStr("");
+    setExpectedStr("");
     setDocUrls([""]);
     setDocNames([""]);
     setDocTypes([""]);
@@ -147,11 +174,17 @@ export function AdminPaQualityManager() {
   };
 
   const handleEditRecord = (item: any) => {
-    setCategory(item.category || "pa_report");
+    setCategory(item.category || "pa_agreement");
     setIndicatorCode(item.indicator_code || "1.1");
     setEditingId(item.id);
     setTitle(item.title || "");
     setDescription(item.description || "");
+    setProblem(item.problem || "");
+    setTasksStr(item.tasks ? item.tasks.join("\n") : "");
+    setOutcomesStr(item.outcomes ? item.outcomes.join("\n") : "");
+    setIndicatorsStr(item.indicators ? item.indicators.join("\n") : "");
+    setMethodsStr(item.methods ? item.methods.join("\n") : "");
+    setExpectedStr(item.expected ? item.expected.join("\n") : "");
     setDocUrls(item.document_urls?.length ? item.document_urls : [""]);
     setDocNames(item.document_names?.length ? item.document_names : [""]);
     setDocTypes(item.document_types?.length ? item.document_types : [""]);
@@ -160,7 +193,7 @@ export function AdminPaQualityManager() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSavePdfOrAlbum = async (e: React.FormEvent) => {
+  const handleSaveGeneralOrPdf = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setMessage(null);
@@ -169,10 +202,10 @@ export function AdminPaQualityManager() {
       if (file) {
         const formData = new FormData();
         formData.append("pdfFile", file);
-        formData.append("documentType", category === "pa_agreement" ? "agreement" : "report");
+        formData.append("documentType", indicatorCode === "pdf_agreement" ? "agreement" : "report");
         const pdfRes = await uploadPaPdf(formData);
         if (pdfRes.success && pdfRes.pdfUrl) {
-          const fieldKey = category === "pa_agreement" ? "agreementPdfUrl" : "reportPdfUrl";
+          const fieldKey = indicatorCode === "pdf_agreement" ? "agreementPdfUrl" : "reportPdfUrl";
           generalSettings[fieldKey as keyof typeof generalSettings] = pdfRes.pdfUrl;
         }
       }
@@ -266,17 +299,17 @@ export function AdminPaQualityManager() {
   return (
     <section className="admin-content-grid">
       
-      {/* LEFT FORM */}
+      {/* LEFT FORM: DYNAMICFORM FIELDS PER INDICATOR */}
       <div className="news-editor space-y-5">
         <div className="admin-section-heading">
           <div>
             <span>PERFORMANCE AGREEMENT (PA)</span>
-            <h2>บริหารจัดการ การพัฒนางานตามข้อตกลง (PA)</h2>
+            <h2>{editingId ? "แก้ไขข้อมูล PA" : "จัดการข้อมูล PA ตามตัวชี้วัด"}</h2>
           </div>
           <ShieldCheck size={28} className="text-amber-400" />
         </div>
 
-        {/* Level / Category Selector */}
+        {/* Dropdown Selectors */}
         <div className="news-editor__grid">
           <label className="news-field">
             <span>ระดับ / ด้านการประเมิน PA</span>
@@ -287,7 +320,6 @@ export function AdminPaQualityManager() {
             </select>
           </label>
 
-          {/* Indicator Select (Shown for PA Report) */}
           <label className="news-field">
             <span>ตัวชี้วัด / หมวดหมู่</span>
             <select value={indicatorCode} onChange={(e) => handleIndicatorChange(e.target.value)}>
@@ -300,7 +332,7 @@ export function AdminPaQualityManager() {
           </label>
         </div>
 
-        {/* Selected Indicator Banner */}
+        {/* Highlight Selected Indicator */}
         <div className="quality-selected-indicator p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
           <span className="text-xs font-bold text-amber-400">
             [{indicatorCode}] {selectedLevel.shortLabel}
@@ -308,16 +340,83 @@ export function AdminPaQualityManager() {
           <p className="text-sm font-semibold text-white mt-1">{currentIndicator?.title}</p>
         </div>
 
-        {/* DYNAMIC FORM ENGINE */}
+        {/* DYNAMIC FORM VIEW BASED ON INDICATOR CODE */}
         
-        {/* 1. PA AGREEMENT: PDF FILE UPLOAD ONLY */}
-        {category === "pa_agreement" && (
-          <form onSubmit={handleSavePdfOrAlbum} className="space-y-4">
+        {/* CASE 1: ข้อมูลทั่วไป & ภาระงาน ก.ค.ศ. */}
+        {indicatorCode === "general_info" && (
+          <form onSubmit={handleSaveGeneralOrPdf} className="space-y-4">
+            <div className="news-editor__grid">
+              <label className="news-field">
+                <span>ชื่อ-นามสกุล ผู้จัดทำ</span>
+                <input
+                  value={generalSettings.name}
+                  onChange={(e) => setGeneralSettings((p) => ({ ...p, name: e.target.value }))}
+                  required
+                />
+              </label>
+              <label className="news-field">
+                <span>ตำแหน่ง / วิทยฐานะ</span>
+                <input
+                  value={generalSettings.position}
+                  onChange={(e) => setGeneralSettings((p) => ({ ...p, position: e.target.value }))}
+                  required
+                />
+              </label>
+              <label className="news-field">
+                <span>สถานศึกษา</span>
+                <input
+                  value={generalSettings.school}
+                  onChange={(e) => setGeneralSettings((p) => ({ ...p, school: e.target.value }))}
+                  required
+                />
+              </label>
+              <label className="news-field">
+                <span>สังกัดหน่วยงาน</span>
+                <input
+                  value={generalSettings.affiliation}
+                  onChange={(e) => setGeneralSettings((p) => ({ ...p, affiliation: e.target.value }))}
+                  required
+                />
+              </label>
+              <label className="news-field">
+                <span>รอบข้อตกลง PA</span>
+                <input
+                  value={generalSettings.agreementPeriod}
+                  onChange={(e) => setGeneralSettings((p) => ({ ...p, agreementPeriod: e.target.value }))}
+                  required
+                />
+              </label>
+              <label className="news-field">
+                <span>ภาระงานรวม (ชั่วโมง/สัปดาห์)</span>
+                <input
+                  value={generalSettings.workloadHours}
+                  onChange={(e) => setGeneralSettings((p) => ({ ...p, workloadHours: e.target.value }))}
+                  required
+                />
+              </label>
+            </div>
+
+            <button type="submit" disabled={submitting} className="admin-button admin-button--primary w-full py-3 rounded-xl bg-amber-500 text-black font-bold text-sm flex items-center justify-center gap-2 cursor-pointer">
+              {submitting ? <LoaderCircle className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>บันทึกข้อมูลทั่วไป & ภาระงาน</span>
+            </button>
+          </form>
+        )}
+
+        {/* CASE 2: ไฟล์เอกสาร PDF */}
+        {(indicatorCode === "pdf_agreement" || indicatorCode === "pdf_report") && (
+          <form onSubmit={handleSaveGeneralOrPdf} className="space-y-4">
             <label className="news-field news-field--wide">
-              <span>ลิงก์ไฟล์เอกสารข้อตกลง PA (แบบ PA 1/ส)</span>
+              <span>ลิงก์ไฟล์ PDF ({indicatorCode === "pdf_agreement" ? "ข้อตกลง PA" : "รายงานผล PA"})</span>
               <input
-                value={generalSettings.agreementPdfUrl}
-                onChange={(e) => setGeneralSettings((p) => ({ ...p, agreementPdfUrl: e.target.value }))}
+                value={indicatorCode === "pdf_agreement" ? generalSettings.agreementPdfUrl : generalSettings.reportPdfUrl}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setGeneralSettings((p) => ({
+                    ...p,
+                    [indicatorCode === "pdf_agreement" ? "agreementPdfUrl" : "reportPdfUrl"]: val
+                  }));
+                }}
                 required
               />
             </label>
@@ -325,7 +424,7 @@ export function AdminPaQualityManager() {
             <label className="quality-file-uploader">
               <span><FileText size={27} /></span>
               <div>
-                <strong>{file ? file.name : "อัปโหลดไฟล์ PDF ข้อตกลง PA (แบบ PA 1/ส) ใหม่"}</strong>
+                <strong>{file ? file.name : `อัปโหลดไฟล์ PDF ${indicatorCode === "pdf_agreement" ? "ข้อตกลง PA" : "รายงานผล PA"} ใหม่`}</strong>
                 <small>รองรับไฟล์ PDF ไม่เกิน 100 MB</small>
               </div>
               <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
@@ -333,44 +432,36 @@ export function AdminPaQualityManager() {
 
             <button type="submit" disabled={submitting} className="admin-button admin-button--primary w-full py-3 rounded-xl bg-amber-500 text-black font-bold text-sm flex items-center justify-center gap-2 cursor-pointer">
               {submitting ? <LoaderCircle className="animate-spin" size={18} /> : <Save size={18} />}
-              <span>บันทึกไฟล์ข้อตกลง PA (แบบ PA 1/ส)</span>
+              <span>บันทึกไฟล์ PDF</span>
             </button>
           </form>
         )}
 
-        {/* 2. PA REPORT: PDF FILE UPLOAD */}
-        {category === "pa_report" && indicatorCode === "pdf_report" && (
-          <form onSubmit={handleSavePdfOrAlbum} className="space-y-4">
+        {/* CASE 3: คำนำ SAR */}
+        {indicatorCode === "preface" && (
+          <form onSubmit={handleSaveGeneralOrPdf} className="space-y-4">
             <label className="news-field news-field--wide">
-              <span>ลิงก์ไฟล์เอกสารรายงานผล PA (PDF)</span>
-              <input
-                value={generalSettings.reportPdfUrl}
-                onChange={(e) => setGeneralSettings((p) => ({ ...p, reportPdfUrl: e.target.value }))}
+              <span>บทความคำนำรายงานการประเมินตนเอง (SAR)</span>
+              <textarea
+                rows={8}
+                value={generalSettings.preface}
+                onChange={(e) => setGeneralSettings((p) => ({ ...p, preface: e.target.value }))}
                 required
               />
             </label>
 
-            <label className="quality-file-uploader">
-              <span><FileText size={27} /></span>
-              <div>
-                <strong>{file ? file.name : "อัปโหลดไฟล์ PDF รายงานผล PA ใหม่"}</strong>
-                <small>รองรับไฟล์ PDF ไม่เกิน 100 MB</small>
-              </div>
-              <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-            </label>
-
             <button type="submit" disabled={submitting} className="admin-button admin-button--primary w-full py-3 rounded-xl bg-amber-500 text-black font-bold text-sm flex items-center justify-center gap-2 cursor-pointer">
               {submitting ? <LoaderCircle className="animate-spin" size={18} /> : <Save size={18} />}
-              <span>บันทึกไฟล์รายงานผล PA (PDF)</span>
+              <span>บันทึกคำนำ SAR</span>
             </button>
           </form>
         )}
 
-        {/* 3. PA REPORT: GOOGLE PHOTOS EVIDENCE ALBUM */}
-        {category === "pa_report" && indicatorCode === "evidence_gallery" && (
-          <form onSubmit={handleSavePdfOrAlbum} className="space-y-4">
+        {/* CASE 4: ภาพหลักฐานร่องรอย (Google Photos) */}
+        {indicatorCode === "evidence_gallery" && (
+          <form onSubmit={handleSaveGeneralOrPdf} className="space-y-4">
             <label className="news-field news-field--wide">
-              <span>อัลบั้ม Google Photos สำหรับสแครปภาพหลักฐานร่องรอย</span>
+              <span>อัลบั้ม Google Photos ภาพหลักฐานร่องรอยการพัฒนางาน</span>
               <input
                 type="url"
                 value={generalSettings.evidenceAlbumUrl}
@@ -386,11 +477,42 @@ export function AdminPaQualityManager() {
           </form>
         )}
 
-        {/* 4. PA REPORT: ALL PA INDICATORS (1.1 - 3.3, comp2) */}
-        {category === "pa_report" && !["pdf_report", "evidence_gallery"].includes(indicatorCode) && (
+        {/* CASE 5: ข้อตกลง / สรุปผลประเด็นท้าทาย */}
+        {(indicatorCode === "challenge" || indicatorCode === "comp2") && (
           <form onSubmit={handleSavePaRecordItem} className="space-y-4">
             <label className="news-field news-field--wide">
-              <span>ชื่อเอกสารหลักฐาน / สรุปการพัฒนางาน</span>
+              <span>ชื่อเรื่อง / หัวข้อประเด็นท้าทาย</span>
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="เช่น การพัฒนาทักษะการเรียนรู้..."
+                required
+              />
+            </label>
+
+            <label className="news-field news-field--wide">
+              <span>สภาพปัญหาการจัดการเรียนรู้และคุณภาพผู้เรียน</span>
+              <textarea
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="รายละเอียดสภาพปัญหา..."
+                required
+              />
+            </label>
+
+            <button type="submit" disabled={submitting} className="admin-button admin-button--primary w-full py-3 rounded-xl bg-amber-500 text-black font-bold text-sm flex items-center justify-center gap-2 cursor-pointer">
+              {submitting ? <LoaderCircle className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>{editingId ? "บันทึกการแก้ไขประเด็นท้าทาย" : "เพิ่มประเด็นท้าทาย"}</span>
+            </button>
+          </form>
+        )}
+
+        {/* CASE 6: STANDARD PA INDICATORS (1.1 - 3.3, comp1, profile_history) */}
+        {!["general_info", "pdf_agreement", "pdf_report", "preface", "evidence_gallery", "challenge", "comp2"].includes(indicatorCode) && (
+          <form onSubmit={handleSavePaRecordItem} className="space-y-4">
+            <label className="news-field news-field--wide">
+              <span>ชื่อเอกสารหลักฐาน / สรุปผลการปฏิบัติงาน</span>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -400,19 +522,19 @@ export function AdminPaQualityManager() {
             </label>
 
             <label className="news-field news-field--wide">
-              <span>คำอธิบายรายละเอียด / สรุปผลการปฏิบัติงาน</span>
+              <span>คำอธิบายรายละเอียด</span>
               <textarea
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="รายละเอียดสั้น ๆ ของหลักฐาน หรือผลสัมฤทธิ์ที่ได้"
+                placeholder="รายละเอียดสั้น ๆ ของหลักฐานนี้"
               />
             </label>
 
             {/* Multiple Links Input */}
             <div className="news-field news-field--wide quality-link-fields">
               <div className="quality-link-fields__heading">
-                <span>ลิงก์เอกสาร / รูปภาพบน Google Drive / Google Photos / เว็บไซต์ภายนอก</span>
+                <span>ลิงก์เอกสารบน Google Drive / Google Photos / เว็บไซต์ภายนอก</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -465,7 +587,7 @@ export function AdminPaQualityManager() {
               ))}
             </div>
 
-            {/* Upload File Box */}
+            {/* File Upload Box */}
             <label className={`quality-file-uploader ${file ? "is-selected" : ""}`}>
               <span><FileText size={27} /></span>
               <div>
@@ -493,27 +615,17 @@ export function AdminPaQualityManager() {
         )}
       </div>
 
-      {/* RIGHT COLUMN: EVIDENCE DATABASE PREVIEW */}
+      {/* RIGHT COLUMN: LIVE EVIDENCE DATABASE CARDS */}
       <div className="admin-list-card">
         <div className="admin-section-heading">
           <div>
-            <span>PA EVIDENCE DATABASE</span>
+            <span>PA DATABASE & EVIDENCE</span>
             <h2>รายการหลักฐานในตัวชี้วัด [{indicatorCode}] ({filteredItems.length})</h2>
           </div>
           <FileText size={27} className="text-amber-400" />
         </div>
 
-        {category === "pa_agreement" ? (
-          <div className="p-6 rounded-2xl bg-[#0d1321] border border-white/10 space-y-4">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <FileText className="w-4 h-4 text-amber-400" />
-              <span>พรีวิวไฟล์ข้อตกลง PA (แบบ PA 1/ส)</span>
-            </h3>
-            <div className="w-full h-[350px] rounded-xl overflow-hidden border border-white/10 bg-black/50">
-              <iframe src={`${generalSettings.agreementPdfUrl}#toolbar=0`} className="w-full h-full border-0" title="PA 1/S Preview" />
-            </div>
-          </div>
-        ) : !filteredItems.length ? (
+        {!filteredItems.length ? (
           <div className="admin-empty p-10 text-center text-slate-400 space-y-2">
             <FileText size={34} className="mx-auto text-amber-500/50" />
             <strong className="block text-base text-white">ยังไม่มีหลักฐานบันทึกในตัวชี้วัดนี้</strong>

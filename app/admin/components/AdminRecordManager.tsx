@@ -18,7 +18,7 @@ import {
   Images,
   Sparkles
 } from "lucide-react";
-import { addOrEditContent, deleteContent, reorderContent } from "@/app/admin/actions";
+import { addOrEditContent, deleteContent } from "@/app/admin/actions";
 
 type RecordItem = {
   id: string;
@@ -67,15 +67,6 @@ export function AdminRecordManager({
   const [attachmentUrls, setAttachmentUrls] = useState<string[]>([""]);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-
-  // Drag & Drop Reorder States
-  const [draggedId, setDraggedId] = useState<string>("");
-  const [dropTargetId, setDropTargetId] = useState<string>("");
-  const [orderBaseline, setOrderBaseline] = useState<string[]>([]);
-  const [orderSaving, setOrderSaving] = useState(false);
-  const [orderMessage, setOrderMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-
-  const orderDirty = orderBaseline.length > 0;
 
   useEffect(() => {
     setItems(initialItems);
@@ -168,10 +159,6 @@ export function AdminRecordManager({
       formData.append("albumUrl", form.albumUrl);
       formData.append("imgUrl", form.imgUrl);
       formData.append("status", form.status);
-
-      const validUrls = attachmentUrls.filter((u) => u.trim());
-      formData.append("document_urls", JSON.stringify(validUrls));
-
       if (imageFile) {
         formData.append("imageFile", imageFile);
       }
@@ -208,78 +195,6 @@ export function AdminRecordManager({
       }
     } catch (err: any) {
       setMessage({ type: "error", text: err.message || "เกิดข้อผิดพลาด" });
-    }
-  };
-
-  // Drag & Drop Handlers
-  const dragStart = (e: React.DragEvent, item: RecordItem) => {
-    if (orderSaving) {
-      e.preventDefault();
-      return;
-    }
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", item.id);
-    setDraggedId(item.id);
-    if (!orderBaseline.length) {
-      setOrderBaseline(items.map((i) => i.id));
-    }
-    setOrderMessage(null);
-  };
-
-  const dragOver = (e: React.DragEvent, item: RecordItem) => {
-    if (!draggedId || draggedId === item.id) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    setDropTargetId(item.id);
-  };
-
-  const drop = (e: React.DragEvent, targetItem: RecordItem) => {
-    e.preventDefault();
-    const sourceId = draggedId || e.dataTransfer.getData("text/plain");
-    setDraggedId("");
-    setDropTargetId("");
-    if (!sourceId || sourceId === targetItem.id) return;
-
-    setItems((prev) => {
-      const sourceIndex = prev.findIndex((i) => i.id === sourceId);
-      const targetIndex = prev.findIndex((i) => i.id === targetItem.id);
-      if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) return prev;
-      const next = [...prev];
-      const [moved] = next.splice(sourceIndex, 1);
-      next.splice(targetIndex, 0, moved);
-      return next;
-    });
-    setOrderMessage(null);
-  };
-
-  const cancelOrder = () => {
-    if (!orderBaseline.length) return;
-    const itemMap = new Map(items.map((i) => [i.id, i]));
-    const restored = orderBaseline.map((id) => itemMap.get(id)).filter(Boolean) as RecordItem[];
-    setItems(restored);
-    setOrderBaseline([]);
-    setDraggedId("");
-    setDropTargetId("");
-    setOrderMessage(null);
-  };
-
-  const saveOrder = async () => {
-    setOrderSaving(true);
-    setOrderMessage(null);
-    try {
-      const reorderedIds = items.map((i) => i.id);
-      const res = await reorderContent(type, reorderedIds);
-      if (res.success) {
-        setOrderBaseline([]);
-        setOrderMessage({ type: "success", text: "บันทึกลำดับการแสดงผลเรียบร้อยแล้ว" });
-        if (onRefresh) onRefresh();
-      } else {
-        setOrderMessage({ type: "error", text: res.error || "เกิดข้อผิดพลาดในการบันทึกลำดับ" });
-      }
-    } catch (err: any) {
-      setOrderMessage({ type: "error", text: err.message || "เกิดข้อผิดพลาดในการบันทึกลำดับ" });
-    } finally {
-      setOrderSaving(false);
     }
   };
 
@@ -410,7 +325,7 @@ export function AdminRecordManager({
                 <button
                   type="button"
                   onClick={() => removeAttachmentUrl(idx)}
-                  className="p-2 text-red-400 hover:text-red-300 cursor-pointer"
+                  className="p-2 text-red-400 hover:text-red-300"
                 >
                   <X size={16} />
                 </button>
@@ -447,120 +362,51 @@ export function AdminRecordManager({
           {type === "achievements" ? <Trophy size={26} /> : <Images size={26} />}
         </div>
 
-        {/* Drag Hint Banner */}
-        {items.length > 1 && (
-          <div className="admin-reorder-guide flex items-center gap-2 text-xs text-amber-400/90 bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20 mb-3">
-            <GripVertical size={16} className="text-amber-400" />
-            <span>คลิกค้างที่ไอคอนจุดทางซ้ายเพื่อลากสลับลำดับการแสดงผล</span>
-          </div>
-        )}
-
-        {/* Order Dirty Action Banner */}
-        {orderDirty && (
-          <div className="admin-reorder-confirm p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-3 mb-4 shadow-lg">
-            <div className="text-xs">
-              <strong className="block text-amber-300 font-bold">มีการเปลี่ยนลำดับรายการ</strong>
-              <span className="text-slate-300">กดยืนยันเพื่อให้ลำดับใหม่แสดงบนเว็บไซต์</span>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={cancelOrder}
-                disabled={orderSaving}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs hover:bg-slate-700 cursor-pointer transition-all"
-              >
-                ยกเลิก
-              </button>
-              <button
-                type="button"
-                onClick={saveOrder}
-                disabled={orderSaving}
-                className="px-3 py-1.5 rounded-lg bg-amber-500 text-black font-bold text-xs hover:bg-amber-400 flex items-center gap-1.5 cursor-pointer shadow-md transition-all"
-              >
-                {orderSaving ? <LoaderCircle className="animate-spin" size={14} /> : <Save size={14} />}
-                <span>{orderSaving ? "กำลังบันทึก..." : "ยืนยันการเปลี่ยนลำดับ"}</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Order Status Message */}
-        {orderMessage && (
-          <p className={`admin-message admin-message--${orderMessage.type} mb-4 p-3 rounded-xl flex items-center gap-2 text-xs font-bold ${
-            orderMessage.type === "success" ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" : "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-          }`}>
-            {orderMessage.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-            <span>{orderMessage.text}</span>
-          </p>
-        )}
-
         {!items.length ? (
           <div className="admin-empty py-12 text-center text-slate-400">
             <Sparkles size={32} className="mx-auto mb-2 opacity-50 text-amber-400" />
             <strong>ยังไม่มีข้อมูลในหมวดนี้</strong>
           </div>
         ) : (
-          <div className="admin-record-list space-y-3">
+          <div className="admin-record-list">
             {items.map((item) => (
-              <article
-                key={item.id}
-                className={`is-reorderable transition-all rounded-xl border p-3 flex items-center gap-3 bg-[#0d1321] ${
-                  draggedId === item.id ? "opacity-40 bg-amber-500/10 border-amber-500/40" : "border-white/10 hover:border-amber-500/30"
-                } ${dropTargetId === item.id ? "border-amber-400 border-2 bg-amber-500/10 scale-[1.01]" : ""}`}
-                onDragOver={(e) => dragOver(e, item)}
-                onDragLeave={() => setDropTargetId("")}
-                onDrop={(e) => drop(e, item)}
-              >
-                <span
-                  className="admin-record-list__drag cursor-grab active:cursor-grabbing p-1 text-slate-400 hover:text-amber-400 transition-colors shrink-0"
-                  title="คลิกค้างแล้วลากเพื่อสลับลำดับ"
-                  draggable={!orderSaving}
-                  onDragStart={(e) => dragStart(e, item)}
-                  onDragEnd={() => {
-                    setDraggedId("");
-                    setDropTargetId("");
-                  }}
-                >
-                  <GripVertical size={20} />
+              <article key={item.id} className="is-reorderable">
+                <span className="admin-record-list__drag" title="สลับลำดับ">
+                  <GripVertical size={18} />
                 </span>
-
-                <div className="admin-news-list__image shrink-0">
+                <div className="admin-news-list__image">
                   {item.imgUrl ? (
-                    <img src={item.imgUrl} alt="" className="w-12 h-12 object-cover rounded-lg border border-white/10" />
+                    <img src={item.imgUrl} alt="" className="w-12 h-12 object-cover rounded-lg" />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                      <FileImage size={22} />
-                    </div>
+                    <FileImage size={24} />
                   )}
                 </div>
-
-                <div className="admin-record-list__copy flex-1 min-w-0">
-                  <span className="text-amber-400 font-bold text-xs block">
+                <div className="admin-record-list__copy">
+                  <span className="text-amber-400 font-bold text-xs">
                     {item.category} • {item.status === "draft" ? "ฉบับร่าง" : "เผยแพร่"}
                   </span>
-                  <h3 className="font-bold text-slate-100 text-sm truncate mt-0.5">{item.title}</h3>
+                  <h3 className="font-bold text-slate-100 text-sm truncate">{item.title}</h3>
                   {item.albumUrl && (
-                    <small className="admin-record-list__links flex items-center gap-1 text-slate-400 text-[11px] mt-0.5">
+                    <small className="admin-record-list__links flex items-center gap-1 text-slate-400">
                       <Link2 size={12} /> เชื่อมกับ Google Photos
                     </small>
                   )}
-                  <small className="admin-record-list__audit text-slate-400 text-[11px] block mt-0.5">
+                  <small className="admin-record-list__audit text-slate-400">
                     บันทึกเมื่อ {item.date ? new Date(item.date).toLocaleDateString("th-TH") : "ไม่ระบุ"}
                   </small>
                 </div>
-
-                <div className="admin-record-list__actions flex items-center gap-1 shrink-0">
+                <div className="admin-record-list__actions">
                   <button
                     type="button"
                     onClick={() => edit(item)}
                     title="แก้ไข"
-                    className="p-2 rounded-lg bg-amber-500/15 text-amber-300 hover:bg-amber-500/30 transition-all cursor-pointer"
+                    className="p-2 rounded-lg bg-slate-800 text-amber-400 hover:bg-slate-700"
                   >
                     <Pencil size={15} />
                   </button>
                   <button
                     type="button"
-                    className="is-danger p-2 rounded-lg bg-rose-500/15 text-rose-300 hover:bg-rose-500/30 transition-all cursor-pointer"
+                    className="is-danger p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20"
                     onClick={() => handleDelete(item)}
                     title="ลบ"
                   >

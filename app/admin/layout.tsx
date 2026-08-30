@@ -26,6 +26,7 @@ const sidebarMenu = [
   { name: "ภาพกิจกรรม", href: "/admin/activities", icon: Images },
   { name: "ห้องเรียนออนไลน์", href: "/admin/classroom", icon: MonitorPlay },
   { name: "งานประจำชั้น", href: "/admin/homeroom", icon: UsersRound },
+  { name: "พัฒนางานตามข้อตกลง PA", href: "/admin/pa", icon: ShieldCheck },
   { name: "ภาพหน้าปกและ Visuals", href: "/admin/hero", icon: Images },
   { name: "ตั้งค่าระบบ", href: "/admin/settings", icon: Settings },
 ];

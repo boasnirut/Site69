@@ -50,7 +50,7 @@ export default async function PaReportPage() {
           {...visuals.pa}
           eyebrow="PA Report 2569"
           title="รายงานผลการพัฒนางานตามข้อตกลง (PA)"
-          description="รายงานผลการประเมินและหลักฐานการพัฒนางานตามข้อตกลงประจำปีงบประมาณ 2569"
+          description="รายงานผลการประเมินตนเอง (SAR) และหลักฐานการพัฒนางานตามข้อตกลงประจำปีงบประมาณ 2569"
         />
       </div>
 
