@@ -103,11 +103,11 @@ export function SiteHeader() {
       <div className="header-actions">
         <Link 
           href="/admin" 
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 hover:border-amber-400 transition-all shadow-sm active:scale-95 cursor-pointer" 
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-white bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 hover:border-amber-400 transition-all shadow-sm active:scale-95 cursor-pointer" 
           aria-label="เข้าสู่ระบบผู้ดูแล"
+          title="เข้าสู่ระบบผู้ดูแล"
         >
-          <LogIn className="w-4 h-4 text-amber-400" aria-hidden="true" />
-          <span>เข้าสู่ระบบ</span>
+          <LogIn className="w-5 h-5 text-amber-400" aria-hidden="true" />
         </Link>
         <button
           className="icon-button mobile-menu"

@@ -1,29 +1,11 @@
 import { fetchContent } from "../actions";
-import { AdminRecordManager } from "../components/AdminRecordManager";
+import type { AdminContentData } from "../actions";
+import { AdminContentWorkbench } from "../components/AdminContentWorkbench";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminAchievementsPage() {
-  const data = await fetchContent();
-  const achievements = data.achievements || [];
+  const content = (await fetchContent()) as AdminContentData;
 
-  return (
-    <div className="space-y-6">
-      <AdminRecordManager 
-        type="achievements"
-        title="ผลงานและรางวัล"
-        eyebrow="ACHIEVEMENTS & AWARDS"
-        categories={[
-          "รางวัลและผลงานตนเอง",
-          "รางวัลและผลงานผู้เรียน",
-          "รางวัลผลงานสถานศึกษา",
-          "Best Practice / นวัตกรรม",
-          "งานวิจัยในชั้นเรียน",
-          "การอบรมและสัมมนา",
-          "การเสริมสร้างทักษะ"
-        ]}
-        items={achievements}
-      />
-    </div>
-  );
+  return <AdminContentWorkbench collection="achievements" initialRecords={content.achievements || []} />;
 }

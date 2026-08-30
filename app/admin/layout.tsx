@@ -4,27 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
-  Settings, 
   LogOut, 
-  MonitorPlay, 
-  UsersRound, 
-  Trophy, 
-  Images, 
   ExternalLink,
   ShieldCheck
 } from "lucide-react";
 import { logout } from "./login/actions";
 import { useTransition } from "react";
 import "./admin.css";
+import { adminModules } from "./admin-modules";
 
 const sidebarMenu = [
   { name: "ภาพรวมระบบ", href: "/admin", icon: LayoutDashboard },
-  { name: "รางวัลและผลงาน", href: "/admin/achievements", icon: Trophy },
-  { name: "ภาพกิจกรรม", href: "/admin/activities", icon: Images },
-  { name: "ห้องเรียนออนไลน์", href: "/admin/classroom", icon: MonitorPlay },
-  { name: "งานประจำชั้น", href: "/admin/homeroom", icon: UsersRound },
-  { name: "ภาพหน้าปกและ Visuals", href: "/admin/hero", icon: Images },
-  { name: "ตั้งค่าระบบ", href: "/admin/settings", icon: Settings },
+  ...adminModules.map((module) => ({ name: module.name, href: module.href, icon: module.icon })),
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -42,7 +33,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="flex h-screen bg-[#070a12] text-white overflow-hidden font-sans">
+    <div
+      className="flex h-screen bg-[#070a12] text-white overflow-hidden"
+      style={{ fontFamily: 'Arial, "Noto Sans Thai", "Tahoma", sans-serif' }}
+    >
       {/* Sidebar - Inspired by School Admin Portal */}
       <aside className="w-64 bg-[#0d1321]/90 border-r border-amber-500/20 flex flex-col shadow-2xl">
         <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
@@ -51,10 +45,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <ShieldCheck className="w-6 h-6 text-black" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white tracking-wide">
-                ระบบบริหารจัดการ
-              </h2>
-              <p className="text-xs text-amber-400 font-medium">ครูนิรุทธิ์ เสวะนา</p>
+              <h2 className="text-base font-bold text-white tracking-wide">Admin Rebuild</h2>
+              <p className="text-xs text-amber-400 font-medium">Nirut Sewana</p>
             </div>
           </div>
         </div>
@@ -106,7 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className="h-16 border-b border-amber-500/20 bg-[#0d1321]/80 flex items-center px-8 justify-between backdrop-blur-md">
           <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
             <ShieldCheck className="w-4 h-4" />
-            <span>Admin Management Portal</span>
+            <span>Admin Rebuild Center</span>
           </div>
 
           <div className="flex items-center gap-3">

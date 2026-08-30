@@ -1,26 +1,11 @@
 import { fetchContent } from "../actions";
-import { AdminRecordManager } from "../components/AdminRecordManager";
+import type { AdminContentData } from "../actions";
+import { AdminContentWorkbench } from "../components/AdminContentWorkbench";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminActivitiesPage() {
-  const data = await fetchContent();
-  const activities = data.activities || [];
+  const content = (await fetchContent()) as AdminContentData;
 
-  return (
-    <div className="space-y-6">
-      <AdminRecordManager 
-        type="activities"
-        title="ภาพกิจกรรม"
-        eyebrow="ACTIVITY GALLERY"
-        categories={[
-          "กิจกรรมการเรียนรู้",
-          "กิจกรรมพัฒนาผู้เรียน",
-          "กิจกรรมส่งเสริมคุณธรรม",
-          "กิจกรรมสัมพันธ์ชุมชน"
-        ]}
-        items={activities}
-      />
-    </div>
-  );
+  return <AdminContentWorkbench collection="activities" initialRecords={content.activities || []} />;
 }

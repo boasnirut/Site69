@@ -8,7 +8,10 @@ export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(login, null);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: "#000" }}>
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: "#000", fontFamily: 'Arial, "Noto Sans Thai", "Tahoma", sans-serif' }}
+    >
       <div className="w-full max-w-md bg-white/5 border border-white/10 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white mb-2">Admin Login</h1>

@@ -1,10 +1,42 @@
 "use server";
 
+import fallbackContent from "@/data/content.json";
 import { getGithubFileContent, updateGithubFile, uploadGithubBase64File } from "@/lib/github-api";
 import { revalidatePath } from "next/cache";
-import fallbackContent from "@/data/content.json";
 
 const CONTENT_FILE_PATH = "data/content.json";
+
+export type AdminContentStatus = "published" | "draft";
+
+export type AdminContentRecord = {
+  id: string;
+  title: string;
+  category: string;
+  content: string;
+  imgUrl: string;
+  images?: string[];
+  albumUrl?: string;
+  date: string;
+  status: AdminContentStatus;
+};
+
+export type AdminContentData = {
+  achievements: AdminContentRecord[];
+  activities: AdminContentRecord[];
+  pageVisuals?: Record<string, unknown>;
+};
+
+type SaveCollectionResult = {
+  ok: boolean;
+  message: string;
+  records?: AdminContentRecord[];
+};
+
+type UploadResult = {
+  ok: boolean;
+  message: string;
+  url?: string;
+};
 
 export async function fetchContent() {
   if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_OWNER || !process.env.GITHUB_REPO) {
@@ -14,7 +46,7 @@ export async function fetchContent() {
   }
 
   const fileData = await getGithubFileContent(CONTENT_FILE_PATH);
-  
+
   if (!fileData) {
     return fallbackContent;
   }
@@ -27,234 +59,120 @@ export async function fetchContent() {
   }
 }
 
-export async function savePageVisuals(pageVisuals: any) {
-  try {
-    const currentFile = await getGithubFileContent(CONTENT_FILE_PATH);
-    let data: any = { achievements: [], activities: [] };
-    let sha = undefined;
+function normalizeRecord(record: AdminContentRecord): AdminContentRecord {
+  const images = Array.isArray(record.images)
+    ? record.images.map((image) => image.trim()).filter(Boolean)
+    : undefined;
 
-    if (currentFile) {
-      data = JSON.parse(currentFile.content);
-      sha = currentFile.sha;
-    }
-
-    data.pageVisuals = pageVisuals;
-
-    const newContent = JSON.stringify(data, null, 2);
-    await updateGithubFile(CONTENT_FILE_PATH, newContent, "update: page visuals", sha);
-    
-    revalidatePath("/", "layout");
-    
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to save page visuals", error);
-    return { success: false, error: "Failed to save page visuals" };
-  }
+  return {
+    id: record.id || String(Date.now()),
+    title: record.title.trim(),
+    category: record.category.trim(),
+    content: record.content.trim(),
+    imgUrl: record.imgUrl.trim(),
+    images,
+    albumUrl: record.albumUrl?.trim() || "",
+    date: record.date || new Date().toISOString(),
+    status: record.status === "draft" ? "draft" : "published"
+  };
 }
 
-export async function uploadHeroImage(formData: FormData) {
-  try {
-    const imageFile = formData.get("imageFile") as File;
-    const pageKey = formData.get("pageKey") as string;
-    
-    if (!imageFile || imageFile.size === 0) {
-      throw new Error("No image file provided");
+function validateRecords(records: AdminContentRecord[]) {
+  for (const record of records) {
+    if (!record.title.trim()) {
+      return "กรุณาระบุชื่อรายการให้ครบ";
     }
 
-    const arrayBuffer = await imageFile.arrayBuffer();
-    const base64Data = Buffer.from(arrayBuffer).toString("base64");
-    
-    const extension = imageFile.name.split('.').pop();
-    const filename = `hero-${pageKey}-${Date.now()}.${extension}`;
-    const uploadPath = `public/uploads/${filename}`;
-    
-    await uploadGithubBase64File(uploadPath, base64Data, `upload: new hero image for ${pageKey}`);
-    
-    return { success: true, imgUrl: `/uploads/${filename}` };
-  } catch (error) {
-    console.error("Failed to upload hero image", error);
-    return { success: false, error: "Failed to upload hero image" };
+    if (!record.category.trim()) {
+      return "กรุณาระบุหมวดหมู่ให้ครบ";
+    }
   }
+
+  return null;
 }
 
-export async function addOrEditContent(formData: FormData) {
+export async function saveContentCollection(
+  collection: "achievements" | "activities",
+  records: AdminContentRecord[]
+): Promise<SaveCollectionResult> {
   try {
-    const id = formData.get("id") as string;
-    const type = formData.get("type") as string; // "achievements" or "activities"
-    const title = formData.get("title") as string;
-    const category = formData.get("category") as string;
-    const contentText = formData.get("content") as string;
-    let albumUrl = (formData.get("albumUrl") as string || "").trim();
-    let imgUrl = (formData.get("imgUrl") as string || "").trim();
-    const imageFile = formData.get("imageFile") as File | null;
+    const normalizedRecords = records.map(normalizeRecord);
+    const validationError = validateRecords(normalizedRecords);
 
-    if (imageFile && imageFile.size > 0) {
-      const arrayBuffer = await imageFile.arrayBuffer();
-      const base64Data = Buffer.from(arrayBuffer).toString("base64");
-      
-      const extension = imageFile.name.split('.').pop();
-      const filename = `${Date.now()}-${Math.round(Math.random() * 1000)}.${extension}`;
-      const uploadPath = `public/uploads/${filename}`;
-      
-      await uploadGithubBase64File(uploadPath, base64Data, `upload: ${filename}`);
-      imgUrl = `/uploads/${filename}`;
+    if (validationError) {
+      return { ok: false, message: validationError };
     }
 
-    // Extract cover image and photos from Google Photos album if albumUrl is provided
-    let extractedImages: string[] = [];
-    if (albumUrl) {
-      try {
-        const response = await fetch(albumUrl, {
-          redirect: "follow",
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-            "Accept-Language": "th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7"
-          }
-        });
-
-        if (response.ok) {
-          const html = await response.text();
-          
-          // Match og:image
-          const ogMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
-                          html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
-          
-          if (ogMatch && ogMatch[1]) {
-            const ogCover = ogMatch[1].replace(/=w\d+-h\d+.*$/, "") + "=w1200-h800-no";
-            if (!imgUrl || imgUrl.includes("placeholder") || imgUrl === "") {
-              imgUrl = ogCover;
-            }
-          }
-
-          // Match album photo URLs
-          const lh3Matches = html.match(/https:\/\/lh3\.googleusercontent\.com\/pw\/[a-zA-Z0-9_\-]+/gi) || [];
-          if (lh3Matches.length > 0) {
-            extractedImages = Array.from(new Set(lh3Matches)).map(url => url.replace(/=w\d+-h\d+.*$/, "") + "=w1200-h800-no");
-            if (!imgUrl || imgUrl.includes("placeholder") || imgUrl === "") {
-              imgUrl = extractedImages[0];
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch Google Photos album cover:", err);
-      }
-    }
-
-    const currentFile = await getGithubFileContent(CONTENT_FILE_PATH);
-    let data = { achievements: [], activities: [] };
-    let sha = undefined;
-
-    if (currentFile) {
-      data = JSON.parse(currentFile.content);
-      sha = currentFile.sha;
-    }
-
-    const newItem: any = {
-      id: id || Date.now().toString(),
-      title,
-      category: category || "ภาพกิจกรรม",
-      content: contentText,
-      imgUrl: imgUrl || (type === "achievements" ? "/achievement-self-01.jpg" : "/placeholder-activity-student-development.jpg"),
-      images: extractedImages.length > 0 ? extractedImages : undefined,
-      albumUrl: albumUrl || "",
-      date: new Date().toISOString(),
-      status: "published"
+    const currentContent = (await fetchContent()) as AdminContentData;
+    const nextContent: AdminContentData = {
+      ...currentContent,
+      achievements: collection === "achievements" ? normalizedRecords : currentContent.achievements || [],
+      activities: collection === "activities" ? normalizedRecords : currentContent.activities || []
     };
 
-    if (type === "achievements") {
-      if (id) {
-        data.achievements = data.achievements.map((item: any) => item.id === id ? { ...item, ...newItem } : item) as never[];
-      } else {
-        data.achievements = [newItem, ...(data.achievements || [])] as never[];
-      }
-    } else {
-      if (id) {
-        data.activities = data.activities.map((item: any) => item.id === id ? { ...item, ...newItem } : item) as never[];
-      } else {
-        data.activities = [newItem, ...(data.activities || [])] as never[];
-      }
-    }
-
     await updateGithubFile(
       CONTENT_FILE_PATH,
-      JSON.stringify(data, null, 2),
-      `content: ${id ? 'Edit' : 'Add'} ${type} - ${title}`,
-      sha
+      `${JSON.stringify(nextContent, null, 2)}\n`,
+      `Update ${collection} content`
     );
 
-    revalidatePath("/admin/achievements");
-    revalidatePath("/admin/activities");
-    return { success: true };
-  } catch (error: any) {
-    return { error: error.message };
+    revalidatePath("/");
+    revalidatePath("/achievements");
+    revalidatePath("/achievements/awards");
+    revalidatePath("/achievements/academic");
+    revalidatePath("/achievements/development");
+    revalidatePath("/activities");
+    revalidatePath(`/admin/${collection}`);
+
+    return {
+      ok: true,
+      message: "บันทึกข้อมูลเรียบร้อยแล้ว",
+      records: normalizedRecords
+    };
+  } catch (error) {
+    console.error(`Failed to save ${collection}`, error);
+    return {
+      ok: false,
+      message: "บันทึกไม่สำเร็จ กรุณาตรวจการตั้งค่า GitHub หรือสิทธิ์การเขียนไฟล์"
+    };
   }
 }
 
-export async function deleteContent(type: string, id: string) {
+export async function uploadAdminAsset(formData: FormData): Promise<UploadResult> {
   try {
-    const currentFile = await getGithubFileContent(CONTENT_FILE_PATH);
-    if (!currentFile) throw new Error("Content file not found");
+    const file = formData.get("file");
+    const folder = String(formData.get("folder") || "admin");
 
-    const data = JSON.parse(currentFile.content);
-    
-    if (type === "achievements" && data.achievements) {
-      data.achievements = data.achievements.filter((item: any) => item.id !== id);
-    } else if (type === "activities" && data.activities) {
-      data.activities = data.activities.filter((item: any) => item.id !== id);
+    if (!(file instanceof File) || file.size === 0) {
+      return { ok: false, message: "ไม่พบไฟล์ที่ต้องการอัปโหลด" };
     }
 
-    await updateGithubFile(
-      CONTENT_FILE_PATH,
-      JSON.stringify(data, null, 2),
-      `content: Delete ${type} item ${id}`,
-      currentFile.sha
-    );
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
 
-    revalidatePath("/admin/achievements");
-    revalidatePath("/admin/activities");
-    return { success: true };
-  } catch (error: any) {
-    return { error: error.message };
-  }
-}
-
-export async function reorderContent(type: string, reorderedIds: string[]) {
-  try {
-    const currentFile = await getGithubFileContent(CONTENT_FILE_PATH);
-    if (!currentFile) throw new Error("Content file not found");
-
-    const data = JSON.parse(currentFile.content);
-    
-    if (type === "achievements" && data.achievements) {
-      // Create a map for quick lookup
-      const itemsMap = new Map(data.achievements.map((item: any) => [item.id, item]));
-      
-      // Separate items that were reordered vs items that were not part of this specific list (e.g. other categories)
-      const reorderedItems = reorderedIds.map(id => itemsMap.get(id)).filter(Boolean);
-      const otherItems = data.achievements.filter((item: any) => !reorderedIds.includes(item.id));
-      
-      data.achievements = [...reorderedItems, ...otherItems] as never[];
-    } else if (type === "activities" && data.activities) {
-      const itemsMap = new Map(data.activities.map((item: any) => [item.id, item]));
-      const reorderedItems = reorderedIds.map(id => itemsMap.get(id)).filter(Boolean);
-      const otherItems = data.activities.filter((item: any) => !reorderedIds.includes(item.id));
-      
-      data.activities = [...reorderedItems, ...otherItems] as never[];
+    if (!allowedTypes.includes(file.type)) {
+      return { ok: false, message: "รองรับเฉพาะไฟล์ JPG, PNG, WebP และ PDF" };
     }
 
-    await updateGithubFile(
-      CONTENT_FILE_PATH,
-      JSON.stringify(data, null, 2),
-      `content: Reorder ${type}`,
-      currentFile.sha
-    );
+    const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
+    const safeExtension = extension === "jpeg" ? "jpg" : extension;
+    const safeFolder = folder.replace(/[^a-z0-9-]/gi, "").toLowerCase() || "admin";
+    const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${safeExtension}`;
+    const repoPath = `public/uploads/${safeFolder}-${fileName}`;
+    const arrayBuffer = await file.arrayBuffer();
+    const base64Content = Buffer.from(arrayBuffer).toString("base64");
 
-    revalidatePath("/admin/achievements");
-    revalidatePath("/admin/activities");
-    return { success: true };
-  } catch (error: any) {
-    return { error: error.message };
+    await uploadGithubBase64File(repoPath, base64Content, `Upload admin asset ${fileName}`);
+
+    return {
+      ok: true,
+      message: "อัปโหลดไฟล์เรียบร้อยแล้ว",
+      url: `/uploads/${safeFolder}-${fileName}`
+    };
+  } catch (error) {
+    console.error("Failed to upload admin asset", error);
+    return {
+      ok: false,
+      message: "อัปโหลดไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
+    };
   }
 }
-
