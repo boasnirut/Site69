@@ -2,17 +2,17 @@
 
 import { ChangeEvent, useMemo, useState, useTransition } from "react";
 import {
-  ArrowDown,
-  ArrowUp,
   CheckCircle2,
   Download,
   Eye,
   EyeOff,
   FileImage,
   FileText,
+  GripVertical,
   ImagePlus,
   Pencil,
   Plus,
+  RotateCcw,
   Save,
   Search,
   Trash2,
@@ -145,6 +145,10 @@ export function AdminContentWorkbench({
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("ทั้งหมด");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [orderSnapshot, setOrderSnapshot] = useState<AdminContentRecord[] | null>(null);
+  const [hasOrderChanges, setHasOrderChanges] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const stats = useMemo(() => {
@@ -215,6 +219,9 @@ export function AdminContentWorkbench({
 
       if (result.ok && result.records) {
         setRecords(result.records);
+        setOrderSnapshot(null);
+        setHasOrderChanges(false);
+        setDeleteTargetId(null);
         setMessage({ type: "success", text: successText });
         return;
       }
@@ -267,6 +274,9 @@ export function AdminContentWorkbench({
 
         if (result.ok && result.records) {
           setRecords(result.records);
+          setOrderSnapshot(null);
+          setHasOrderChanges(false);
+          setDeleteTargetId(null);
           resetForm();
           setMessage({ type: "success", text: form.id ? "แก้ไขรายการเรียบร้อยแล้ว" : "เพิ่มรายการใหม่เรียบร้อยแล้ว" });
           return;
@@ -280,9 +290,6 @@ export function AdminContentWorkbench({
   };
 
   const deleteRecord = (record: AdminContentRecord) => {
-    const confirmed = window.confirm(`ยืนยันการลบ "${record.title}" หรือไม่`);
-    if (!confirmed) return;
-
     const nextRecords = records.filter((item) => item.id !== record.id);
     persistRecords(nextRecords, "ลบรายการเรียบร้อยแล้ว");
 
@@ -297,16 +304,37 @@ export function AdminContentWorkbench({
     persistRecords(nextRecords, nextStatus === "published" ? "เปิดแสดงผลเรียบร้อยแล้ว" : "ซ่อนรายการเรียบร้อยแล้ว");
   };
 
-  const moveRecord = (record: AdminContentRecord, direction: -1 | 1) => {
-    const currentIndex = records.findIndex((item) => item.id === record.id);
-    const targetIndex = currentIndex + direction;
+  const moveRecordByDrag = (sourceId: string, targetId: string) => {
+    if (sourceId === targetId || isPending) return;
 
-    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= records.length) return;
+    setRecords((currentRecords) => {
+      const currentIndex = currentRecords.findIndex((item) => item.id === sourceId);
+      const targetIndex = currentRecords.findIndex((item) => item.id === targetId);
 
-    const nextRecords = [...records];
-    const [selectedRecord] = nextRecords.splice(currentIndex, 1);
-    nextRecords.splice(targetIndex, 0, selectedRecord);
-    persistRecords(nextRecords, "จัดลำดับรายการเรียบร้อยแล้ว");
+      if (currentIndex < 0 || targetIndex < 0) return currentRecords;
+
+      setOrderSnapshot((snapshot) => snapshot ?? currentRecords);
+      setHasOrderChanges(true);
+
+      const nextRecords = [...currentRecords];
+      const [selectedRecord] = nextRecords.splice(currentIndex, 1);
+      nextRecords.splice(targetIndex, 0, selectedRecord);
+      return nextRecords;
+    });
+  };
+
+  const confirmOrderChanges = () => {
+    persistRecords(records, "จัดลำดับรายการเรียบร้อยแล้ว");
+  };
+
+  const cancelOrderChanges = () => {
+    if (orderSnapshot) {
+      setRecords(orderSnapshot);
+    }
+
+    setOrderSnapshot(null);
+    setHasOrderChanges(false);
+    setDraggedId(null);
   };
 
   const exportJson = () => {
@@ -381,50 +409,50 @@ export function AdminContentWorkbench({
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.58fr)]">
-        <section className="rounded-3xl border border-white/10 bg-white/[0.035] p-5 shadow-xl shadow-black/20 xl:order-2 xl:max-h-[calc(100vh-3rem)] xl:overflow-auto">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.42fr)]">
+        <section className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 shadow-xl shadow-black/20 xl:order-2">
+          <div className="flex flex-col gap-3">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Content List</span>
-              <h2 className="mt-1 text-xl font-bold text-white">รายการทั้งหมด</h2>
+              <span className="text-[0.66rem] font-bold uppercase tracking-[0.16em] text-amber-300">Content List</span>
+              <h2 className="mt-1 text-lg font-bold text-white">รายการทั้งหมด</h2>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row xl:w-full xl:flex-col">
+            <div className="grid grid-cols-3 gap-2">
               <button
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/15 px-4 text-sm font-bold text-amber-100 transition hover:bg-amber-500/25"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/15 px-2 text-xs font-bold text-amber-100 transition hover:bg-amber-500/25"
                 type="button"
                 onClick={resetForm}
               >
                 <Plus className="h-4 w-4" />
-                เพิ่มรายการใหม่
+                เพิ่ม
               </button>
               <button
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-xs font-bold text-slate-200 transition hover:bg-white/10"
                 type="button"
                 onClick={exportJson}
               >
                 <Download className="h-4 w-4" />
-                ส่งออก JSON
+                ส่งออก
               </button>
-              <label className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-bold text-slate-200 transition hover:bg-white/10">
+              <label className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2 text-xs font-bold text-slate-200 transition hover:bg-white/10">
                 <Upload className="h-4 w-4" />
-                นำเข้า JSON
+                นำเข้า
                 <input className="sr-only" type="file" accept="application/json,.json" onChange={importJson} />
               </label>
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-1 gap-3">
+          <div className="mt-4 grid grid-cols-1 gap-2">
             <label className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
-                className="h-12 w-full rounded-2xl border border-white/10 bg-black/30 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-amber-400/60"
+                className="h-10 w-full rounded-xl border border-white/10 bg-black/30 pl-10 pr-3 text-xs text-white outline-none transition placeholder:text-slate-500 focus:border-amber-400/60"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="ค้นหาชื่อ รายละเอียด หรือหมวดหมู่"
               />
             </label>
             <select
-              className="h-12 rounded-2xl border border-white/10 bg-black/30 px-4 text-sm text-white outline-none transition focus:border-amber-400/60"
+              className="h-10 rounded-xl border border-white/10 bg-black/30 px-3 text-xs text-white outline-none transition focus:border-amber-400/60"
               value={category}
               onChange={(event) => setCategory(event.target.value)}
             >
@@ -437,7 +465,35 @@ export function AdminContentWorkbench({
             </select>
           </div>
 
-          <div className="mt-5 space-y-3">
+          {hasOrderChanges ? (
+            <div className="mt-4 rounded-2xl border border-amber-400/25 bg-amber-400/10 p-3">
+              <p className="text-xs font-semibold leading-relaxed text-amber-100">
+                มีการเปลี่ยนลำดับรายการที่ยังไม่ได้บันทึก กดยืนยันเมื่อตรวจลำดับเรียบร้อยแล้ว
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <button
+                  className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-amber-400 px-3 text-xs font-black text-black transition hover:brightness-110 disabled:opacity-60"
+                  type="button"
+                  onClick={confirmOrderChanges}
+                  disabled={isPending}
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  ยืนยัน
+                </button>
+                <button
+                  className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-black/25 px-3 text-xs font-bold text-slate-200 transition hover:bg-white/10 disabled:opacity-60"
+                  type="button"
+                  onClick={cancelOrderChanges}
+                  disabled={isPending}
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  ยกเลิก
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="mt-4 space-y-2">
             {filteredRecords.length === 0 ? (
               <div className="flex min-h-56 flex-col items-center justify-center rounded-3xl border border-dashed border-white/12 bg-black/25 text-center">
                 <FileImage className="h-10 w-10 text-slate-500" />
@@ -447,49 +503,79 @@ export function AdminContentWorkbench({
             ) : (
               filteredRecords.map((record) => (
                 <article
-                  className={`grid gap-3 rounded-2xl border p-3 transition md:grid-cols-[76px_minmax(0,1fr)] ${
+                  className={`grid gap-2 rounded-2xl border p-2.5 transition ${
                     form.id === record.id
                       ? "border-amber-400/45 bg-amber-400/[0.08]"
                       : "border-white/10 bg-black/25 hover:border-amber-400/25"
-                  }`}
+                  } ${draggedId === record.id ? "opacity-45" : ""}`}
                   key={record.id}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={() => {
+                    if (draggedId) {
+                      moveRecordByDrag(draggedId, record.id);
+                    }
+                    setDraggedId(null);
+                  }}
                 >
-                  <PreviewImage url={record.imgUrl || record.images?.[0] || ""} title={record.title} />
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-200">{record.category}</span>
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${record.status === "published" ? "bg-emerald-400/10 text-emerald-200" : "bg-slate-400/10 text-slate-300"}`}>
-                        {record.status === "published" ? "เผยแพร่" : "แบบร่าง"}
-                      </span>
+                  <div className="grid grid-cols-[24px_52px_minmax(0,1fr)] gap-2">
+                    <div
+                      className="grid h-12 cursor-grab place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-400 active:cursor-grabbing"
+                      draggable={!isPending}
+                      onDragStart={() => setDraggedId(record.id)}
+                      onDragEnd={() => setDraggedId(null)}
+                      title="ลากเพื่อจัดลำดับ"
+                    >
+                      <GripVertical className="h-4 w-4" />
                     </div>
-                    <h3 className="mt-2 line-clamp-2 text-base font-bold leading-relaxed text-white">{record.title}</h3>
-                    <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-slate-400">{record.content || "ไม่มีรายละเอียด"}</p>
-                    <small className="mt-2 block text-xs text-slate-500">{formatDate(record.date)}</small>
+                    <PreviewImage url={record.imgUrl || record.images?.[0] || ""} title={record.title} />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className={`h-2 w-2 shrink-0 rounded-full ${record.status === "published" ? "bg-emerald-300" : "bg-slate-500"}`} />
+                        <span className="truncate text-[0.65rem] font-bold text-amber-200">{record.category}</span>
+                      </div>
+                      <h3 className="mt-1 line-clamp-2 text-sm font-bold leading-snug text-white">{record.title}</h3>
+                      <small className="mt-1 block text-[0.65rem] text-slate-500">{formatDate(record.date)}</small>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap items-center justify-end gap-2 md:col-span-2">
-                    <IconButton label="เลื่อนขึ้น" onClick={() => moveRecord(record, -1)} disabled={records[0]?.id === record.id || isPending}>
-                      <ArrowUp className="h-4 w-4" />
-                    </IconButton>
-                    <IconButton label="เลื่อนลง" onClick={() => moveRecord(record, 1)} disabled={records[records.length - 1]?.id === record.id || isPending}>
-                      <ArrowDown className="h-4 w-4" />
-                    </IconButton>
-                    <IconButton label={record.status === "published" ? "ซ่อน" : "เผยแพร่"} onClick={() => toggleStatus(record)} disabled={isPending}>
-                      {record.status === "published" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </IconButton>
-                    <IconButton label="แก้ไข" onClick={() => editRecord(record)} disabled={isPending}>
-                      <Pencil className="h-4 w-4" />
-                    </IconButton>
-                    <IconButton label="ลบ" onClick={() => deleteRecord(record)} disabled={isPending} danger>
-                      <Trash2 className="h-4 w-4" />
-                    </IconButton>
-                  </div>
+                  {deleteTargetId === record.id ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        className="inline-flex min-h-8 items-center justify-center rounded-lg bg-red-400 px-2 text-[0.66rem] font-black text-black transition hover:brightness-110 disabled:opacity-60"
+                        type="button"
+                        onClick={() => deleteRecord(record)}
+                        disabled={isPending}
+                      >
+                        ยืนยันลบ
+                      </button>
+                      <button
+                        className="inline-flex min-h-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 px-2 text-[0.66rem] font-bold text-slate-200 transition hover:bg-white/10"
+                        type="button"
+                        onClick={() => setDeleteTargetId(null)}
+                        disabled={isPending}
+                      >
+                        ยกเลิก
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap items-center justify-end gap-1.5">
+                      <IconButton label={record.status === "published" ? "ซ่อน" : "เผยแพร่"} onClick={() => toggleStatus(record)} disabled={isPending || hasOrderChanges}>
+                        {record.status === "published" ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                      </IconButton>
+                      <IconButton label="แก้ไข" onClick={() => editRecord(record)} disabled={isPending || hasOrderChanges}>
+                        <Pencil className="h-3.5 w-3.5" />
+                      </IconButton>
+                      <IconButton label="ลบ" onClick={() => setDeleteTargetId(record.id)} disabled={isPending || hasOrderChanges} danger>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </IconButton>
+                    </div>
+                  )}
                 </article>
               ))
             )}
           </div>
         </section>
 
-        <section className="rounded-3xl border border-amber-500/20 bg-[linear-gradient(180deg,rgba(255,138,31,0.08),rgba(255,255,255,0.035))] p-5 shadow-xl shadow-black/25 xl:order-1 xl:sticky xl:top-6">
+        <section className="rounded-3xl border border-amber-500/20 bg-[linear-gradient(180deg,rgba(255,138,31,0.08),rgba(255,255,255,0.035))] p-5 shadow-xl shadow-black/25 xl:order-1">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Editor</span>
@@ -581,7 +667,7 @@ export function AdminContentWorkbench({
               onClick={saveRecord}
             >
               <Save className="h-5 w-5" />
-              {isPending ? "กำลังบันทึก..." : form.id ? "บันทึกการแก้ไข" : "เพิ่มรายการ"}
+              {isPending ? "กำลังบันทึก..." : form.id ? "ยืนยันการแก้ไขรายการ" : "ยืนยันเพิ่มรายการ"}
             </button>
           </div>
         </section>
@@ -627,7 +713,7 @@ function IconButton({
     <button
       aria-label={label}
       title={label}
-      className={`grid h-9 w-9 place-items-center rounded-xl border transition disabled:cursor-not-allowed disabled:opacity-40 ${
+      className={`grid h-8 w-8 place-items-center rounded-lg border transition disabled:cursor-not-allowed disabled:opacity-40 ${
         danger ? "border-red-400/25 bg-red-400/10 text-red-200 hover:bg-red-400/18" : "border-white/10 bg-white/5 text-slate-200 hover:border-amber-400/35 hover:text-amber-200"
       }`}
       type="button"
@@ -642,22 +728,22 @@ function IconButton({
 function PreviewImage({ url, title }: { url: string; title: string }) {
   if (!url) {
     return (
-      <div className="grid h-20 w-full place-items-center rounded-2xl border border-white/10 bg-white/[0.04] text-slate-500 md:h-20 md:w-20">
-        <FileImage className="h-7 w-7" />
+      <div className="grid h-12 w-full place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-500 md:h-12 md:w-12">
+        <FileImage className="h-5 w-5" />
       </div>
     );
   }
 
   if (isDocument(url)) {
     return (
-      <div className="grid h-20 w-full place-items-center rounded-2xl border border-white/10 bg-amber-400/10 text-amber-200 md:h-20 md:w-20">
-        <FileText className="h-7 w-7" />
+      <div className="grid h-12 w-full place-items-center rounded-xl border border-white/10 bg-amber-400/10 text-amber-200 md:h-12 md:w-12">
+        <FileText className="h-5 w-5" />
       </div>
     );
   }
 
   return (
-    <div className="h-20 w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] md:w-20">
+    <div className="h-12 w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] md:w-12">
       <img className="h-full w-full object-cover" src={url} alt={title} />
     </div>
   );

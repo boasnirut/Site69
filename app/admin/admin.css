@@ -319,10 +319,8 @@
   position: sticky;
   top: 0;
   display: flex;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 0;
-  overflow: hidden;
+  min-height: calc(100vh - 76px);
+  overflow: visible;
   padding: 24px 18px;
   color: #dce9f7;
   background:
@@ -368,25 +366,11 @@
 .admin-sidebar nav {
   display: grid;
   flex: 1 1 auto;
-  min-height: 0;
-  margin: 18px -5px 10px 0;
-  padding: 0 5px 8px 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  margin: 18px 0 10px;
+  padding: 0 0 8px;
+  overflow: visible;
   align-content: start;
   gap: 4px;
-  overscroll-behavior: contain;
-  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
-  scrollbar-width: thin;
-}
-
-.admin-sidebar nav::-webkit-scrollbar {
-  width: 5px;
-}
-
-.admin-sidebar nav::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.24);
 }
 
 .admin-sidebar nav a,

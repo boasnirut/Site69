@@ -9,9 +9,11 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { logout } from "./login/actions";
-import { useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import "./admin.css";
 import { adminModules } from "./admin-modules";
+
+const INACTIVITY_TIMEOUT_MS = 20 * 60 * 1000;
 
 const sidebarMenu = [
   { name: "ภาพรวมระบบ", href: "/admin", icon: LayoutDashboard },
@@ -21,10 +23,7 @@ const sidebarMenu = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
-  }
+  const logoutTimerRef = useRef<number | null>(null);
 
   const handleLogout = () => {
     startTransition(() => {
@@ -32,13 +31,52 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     });
   };
 
+  useEffect(() => {
+    if (pathname === "/admin/login") {
+      return;
+    }
+
+    const clearLogoutTimer = () => {
+      if (logoutTimerRef.current) {
+        window.clearTimeout(logoutTimerRef.current);
+      }
+    };
+
+    const resetLogoutTimer = () => {
+      clearLogoutTimer();
+      logoutTimerRef.current = window.setTimeout(() => {
+        startTransition(() => {
+          logout();
+        });
+      }, INACTIVITY_TIMEOUT_MS);
+    };
+
+    const activityEvents = ["pointerdown", "pointermove", "keydown", "wheel", "scroll", "touchstart"];
+
+    resetLogoutTimer();
+    activityEvents.forEach((eventName) => {
+      window.addEventListener(eventName, resetLogoutTimer, { passive: true });
+    });
+
+    return () => {
+      clearLogoutTimer();
+      activityEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, resetLogoutTimer);
+      });
+    };
+  }, [pathname, startTransition]);
+
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
   return (
     <div
-      className="flex h-screen bg-[#070a12] text-white overflow-hidden"
+      className="flex min-h-[calc(100vh-76px)] bg-[#070a12] text-white"
       style={{ fontFamily: 'Arial, "Noto Sans Thai", "Tahoma", sans-serif' }}
     >
       {/* Sidebar - Inspired by School Admin Portal */}
-      <aside className="w-64 bg-[#0d1321]/90 border-r border-amber-500/20 flex flex-col shadow-2xl">
+      <aside className="w-64 shrink-0 bg-[#0d1321]/90 border-r border-amber-500/20 flex flex-col shadow-2xl">
         <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-black font-bold shadow-lg shadow-orange-500/20">
@@ -51,7 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </div>
         
-        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-1.5">
           {sidebarMenu.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const isReallyActive = item.href === "/admin" ? pathname === "/admin" : isActive;
@@ -94,7 +132,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#070a12]">
+      <main className="flex-1 min-w-0 bg-[#070a12]">
         <header className="h-16 border-b border-amber-500/20 bg-[#0d1321]/80 flex items-center px-8 justify-between backdrop-blur-md">
           <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
             <ShieldCheck className="w-4 h-4" />
@@ -109,7 +147,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
         
-        <div className="flex-1 overflow-auto p-8">
+        <div className="p-6 xl:p-8">
           {children}
         </div>
       </main>
