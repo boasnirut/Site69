@@ -5041,7 +5041,7 @@ p {
 
 .pa-evidence-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   padding-top: 2px;
 }
@@ -5419,6 +5419,44 @@ p {
   --pa-level-glow: rgba(34, 197, 94, 0.22);
 }
 
+.pa-evidence-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.pa-evidence-group {
+  display: grid;
+  gap: 10px;
+}
+
+.pa-evidence-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pa-evidence-group__header strong {
+  color: #ffc996;
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.pa-evidence-group__header span {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 9px;
+  color: #f8fafc;
+  font-size: 0.68rem;
+  font-weight: 900;
+  background: rgba(255, 138, 31, 0.12);
+  border: 1px solid rgba(255, 177, 95, 0.22);
+  border-radius: 999px;
+}
+
 .pa-evidence-links {
   display: flex;
   flex-wrap: wrap;
@@ -5726,6 +5764,12 @@ p {
   height: 100%;
   border: 0;
   background: white;
+}
+
+@media (max-width: 980px) {
+  .pa-evidence-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .pa-image-modal .gallery-modal-image {

@@ -78,7 +78,8 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
     [images]
   );
 
-  const previewItems = evidenceItems.filter((item) => item.type !== "link");
+  const imageItems = evidenceItems.filter((item) => item.type === "image");
+  const pdfItems = evidenceItems.filter((item) => item.type === "pdf");
   const linkItems = evidenceItems.filter((item) => item.type === "link");
 
   const getIframeUrl = (url: string) => {
@@ -150,48 +151,81 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
   ) : null;
 
   return (
-    <>
-      {previewItems.length ? (
-        <div className="pa-evidence-gallery" aria-label={`ภาพหลักฐาน ${title}`}>
-          {previewItems.map((item, index) => (
-            <button
-              className={`pa-evidence-card pa-evidence-card--${item.type}`}
-              key={`${title}-${item.url}-${index}`}
-              type="button"
-              onClick={() => setSelected(item)}
-            >
-              {item.type === "pdf" ? (
-              <div className="pa-evidence-pdf-preview">
-                <iframe
-                  src={`${getIframeUrl(item.url)}#toolbar=0&navpanes=0&scrollbar=0`}
-                  title={`${title} ${index + 1}`}
-                />
-                <FileText aria-hidden="true" />
-              </div>
-              ) : (
+    <div className="pa-evidence-stack">
+      {imageItems.length ? (
+        <section className="pa-evidence-group" aria-label={`ภาพหลักฐาน ${title}`}>
+          <div className="pa-evidence-group__header">
+            <strong>ภาพหลักฐาน</strong>
+            <span>{imageItems.length} รายการ</span>
+          </div>
+          <div className="pa-evidence-gallery">
+            {imageItems.map((item, index) => (
+              <button
+                className="pa-evidence-card pa-evidence-card--image"
+                key={`${title}-image-${item.url}-${index}`}
+                type="button"
+                onClick={() => setSelected(item)}
+              >
                 <img src={item.url} alt={item.title || `${title} ภาพที่ ${index + 1}`} />
-              )}
-              <span>
-                <Maximize2 aria-hidden="true" />
-                {item.type === "pdf" ? item.title || "เปิดเอกสาร" : "ดูภาพ"}
-              </span>
-            </button>
-          ))}
-        </div>
+                <span>
+                  <Maximize2 aria-hidden="true" />
+                  ดูภาพ
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {pdfItems.length ? (
+        <section className="pa-evidence-group" aria-label={`PDF หลักฐาน ${title}`}>
+          <div className="pa-evidence-group__header">
+            <strong>เอกสาร PDF</strong>
+            <span>{pdfItems.length} รายการ</span>
+          </div>
+          <div className="pa-evidence-gallery">
+            {pdfItems.map((item, index) => (
+              <button
+                className="pa-evidence-card pa-evidence-card--pdf"
+                key={`${title}-pdf-${item.url}-${index}`}
+                type="button"
+                onClick={() => setSelected(item)}
+              >
+                <div className="pa-evidence-pdf-preview">
+                  <iframe
+                    src={`${getIframeUrl(item.url)}#toolbar=0&navpanes=0&scrollbar=0`}
+                    title={`${title} เอกสารที่ ${index + 1}`}
+                  />
+                  <FileText aria-hidden="true" />
+                </div>
+                <span>
+                  <Maximize2 aria-hidden="true" />
+                  {item.title || "เปิดเอกสาร"}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
       ) : null}
 
       {linkItems.length ? (
-        <div className="pa-evidence-links" aria-label={`ลิงก์หลักฐาน ${title}`}>
-          {linkItems.map((item, index) => (
-            <a key={`${title}-link-${item.url}-${index}`} href={item.url} target="_blank" rel="noreferrer">
-              <Link2 aria-hidden="true" />
-              <span>{item.title || "เปิดลิงก์หลักฐาน"}</span>
-            </a>
-          ))}
-        </div>
+        <section className="pa-evidence-group pa-evidence-group--links" aria-label={`ลิงก์หลักฐาน ${title}`}>
+          <div className="pa-evidence-group__header">
+            <strong>ลิงก์อ้างอิง</strong>
+            <span>{linkItems.length} รายการ</span>
+          </div>
+          <div className="pa-evidence-links">
+            {linkItems.map((item, index) => (
+              <a key={`${title}-link-${item.url}-${index}`} href={item.url} target="_blank" rel="noreferrer">
+                <Link2 aria-hidden="true" />
+                <span>{item.title || "เปิดลิงก์หลักฐาน"}</span>
+              </a>
+            ))}
+          </div>
+        </section>
       ) : null}
 
       {isMounted && modal ? createPortal(modal, document.body) : null}
-    </>
+    </div>
   );
 }
