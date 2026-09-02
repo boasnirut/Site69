@@ -7,6 +7,7 @@ import {
   ExternalLink,
   FileText,
   GraduationCap,
+  Info,
   Sparkles,
   Target,
   UserCheck
@@ -41,6 +42,81 @@ const paMenu = [
   { id: "report-component-2", label: "องค์ประกอบที่ 2" },
   { id: "report-pdf", label: "เอกสาร PDF" }
 ];
+
+const assessmentLevels = {
+  "1": {
+    label: "ระดับ 1",
+    description: "ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวังมาก",
+    className: "pa-assessment-card pa-assessment-card--red"
+  },
+  "2": {
+    label: "ระดับ 2",
+    description: "ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวัง",
+    className: "pa-assessment-card pa-assessment-card--yellow"
+  },
+  "3": {
+    label: "ระดับ 3",
+    description: "ปฏิบัติได้ตามระดับฯที่คาดหวัง",
+    className: "pa-assessment-card pa-assessment-card--blue"
+  },
+  "4": {
+    label: "ระดับ 4",
+    description: "ปฏิบัติได้สูงกว่าระดับฯที่คาดหวัง",
+    className: "pa-assessment-card pa-assessment-card--green"
+  }
+};
+
+function SelfAssessmentBadge({ level }: { level?: string }) {
+  const assessment = assessmentLevels[(level || "3") as keyof typeof assessmentLevels] || assessmentLevels["3"];
+
+  return (
+    <div className={assessment.className}>
+      <div className="pa-assessment-card__header">
+        <span>ระดับผลการประเมินตนเอง</span>
+        <details className="pa-assessment-info">
+          <summary aria-label="ดูคำอธิบายระดับการประเมินตนเอง">
+            <Info aria-hidden="true" />
+          </summary>
+          <div>
+            <strong>คำอธิบายระดับ</strong>
+            <ul>
+              {Object.values(assessmentLevels).map((item) => (
+                <li key={item.label}>
+                  <b>{item.label}</b>
+                  <span>{item.description}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
+      </div>
+      <strong>{assessment.label}</strong>
+      <p>{assessment.description}</p>
+    </div>
+  );
+}
+
+function AssessmentLegend() {
+  return (
+    <section className="pa-assessment-legend scroll-mt-28" aria-label="หมายเหตุการแบ่งระดับผลการประเมินตนเอง">
+      <div className="pa-assessment-legend__heading">
+        <Info className="w-5 h-5" />
+        <div>
+          <span>Assessment Level Note</span>
+          <h2>หมายเหตุการแบ่งระดับผลการประเมินตนเอง</h2>
+        </div>
+      </div>
+      <div className="pa-assessment-legend__grid">
+        {Object.values(assessmentLevels).map((item) => (
+          <div key={item.label} className={`${item.className} pa-assessment-legend__item`}>
+            <span>{item.label}</span>
+            <p>{item.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 function WorkloadTable({ rows }: { rows: { activity: string; hours: string }[] }) {
   return (
@@ -230,6 +306,8 @@ export default async function PaPage() {
           </div>
         </section>
 
+        <AssessmentLegend />
+
         <section id="report-component-1" className="scroll-mt-28 p-6 sm:p-8 rounded-3xl bg-white/[0.03] border border-white/10 space-y-8">
           <div className="flex items-center gap-3 border-b border-white/10 pb-6">
             <div className="p-3 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400">
@@ -268,7 +346,7 @@ export default async function PaPage() {
                         <ChevronDown className="pa-disclosure-icon" aria-hidden="true" />
                       </summary>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                         <div className="p-3.5 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
                           <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
                             งานที่ปฏิบัติ
@@ -290,6 +368,8 @@ export default async function PaPage() {
                             ))}
                           </ul>
                         </div>
+
+                        <SelfAssessmentBadge level={item.selfAssessmentLevel} />
 
                         <div className="p-3.5 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
                           <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -371,6 +451,8 @@ export default async function PaPage() {
                     </p>
                   </div>
                 </div>
+
+                <SelfAssessmentBadge level={challenge.selfAssessmentLevel} />
 
                 {challenge.images?.length ? (
                   <div className="space-y-3">

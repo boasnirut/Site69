@@ -1548,8 +1548,79 @@
   box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.44);
 }
 
+.admin-pa-assessment-field {
+  display: grid;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--admin-pa-level-border);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 100% 0%, var(--admin-pa-level-glow), transparent 44%),
+    rgba(0, 0, 0, 0.24);
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 0.55fr);
+}
+
+.admin-pa-assessment-field span {
+  display: block;
+  color: var(--admin-pa-level-text);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.admin-pa-assessment-field strong {
+  display: block;
+  margin-top: 4px;
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.admin-pa-assessment-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 8px 12px;
+  border: 1px solid var(--admin-pa-level-border);
+  border-radius: 12px;
+  outline: 0;
+  color: #f8fafc;
+  background: rgba(0, 0, 0, 0.38);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.admin-pa-assessment-field--red {
+  --admin-pa-level-border: rgba(248, 113, 113, 0.34);
+  --admin-pa-level-glow: rgba(239, 68, 68, 0.17);
+  --admin-pa-level-text: #fecaca;
+}
+
+.admin-pa-assessment-field--yellow {
+  --admin-pa-level-border: rgba(250, 204, 21, 0.34);
+  --admin-pa-level-glow: rgba(250, 204, 21, 0.14);
+  --admin-pa-level-text: #fef3c7;
+}
+
+.admin-pa-assessment-field--blue {
+  --admin-pa-level-border: rgba(56, 189, 248, 0.34);
+  --admin-pa-level-glow: rgba(56, 189, 248, 0.16);
+  --admin-pa-level-text: #bae6fd;
+}
+
+.admin-pa-assessment-field--green {
+  --admin-pa-level-border: rgba(34, 197, 94, 0.34);
+  --admin-pa-level-glow: rgba(34, 197, 94, 0.16);
+  --admin-pa-level-text: #bbf7d0;
+}
+
 @media (max-width: 680px) {
   .quality-link-fields__inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-pa-assessment-field {
     grid-template-columns: 1fr;
   }
 }

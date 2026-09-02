@@ -45,6 +45,7 @@ export type PaStandardItem = {
   title: string;
   tasks: string[];
   outcomes: string[];
+  selfAssessmentLevel?: string;
   indicators: string[];
   images?: PaEvidenceItem[];
 };
@@ -61,6 +62,7 @@ export type PaChallengeItem = {
   problem: string;
   methods: string[];
   expected: string[];
+  selfAssessmentLevel?: string;
   images?: PaEvidenceItem[];
 };
 
@@ -262,6 +264,7 @@ function normalizePaSettings(settings: PaSettings): PaSettings {
             title: item.title.trim(),
             tasks: cleanLines(item.tasks),
             outcomes: cleanLines(item.outcomes),
+            selfAssessmentLevel: ["1", "2", "3", "4"].includes(item.selfAssessmentLevel || "") ? item.selfAssessmentLevel : "3",
             indicators: cleanLines(item.indicators),
             images: cleanLines(item.images)
           }))
@@ -275,6 +278,7 @@ function normalizePaSettings(settings: PaSettings): PaSettings {
         problem: challenge.problem.trim(),
         methods: cleanLines(challenge.methods),
         expected: cleanLines(challenge.expected),
+        selfAssessmentLevel: ["1", "2", "3", "4"].includes(challenge.selfAssessmentLevel || "") ? challenge.selfAssessmentLevel : "3",
         images: cleanLines(challenge.images)
       }))
       .filter((challenge) => challenge.title || challenge.subtitle)

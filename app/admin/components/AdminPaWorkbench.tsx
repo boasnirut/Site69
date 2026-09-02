@@ -37,6 +37,13 @@ const tabs: { id: PaTab; label: string; icon: React.ComponentType<{ className?: 
   { id: "document", label: "เอกสาร PDF", icon: FileText }
 ];
 
+const assessmentLevels = [
+  { value: "1", label: "ระดับ 1 ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวังมาก", tone: "red" },
+  { value: "2", label: "ระดับ 2 ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวัง", tone: "yellow" },
+  { value: "3", label: "ระดับ 3 ปฏิบัติได้ตามระดับฯที่คาดหวัง", tone: "blue" },
+  { value: "4", label: "ระดับ 4 ปฏิบัติได้สูงกว่าระดับฯที่คาดหวัง", tone: "green" }
+];
+
 const linesToText = (items?: string[]) => (items || []).join("\n");
 const textToLines = (value: string) =>
   value
@@ -64,6 +71,7 @@ const blankStandardItem = (): PaStandardItem => ({
   title: "หัวข้อย่อยใหม่",
   tasks: [],
   outcomes: [],
+  selfAssessmentLevel: "3",
   indicators: [],
   images: []
 });
@@ -80,6 +88,7 @@ const blankChallenge = (): PaChallengeItem => ({
   problem: "",
   methods: [],
   expected: [],
+  selfAssessmentLevel: "3",
   images: []
 });
 
@@ -744,17 +753,23 @@ function StandardsPanel({
             <input value={selectedItem.title} onChange={(event) => updateItem("title", event.target.value)} />
           </Field>
 
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Field label="งานที่ปฏิบัติ">
               <textarea rows={8} value={linesToText(selectedItem.tasks)} onChange={(event) => updateItem("tasks", textToLines(event.target.value))} />
             </Field>
             <Field label="ผลลัพธ์">
               <textarea rows={8} value={linesToText(selectedItem.outcomes)} onChange={(event) => updateItem("outcomes", textToLines(event.target.value))} />
             </Field>
-            <Field label="ตัวชี้วัด / หลักฐาน">
-              <textarea rows={8} value={linesToText(selectedItem.indicators)} onChange={(event) => updateItem("indicators", textToLines(event.target.value))} />
-            </Field>
           </div>
+
+          <AssessmentLevelField
+            value={selectedItem.selfAssessmentLevel || "3"}
+            onChange={(value) => updateItem("selfAssessmentLevel", value)}
+          />
+
+          <Field label="ตัวชี้วัด / หลักฐาน">
+            <textarea rows={6} value={linesToText(selectedItem.indicators)} onChange={(event) => updateItem("indicators", textToLines(event.target.value))} />
+          </Field>
 
           <EvidenceEditor value={selectedItem.images || []} onChange={(items) => updateItem("images", items)} onUpload={onEvidenceUpload} />
         </section>
@@ -839,6 +854,11 @@ function ChallengesPanel({
             </Field>
           </div>
 
+          <AssessmentLevelField
+            value={selectedChallenge.selfAssessmentLevel || "3"}
+            onChange={(value) => updateChallenge("selfAssessmentLevel", value)}
+          />
+
           <EvidenceEditor value={selectedChallenge.images || []} onChange={(items) => updateChallenge("images", items)} onUpload={onEvidenceUpload} />
         </section>
       </div>
@@ -903,6 +923,26 @@ function EvidenceEditor({
           <textarea rows={6} value={linesToText(value)} onChange={(event) => onChange(textToLines(event.target.value))} />
         </Field>
       </div>
+    </div>
+  );
+}
+
+function AssessmentLevelField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const selectedLevel = assessmentLevels.find((level) => level.value === value) || assessmentLevels[2];
+
+  return (
+    <div className={`admin-pa-assessment-field admin-pa-assessment-field--${selectedLevel.tone}`}>
+      <div>
+        <span>ระดับผลการประเมินตนเอง</span>
+        <strong>{selectedLevel.label}</strong>
+      </div>
+      <select value={value} onChange={(event) => onChange(event.target.value)}>
+        {assessmentLevels.map((level) => (
+          <option key={level.value} value={level.value}>
+            {level.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
