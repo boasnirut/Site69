@@ -1779,33 +1779,7 @@
             "indicators": [
               "ร้อยละ 80 ของผู้เรียนมีผลการประเมินในด้านสมรรถนะสำคัญตามหลักสูตรสูงขึ้นเป็นไปตามค่าเป้าหมายที่สถานศึกษากำหนด"
             ],
-            "images": [
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-7-01.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-7-02.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-7-03.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-7-04.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-7-05.jpg"
-              }
-            ]
+            "images": []
           },
           {
             "title": "1.8 อบรมและพัฒนาคุณลักษณะที่ดีของผู้เรียน",
@@ -1819,33 +1793,7 @@
             "indicators": [
               "ร้อยละ 80 ของผู้เรียน มีผลการประเมินในด้านคุณลักษณะนิสัยอันพึงประสงค์"
             ],
-            "images": [
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-8-01.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-8-02.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-8-03.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-8-04.jpg"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/placeholder-pa-standard-1-8-05.jpg"
-              }
-            ]
+            "images": []
           }
         ]
       },
