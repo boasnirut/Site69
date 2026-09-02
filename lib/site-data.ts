@@ -441,16 +441,34 @@ export const getDevelopmentAchievements = (achievements: any[]) => {
   return achievements.filter(item => ["การพัฒนาตนเอง", "การอบรมและสัมมนา", "การประชุมและเสวนา", "การเสริมสร้างทักษะ"].includes(item.category));
 };
 
+const isGooglePhotosAlbumUrl = (url?: string) =>
+  Boolean(url && (url.includes("photos.app.goo.gl") || url.includes("photos.google.com")));
+
+const isDisplayableGalleryAsset = (url?: string) =>
+  Boolean(
+    url &&
+      !isGooglePhotosAlbumUrl(url) &&
+      (url.includes("lh3.googleusercontent.com/") || /\.(jpg|jpeg|png|webp|gif|avif|pdf)(\?.*)?$/i.test(url))
+  );
+
 export const getActivityGallery = (activities: any[]) =>
-  activities.map(item => ({
-    id: item.id,
-    title: item.title,
-    category: item.category,
-    image: item.imgUrl,
-    images: item.images?.length ? item.images : [item.imgUrl],
-    albumUrl: item.albumUrl || (item.imgUrl && (item.imgUrl.includes('photos.app.goo.gl') || item.imgUrl.includes('photos.google.com')) ? item.imgUrl : undefined),
-    detail: item.content
-  }));
+  activities.map(item => {
+    const albumUrl = item.albumUrl || (isGooglePhotosAlbumUrl(item.imgUrl) ? item.imgUrl : undefined);
+    const images = Array.isArray(item.images)
+      ? item.images.filter((image: string) => isDisplayableGalleryAsset(image))
+      : [];
+    const cover = isDisplayableGalleryAsset(item.imgUrl) ? item.imgUrl : images[0] || "";
+
+    return {
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      image: cover,
+      images: images.length ? images : cover ? [cover] : [],
+      albumUrl,
+      detail: item.content
+    };
+  });
 
 export const paObjectives = [
   {

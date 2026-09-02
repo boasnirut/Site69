@@ -123,6 +123,70 @@ type SavePaSettingsResult = {
   settings?: PaSettings;
 };
 
+const GOOGLE_PHOTOS_HOSTS = ["photos.app.goo.gl", "photos.google.com"];
+
+const isGooglePhotosAlbumUrl = (url: string) => {
+  if (!url) return false;
+
+  try {
+    const parsed = new URL(url);
+    return GOOGLE_PHOTOS_HOSTS.some((host) => parsed.hostname.includes(host));
+  } catch {
+    return GOOGLE_PHOTOS_HOSTS.some((host) => url.includes(host));
+  }
+};
+
+const isDirectDisplayAsset = (url: string) => {
+  if (!url) return false;
+  const lowerUrl = url.toLowerCase();
+  return (
+    lowerUrl.includes("lh3.googleusercontent.com/pw/") ||
+    /\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url) ||
+    lowerUrl.endsWith(".pdf")
+  );
+};
+
+const normalizeGooglePhotoUrl = (url: string) => {
+  const decoded = url
+    .replace(/\\u003d/g, "=")
+    .replace(/\\u0026/g, "&")
+    .replace(/\\\//g, "/")
+    .replace(/&amp;/g, "&")
+    .replace(/[),;]+$/g, "");
+
+  if (/=[whs]\d+/i.test(decoded)) {
+    return decoded.replace(/=[^"'\\)<>\s]+$/i, "=w1200-h800-no");
+  }
+
+  return `${decoded}=w1200-h800-no`;
+};
+
+async function extractGooglePhotosImages(albumUrl: string) {
+  if (!isGooglePhotosAlbumUrl(albumUrl)) return [];
+
+  try {
+    const response = await fetch(albumUrl, {
+      redirect: "follow",
+      headers: {
+        "user-agent": "Mozilla/5.0"
+      },
+      cache: "no-store"
+    });
+
+    if (!response.ok) return [];
+
+    const html = await response.text();
+    const normalizedHtml = html.replace(/\\u003d/g, "=").replace(/\\u0026/g, "&").replace(/\\\//g, "/");
+    const matches = normalizedHtml.match(/https:\/\/lh3\.googleusercontent\.com\/pw\/[^"'\\)<>\s]+/g) || [];
+    const uniqueImages = Array.from(new Set(matches.map(normalizeGooglePhotoUrl)));
+
+    return uniqueImages.slice(0, 360);
+  } catch (error) {
+    console.error("Failed to extract Google Photos album", error);
+    return [];
+  }
+}
+
 export async function fetchContent() {
   if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_OWNER || !process.env.GITHUB_REPO) {
     if (process.env.NODE_ENV !== "development") {
@@ -144,19 +208,42 @@ export async function fetchContent() {
   }
 }
 
-function normalizeRecord(record: AdminContentRecord): AdminContentRecord {
-  const images = Array.isArray(record.images)
+async function normalizeRecord(record: AdminContentRecord, collection?: "achievements" | "activities"): Promise<AdminContentRecord> {
+  const albumUrl = record.albumUrl?.trim() || "";
+  let images = Array.isArray(record.images)
     ? record.images.map((image) => image.trim()).filter(Boolean)
     : undefined;
+  let imgUrl = record.imgUrl.trim();
+
+  if (collection === "activities" && albumUrl && (!images || images.length === 0)) {
+    const albumImages = await extractGooglePhotosImages(albumUrl);
+
+    if (albumImages.length > 0) {
+      images = albumImages;
+    }
+  }
+
+  if (collection === "activities" && isGooglePhotosAlbumUrl(imgUrl) && albumUrl === "") {
+    const albumImages = await extractGooglePhotosImages(imgUrl);
+
+    if (albumImages.length > 0) {
+      images = images?.length ? images : albumImages;
+      imgUrl = albumImages[0];
+    }
+  }
+
+  if (collection === "activities" && (!imgUrl || !isDirectDisplayAsset(imgUrl)) && images?.length) {
+    imgUrl = images[0];
+  }
 
   return {
     id: record.id || String(Date.now()),
     title: record.title.trim(),
     category: record.category.trim(),
     content: record.content.trim(),
-    imgUrl: record.imgUrl.trim(),
+    imgUrl,
     images,
-    albumUrl: record.albumUrl?.trim() || "",
+    albumUrl,
     date: record.date || new Date().toISOString(),
     status: record.status === "draft" ? "draft" : "published"
   };
@@ -181,7 +268,7 @@ export async function saveContentCollection(
   records: AdminContentRecord[]
 ): Promise<SaveCollectionResult> {
   try {
-    const normalizedRecords = records.map(normalizeRecord);
+    const normalizedRecords = await Promise.all(records.map((record) => normalizeRecord(record, collection)));
     const validationError = validateRecords(normalizedRecords);
 
     if (validationError) {

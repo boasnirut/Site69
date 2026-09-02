@@ -24,6 +24,8 @@ export function ActivityGallery({
 }) {
   const [indices, setIndices] = useState<Record<string, number>>({});
   const [selected, setSelected] = useState<GalleryItem | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const fallbackImage = "/placeholder-activity-student-development.jpg";
 
   const isDocument = (url: string) => {
     if (!url) return false;
@@ -42,7 +44,7 @@ export function ActivityGallery({
     () =>
       initialActivities.map((item) => ({
         ...item,
-        images: item.images?.length ? item.images : [item.image || item.imgUrl || "/placeholder-activity-student-development.jpg"]
+        images: item.images?.length ? item.images : [item.image || item.imgUrl || fallbackImage]
       })),
     [initialActivities]
   );
@@ -89,11 +91,16 @@ export function ActivityGallery({
             const activeIndex = indices[item.title] || 0;
             const currentImg = images[activeIndex] || item.image || item.imgUrl;
 
+            const openActivity = () => {
+              setSelected(item);
+              setSelectedIndex(activeIndex);
+            };
+
             return (
               <article 
                 className="activity-card gallery-slider-card cursor-pointer" 
                 key={item.id || item.title} 
-                onClick={() => setSelected(item)}
+                onClick={openActivity}
               >
                 <div className="gallery-card-media aspect-[4/3]">
                   {isDocument(currentImg) ? (
@@ -102,7 +109,13 @@ export function ActivityGallery({
                       <span className="font-medium text-xs">เอกสาร</span>
                     </div>
                   ) : (
-                    <img src={currentImg} alt={item.title} />
+                    <img
+                      src={currentImg}
+                      alt={item.title}
+                      onError={(event) => {
+                        event.currentTarget.src = fallbackImage;
+                      }}
+                    />
                   )}
 
                   {images.length > 1 && (
@@ -154,7 +167,7 @@ export function ActivityGallery({
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        setSelected(item);
+                        openActivity();
                       }}
                     >
                       ดูภาพขยาย
@@ -192,7 +205,14 @@ export function ActivityGallery({
             </div>
 
             <div className="relative w-full h-[75vh] flex items-center justify-center overflow-hidden bg-black/60 rounded-xl">
+              {(() => {
+                const selectedImages = selected.images?.length ? selected.images : [selected.image || selected.imgUrl || fallbackImage];
+                const currentImage = selectedImages[selectedIndex] || selectedImages[0] || fallbackImage;
+                const hasManyImages = selectedImages.length > 1;
+
+                return (
               <TransformWrapper
+                key={currentImage}
                 initialScale={1}
                 minScale={0.8}
                 maxScale={5}
@@ -204,6 +224,25 @@ export function ActivityGallery({
               >
                 {({ zoomIn, zoomOut, resetTransform, state }) => (
                   <>
+                    {hasManyImages ? (
+                      <div className="gallery-modal-nav">
+                        <button
+                          type="button"
+                          aria-label="ภาพก่อนหน้า"
+                          onClick={() => setSelectedIndex((current) => (current - 1 + selectedImages.length) % selectedImages.length)}
+                        >
+                          <ChevronLeft aria-hidden="true" />
+                        </button>
+                        <span>{selectedIndex + 1}/{selectedImages.length}</span>
+                        <button
+                          type="button"
+                          aria-label="ภาพถัดไป"
+                          onClick={() => setSelectedIndex((current) => (current + 1) % selectedImages.length)}
+                        >
+                          <ChevronRight aria-hidden="true" />
+                        </button>
+                      </div>
+                    ) : null}
                     <div className="absolute bottom-4 right-4 flex items-center gap-2 z-50 bg-black/75 backdrop-blur-md px-4 py-2 rounded-full border border-white/15 shadow-2xl">
                       <button 
                         className="text-white/80 hover:text-orange-400 bg-white/10 hover:bg-white/20 rounded-full p-2 transition-all"
@@ -235,10 +274,10 @@ export function ActivityGallery({
                       wrapperStyle={{ width: "100%", height: "100%" }}
                       contentStyle={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
-                      {isDocument(selected.image || selected.imgUrl || "") ? (
+                      {isDocument(currentImage) ? (
                         <div className="w-full h-full max-w-5xl bg-white rounded-lg overflow-hidden shadow-2xl border border-white/20">
                           <iframe 
-                            src={getIframeUrl(selected.image || selected.imgUrl || "")} 
+                            src={getIframeUrl(currentImage)}
                             className="w-full h-full border-none"
                             title="Document Viewer"
                             allow="autoplay"
@@ -246,15 +285,20 @@ export function ActivityGallery({
                         </div>
                       ) : (
                         <img 
-                          src={selected.image || selected.imgUrl || "/placeholder-activity-student-development.jpg"} 
+                          src={currentImage}
                           alt={selected.title} 
                           className="max-h-[72vh] max-w-[88vw] object-contain rounded-lg shadow-2xl cursor-grab active:cursor-grabbing select-none"
+                          onError={(event) => {
+                            event.currentTarget.src = fallbackImage;
+                          }}
                         />
                       )}
                     </TransformComponent>
                   </>
                 )}
               </TransformWrapper>
+                );
+              })()}
             </div>
           </div>
         </div>
