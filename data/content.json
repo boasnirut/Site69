@@ -1653,34 +1653,34 @@
             ],
             "images": [
               {
-                "type": "image",
-                "title": "",
-                "url": "/uploads/pa-1788357635998-472.png"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/uploads/pa-1788357640443-359.png"
-              },
-              {
-                "type": "image",
-                "title": "",
-                "url": "/uploads/pa-1788357644692-655.png"
+                "type": "pdf",
+                "title": "หลักสูตรท้องถิ่น",
+                "url": "https://drive.google.com/file/d/1bi848DKMmlyel1yXCe04z-A9ZswJQ5xP/view"
               },
               {
                 "type": "pdf",
-                "title": "ปพ.5 ออกแบบและเทคโนโลยี ม.1",
-                "url": "https://drive.google.com/file/d/1pIOV6I_7stAxVt-S98RhO3PUiWtDnVLB/view?usp=drive_link"
-              },
-              {
-                "type": "pdf",
-                "title": "ปพ.5 ออกแบบและเทคโนโลยี ม.2",
-                "url": "https://drive.google.com/file/d/1R7pAkaIAqv1morNMUEz7a1YUCfmtAnMV/view?usp=drive_link"
+                "title": "แผนการสอนวิทยาการคำนวณ ม.1",
+                "url": "https://drive.google.com/file/d/1tazoWT33jCZ74q9peHg36oMlVxbRqOWx/view"
               },
               {
                 "type": "pdf",
                 "title": "ปพ.5 ออกแบบและเทคโนโลยี ม.3",
                 "url": "https://drive.google.com/file/d/15RZQJ6LT1wJIVLD6lwtnTSukbhbDsWJO/view?usp=drive_link"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788366850077-45.png"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788366864441-346.png"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788366878763-361.png"
               }
             ]
           },
