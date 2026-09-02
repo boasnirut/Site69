@@ -1393,10 +1393,21 @@
               "ร้อยละ 80 ของผู้เรียนมีชิ้นงาน/ภาระงานตามที่กำหนด"
             ],
             "images": [
-              "/uploads/pa-1788355107084-628.png",
-              "/uploads/pa-1788355157316-533.png",
-              "/uploads/pa-1788355172540-370.png",
-              "/uploads/pa-1788355305844-452.pdf"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788355107084-628.png"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788355157316-533.png"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788355172540-370.png"
+              }
             ]
           },
           {
@@ -1414,11 +1425,31 @@
               "ร้อยละ 80 ของผู้เรียนผ่านเกณฑ์การประเมินท้ายหน่วยการเรียนรู้"
             ],
             "images": [
-              "/placeholder-pa-standard-1-2-01.jpg",
-              "/placeholder-pa-standard-1-2-02.jpg",
-              "/placeholder-pa-standard-1-2-03.jpg",
-              "/placeholder-pa-standard-1-2-04.jpg",
-              "/placeholder-pa-standard-1-2-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-2-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-2-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-2-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-2-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-2-05.jpg"
+              }
             ]
           },
           {
@@ -1435,11 +1466,31 @@
               "ร้อยละ 80 ของผู้เรียนมีความพึงพอใจต่อกิจกรรมการเรียนรู้ในระดับมากขึ้นไป"
             ],
             "images": [
-              "/placeholder-pa-standard-1-3-01.jpg",
-              "/placeholder-pa-standard-1-3-02.jpg",
-              "/placeholder-pa-standard-1-3-03.jpg",
-              "/placeholder-pa-standard-1-3-04.jpg",
-              "/placeholder-pa-standard-1-3-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-3-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-3-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-3-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-3-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-3-05.jpg"
+              }
             ]
           },
           {
@@ -1457,11 +1508,31 @@
               "ร้อยละ 80 ของผู้เรียนสามารถใช้งานสื่อ/นวัตกรรมและผ่านเกณฑ์การประเมิน"
             ],
             "images": [
-              "/placeholder-pa-standard-1-4-01.jpg",
-              "/placeholder-pa-standard-1-4-02.jpg",
-              "/placeholder-pa-standard-1-4-03.jpg",
-              "/placeholder-pa-standard-1-4-04.jpg",
-              "/placeholder-pa-standard-1-4-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-4-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-4-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-4-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-4-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-4-05.jpg"
+              }
             ]
           },
           {
@@ -1480,11 +1551,31 @@
               "ร้อยละ 100 ของผู้เรียนมีบรรจุภัณฑ์อัจฉริยะที่ใช้เทคโนโลยี NFC Tag"
             ],
             "images": [
-              "/placeholder-pa-standard-1-5-01.jpg",
-              "/placeholder-pa-standard-1-5-02.jpg",
-              "/placeholder-pa-standard-1-5-03.jpg",
-              "/placeholder-pa-standard-1-5-04.jpg",
-              "/placeholder-pa-standard-1-5-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-5-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-5-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-5-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-5-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-5-05.jpg"
+              }
             ]
           },
           {
@@ -1502,11 +1593,31 @@
               "ร้อยละ 80 ของผู้เรียนที่ได้รับการแก้ปัญหามีผลการเรียนรู้ที่ดีขึ้น"
             ],
             "images": [
-              "/placeholder-pa-standard-1-6-01.jpg",
-              "/placeholder-pa-standard-1-6-02.jpg",
-              "/placeholder-pa-standard-1-6-03.jpg",
-              "/placeholder-pa-standard-1-6-04.jpg",
-              "/placeholder-pa-standard-1-6-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-6-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-6-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-6-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-6-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-6-05.jpg"
+              }
             ]
           },
           {
@@ -1524,11 +1635,31 @@
               "ร้อยละ 80 ของผู้เรียนมีความสนใจและกระตือรือร้นในการร่วมกิจกรรม"
             ],
             "images": [
-              "/placeholder-pa-standard-1-7-01.jpg",
-              "/placeholder-pa-standard-1-7-02.jpg",
-              "/placeholder-pa-standard-1-7-03.jpg",
-              "/placeholder-pa-standard-1-7-04.jpg",
-              "/placeholder-pa-standard-1-7-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-7-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-7-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-7-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-7-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-7-05.jpg"
+              }
             ]
           },
           {
@@ -1546,11 +1677,31 @@
               "ร้อยละ 80 ของผู้เรียนผ่านเกณฑ์การประเมินคุณลักษณะอันพึงประสงค์"
             ],
             "images": [
-              "/placeholder-pa-standard-1-8-01.jpg",
-              "/placeholder-pa-standard-1-8-02.jpg",
-              "/placeholder-pa-standard-1-8-03.jpg",
-              "/placeholder-pa-standard-1-8-04.jpg",
-              "/placeholder-pa-standard-1-8-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-8-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-8-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-8-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-8-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-1-8-05.jpg"
+              }
             ]
           }
         ]
@@ -1574,11 +1725,31 @@
               "ข้อมูลสารสนเทศผู้เรียนและรายวิชาเป็นปัจจุบันร้อยละ 100"
             ],
             "images": [
-              "/placeholder-pa-standard-2-1-01.jpg",
-              "/placeholder-pa-standard-2-1-02.jpg",
-              "/placeholder-pa-standard-2-1-03.jpg",
-              "/placeholder-pa-standard-2-1-04.jpg",
-              "/placeholder-pa-standard-2-1-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-1-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-1-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-1-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-1-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-1-05.jpg"
+              }
             ]
           },
           {
@@ -1596,11 +1767,31 @@
               "ร้อยละ 100 ของผู้เรียนได้รับการดูแลช่วยเหลือตามระบบของสถานศึกษา"
             ],
             "images": [
-              "/placeholder-pa-standard-2-2-01.jpg",
-              "/placeholder-pa-standard-2-2-02.jpg",
-              "/placeholder-pa-standard-2-2-03.jpg",
-              "/placeholder-pa-standard-2-2-04.jpg",
-              "/placeholder-pa-standard-2-2-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-2-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-2-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-2-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-2-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-2-05.jpg"
+              }
             ]
           },
           {
@@ -1618,11 +1809,31 @@
               "ร้อยละ 80 ของครูและบุคลากรพึงพอใจในการให้บริการงานสนับสนุน"
             ],
             "images": [
-              "/placeholder-pa-standard-2-3-01.jpg",
-              "/placeholder-pa-standard-2-3-02.jpg",
-              "/placeholder-pa-standard-2-3-03.jpg",
-              "/placeholder-pa-standard-2-3-04.jpg",
-              "/placeholder-pa-standard-2-3-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-3-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-3-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-3-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-3-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-3-05.jpg"
+              }
             ]
           },
           {
@@ -1640,11 +1851,31 @@
               "ร้อยละ 80 ของผู้ปกครองและภาคีเครือข่ายให้ความร่วมมือในกิจกรรมหรือรับรู้ข่าวสาร"
             ],
             "images": [
-              "/placeholder-pa-standard-2-4-01.jpg",
-              "/placeholder-pa-standard-2-4-02.jpg",
-              "/placeholder-pa-standard-2-4-03.jpg",
-              "/placeholder-pa-standard-2-4-04.jpg",
-              "/placeholder-pa-standard-2-4-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-4-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-4-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-4-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-4-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-2-4-05.jpg"
+              }
             ]
           }
         ]
@@ -1667,11 +1898,31 @@
               "มีเกียรติบัตรหรือหลักฐานการพัฒนาตนเอง"
             ],
             "images": [
-              "/placeholder-pa-standard-3-1-01.jpg",
-              "/placeholder-pa-standard-3-1-02.jpg",
-              "/placeholder-pa-standard-3-1-03.jpg",
-              "/placeholder-pa-standard-3-1-04.jpg",
-              "/placeholder-pa-standard-3-1-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-1-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-1-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-1-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-1-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-1-05.jpg"
+              }
             ]
           },
           {
@@ -1688,11 +1939,31 @@
               "เข้าร่วมกิจกรรม PLC ไม่น้อยกว่า 50 ชั่วโมง/ปีการศึกษา หรือตามเกณฑ์โรงเรียน"
             ],
             "images": [
-              "/placeholder-pa-standard-3-2-01.jpg",
-              "/placeholder-pa-standard-3-2-02.jpg",
-              "/placeholder-pa-standard-3-2-03.jpg",
-              "/placeholder-pa-standard-3-2-04.jpg",
-              "/placeholder-pa-standard-3-2-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-2-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-2-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-2-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-2-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-2-05.jpg"
+              }
             ]
           },
           {
@@ -1710,11 +1981,31 @@
               "มีรายงานผลการใช้นวัตกรรมหรือวิจัยในชั้นเรียนอย่างน้อย 1 เรื่อง/ปีการศึกษา"
             ],
             "images": [
-              "/placeholder-pa-standard-3-3-01.jpg",
-              "/placeholder-pa-standard-3-3-02.jpg",
-              "/placeholder-pa-standard-3-3-03.jpg",
-              "/placeholder-pa-standard-3-3-04.jpg",
-              "/placeholder-pa-standard-3-3-05.jpg"
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-3-01.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-3-02.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-3-03.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-3-04.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/placeholder-pa-standard-3-3-05.jpg"
+              }
             ]
           }
         ]
@@ -1740,11 +2031,31 @@
         ],
         "selfAssessmentLevel": "3",
         "images": [
-          "/placeholder-pa-challenge-01-01.jpg",
-          "/placeholder-pa-challenge-01-02.jpg",
-          "/placeholder-pa-challenge-01-03.jpg",
-          "/placeholder-pa-challenge-01-04.jpg",
-          "/placeholder-pa-challenge-01-05.jpg"
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-01-01.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-01-02.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-01-03.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-01-04.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-01-05.jpg"
+          }
         ]
       },
       {
@@ -1766,11 +2077,31 @@
         ],
         "selfAssessmentLevel": "3",
         "images": [
-          "/placeholder-pa-challenge-02-01.jpg",
-          "/placeholder-pa-challenge-02-02.jpg",
-          "/placeholder-pa-challenge-02-03.jpg",
-          "/placeholder-pa-challenge-02-04.jpg",
-          "/placeholder-pa-challenge-02-05.jpg"
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-02-01.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-02-02.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-02-03.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-02-04.jpg"
+          },
+          {
+            "type": "image",
+            "title": "",
+            "url": "/placeholder-pa-challenge-02-05.jpg"
+          }
         ]
       }
     ]
