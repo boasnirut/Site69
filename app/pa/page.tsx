@@ -23,6 +23,7 @@ import {
 } from "@/lib/pa-data";
 import { getPageVisuals } from "@/lib/site-data";
 import { fetchContent } from "@/app/admin/actions";
+import type { PaSettings } from "@/app/admin/actions";
 
 type EducationItem = {
   level: string;
@@ -101,13 +102,21 @@ export default async function PaPage() {
   const content = await fetchContent();
   const visuals = getPageVisuals(content);
 
-  const paSettings = content.paSettings || {};
-  const general = paSettings.general || {};
+  const paSettings = content.paSettings as Partial<PaSettings> | undefined;
+  const general = (paSettings?.general || {}) as Partial<PaSettings["general"]>;
+  const reportGeneral = (paSettings?.reportGeneral || {}) as Partial<PaSettings["reportGeneral"]>;
 
   const prefaceText = general.preface || paReportGeneral.preface;
-  const agreementPdfUrl = "/pa-agreement-2569.pdf";
-  const agreementDownloadUrl = "/api/download/pa-agreement";
-  const activeChallenges = paSettings.challenges?.length ? paSettings.challenges : paChallenges;
+  const agreementPdfUrl = general.agreementPdfUrl || "/pa-agreement-2569.pdf";
+  const agreementDownloadUrl =
+    general.agreementDownloadUrl ||
+    (agreementPdfUrl === "/pa-agreement-2569.pdf" ? "/api/download/pa-agreement" : agreementPdfUrl);
+  const pdfTitle = general.pdfTitle || "แบบบันทึกข้อตกลงในการปฎิบัติงาน PA";
+  const activeChallenges = paSettings?.challenges?.length ? paSettings.challenges : paChallenges;
+  const activeWorkloadGroups = paSettings?.workloadGroups?.length ? paSettings.workloadGroups : paWorkload2569;
+  const activeReportStandards = paSettings?.reportStandards?.length ? paSettings.reportStandards : paReportStandards;
+  const educationItems = reportGeneral.education?.length ? reportGeneral.education : paReportGeneral.education;
+  const leaveItems = reportGeneral.leave?.length ? reportGeneral.leave : paReportGeneral.leave;
   const workloadHours = general.workloadHours || "43";
   const agreementGeneral = [
     { label: "ผู้จัดทำข้อตกลง", value: general.name || paAgreementGeneral[0].value },
@@ -115,8 +124,8 @@ export default async function PaPage() {
     { label: "สถานศึกษา", value: general.school || paAgreementGeneral[2].value },
     { label: "สังกัด", value: general.affiliation || paAgreementGeneral[3].value },
     { label: "รอบข้อตกลง", value: general.agreementPeriod || paAgreementGeneral[5].value },
-    { label: "เงินเดือน", value: paAgreementGeneral[4].value },
-    { label: "ประเภทห้องเรียน", value: paAgreementGeneral[6].value }
+    { label: "เงินเดือน", value: general.salary || paAgreementGeneral[4].value },
+    { label: "ประเภทห้องเรียน", value: general.classroomType || paAgreementGeneral[6].value }
   ];
 
   return (
@@ -167,7 +176,7 @@ export default async function PaPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <EducationTimeline items={paReportGeneral.education} />
+            <EducationTimeline items={educationItems} />
 
             <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
               <div className="flex items-center gap-3">
@@ -175,7 +184,7 @@ export default async function PaPage() {
                 <h3 className="text-base font-bold text-white">ประวัติการลา</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {paReportGeneral.leave.map((item) => (
+                {leaveItems.map((item) => (
                   <div key={item} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-sm text-slate-300 leading-relaxed">
                     {item}
                   </div>
@@ -207,7 +216,7 @@ export default async function PaPage() {
           </div>
 
           <div className="space-y-6">
-            {paWorkload2569.map((group) => (
+            {activeWorkloadGroups.map((group) => (
               <article key={group.title} className="p-5 rounded-2xl bg-black/30 border border-white/10 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="text-base sm:text-lg font-bold text-white">{group.title}</h3>
@@ -233,7 +242,7 @@ export default async function PaPage() {
           </div>
 
           <div className="space-y-8">
-            {paReportStandards.map((domain, domainIndex) => (
+            {activeReportStandards.map((domain, domainIndex) => (
               <details key={domain.domain} className="pa-domain-disclosure" open={domainIndex === 0}>
                 <summary>
                   <div className="flex items-start gap-4">
@@ -385,7 +394,7 @@ export default async function PaPage() {
               </div>
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-400">PDF Document</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">แบบบันทึกข้อตกลงในการปฎิบัติงาน PA</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-white">{pdfTitle}</h2>
               </div>
             </div>
 
@@ -414,7 +423,7 @@ export default async function PaPage() {
             <iframe
               className="w-full h-full border-0"
               src={`${agreementPdfUrl}#toolbar=1`}
-              title="แบบบันทึกข้อตกลง PA PDF"
+              title={`${pdfTitle} PDF`}
             />
           </div>
         </section>
