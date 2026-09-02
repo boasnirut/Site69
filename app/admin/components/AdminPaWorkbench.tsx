@@ -19,6 +19,8 @@ import {
 import type {
   PaChallengeItem,
   PaEducationItem,
+  PaEvidenceItem,
+  PaEvidenceType,
   PaSettings,
   PaStandardDomain,
   PaStandardItem,
@@ -50,6 +52,47 @@ const textToLines = (value: string) =>
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
+
+const evidenceTypes: PaEvidenceType[] = ["image", "pdf", "link"];
+
+type PaEvidenceDraft = {
+  type: PaEvidenceType;
+  title: string;
+  url: string;
+};
+
+const inferEvidenceType = (url: string, type?: PaEvidenceType): PaEvidenceType => {
+  if (type && evidenceTypes.includes(type)) return type;
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.endsWith(".pdf") || lowerUrl.includes("drive.google.com/file/d/")) return "pdf";
+  if (/\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url)) return "image";
+  return "link";
+};
+
+const getEvidenceFileTitle = (fileName: string) => fileName.replace(/\.[^.]+$/, "").trim() || "หลักฐานอ้างอิง";
+
+const normalizeEvidenceDraft = (item: PaEvidenceItem): PaEvidenceDraft => {
+  if (typeof item === "string") {
+    const url = item.trim();
+    return {
+      type: inferEvidenceType(url),
+      title: "",
+      url
+    };
+  }
+
+  const url = (item.url || "").trim();
+  return {
+    type: inferEvidenceType(url, item.type),
+    title: (item.title || "").trim(),
+    url
+  };
+};
+
+const normalizeEvidenceDrafts = (items?: PaEvidenceItem[]) =>
+  (items || [])
+    .map(normalizeEvidenceDraft)
+    .filter((item) => item.url);
 
 const blankEducation = (): PaEducationItem => ({
   level: "",
@@ -217,7 +260,7 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
     }));
   };
 
-  const updateStandardItem = (field: keyof PaStandardItem, value: string | string[]) => {
+  const updateStandardItem = (field: keyof PaStandardItem, value: string | string[] | PaEvidenceItem[]) => {
     setSettings((current) => ({
       ...current,
       reportStandards: current.reportStandards.map((domain, domainIndex) =>
@@ -259,7 +302,7 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
     setSelectedItemIndex(0);
   };
 
-  const updateChallenge = (field: keyof PaChallengeItem, value: string | string[]) => {
+  const updateChallenge = (field: keyof PaChallengeItem, value: string | string[] | PaEvidenceItem[]) => {
     setSettings((current) => ({
       ...current,
       challenges: current.challenges.map((challenge, index) => (index === selectedChallengeIndex ? { ...challenge, [field]: value } : challenge))
@@ -308,15 +351,20 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
     });
   };
 
-  const handleEvidenceUpload = (event: ChangeEvent<HTMLInputElement>, target: "standard" | "challenge") => {
+  const handleEvidenceUpload = (event: ChangeEvent<HTMLInputElement>, target: "standard" | "challenge", evidenceType: "image" | "pdf") => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
 
     startTransition(async () => {
       try {
-        const uploaded = [];
+        const uploaded: PaEvidenceItem[] = [];
         for (const file of files) {
-          uploaded.push(await uploadFile(file));
+          const url = await uploadFile(file);
+          uploaded.push({
+            type: evidenceType,
+            title: evidenceType === "pdf" ? getEvidenceFileTitle(file.name) : "",
+            url
+          });
         }
 
         if (target === "standard") {
@@ -439,7 +487,7 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
             addDomain={addDomain}
             addItem={addStandardItem}
             removeItem={removeStandardItem}
-            onEvidenceUpload={(event) => handleEvidenceUpload(event, "standard")}
+            onEvidenceUpload={(event, evidenceType) => handleEvidenceUpload(event, "standard", evidenceType)}
           />
         ) : null}
 
@@ -452,7 +500,7 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
             updateChallenge={updateChallenge}
             addChallenge={addChallenge}
             removeChallenge={removeChallenge}
-            onEvidenceUpload={(event) => handleEvidenceUpload(event, "challenge")}
+            onEvidenceUpload={(event, evidenceType) => handleEvidenceUpload(event, "challenge", evidenceType)}
           />
         ) : null}
 
@@ -681,11 +729,11 @@ function StandardsPanel({
   setSelectedDomainIndex: (index: number) => void;
   setSelectedItemIndex: (index: number) => void;
   updateDomain: (field: keyof Omit<PaStandardDomain, "items">, value: string) => void;
-  updateItem: (field: keyof PaStandardItem, value: string | string[]) => void;
+  updateItem: (field: keyof PaStandardItem, value: string | string[] | PaEvidenceItem[]) => void;
   addDomain: () => void;
   addItem: () => void;
   removeItem: () => void;
-  onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>) => void;
+  onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
 }) {
   if (!selectedDomain || !selectedItem) return null;
 
@@ -792,10 +840,10 @@ function ChallengesPanel({
   selectedIndex: number;
   selectedChallenge?: PaChallengeItem;
   setSelectedIndex: (index: number) => void;
-  updateChallenge: (field: keyof PaChallengeItem, value: string | string[]) => void;
+  updateChallenge: (field: keyof PaChallengeItem, value: string | string[] | PaEvidenceItem[]) => void;
   addChallenge: () => void;
   removeChallenge: () => void;
-  onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>) => void;
+  onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
 }) {
   if (!selectedChallenge) return null;
 
@@ -904,24 +952,96 @@ function EvidenceEditor({
   onChange,
   onUpload
 }: {
-  value: string[];
-  onChange: (items: string[]) => void;
-  onUpload: (event: ChangeEvent<HTMLInputElement>) => void;
+  value: PaEvidenceItem[];
+  onChange: (items: PaEvidenceItem[]) => void;
+  onUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
 }) {
+  const [linkTitle, setLinkTitle] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
+  const items = normalizeEvidenceDrafts(value);
+
+  const updateEvidence = (index: number, field: keyof PaEvidenceDraft, nextValue: string) => {
+    onChange(items.map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: nextValue } : item)));
+  };
+
+  const removeEvidence = (index: number) => {
+    onChange(items.filter((_, itemIndex) => itemIndex !== index));
+  };
+
+  const addLink = () => {
+    const url = linkUrl.trim();
+    if (!url) return;
+
+    onChange([
+      ...items,
+      {
+        type: "link",
+        title: linkTitle.trim() || "ลิงก์หลักฐานอ้างอิง",
+        url
+      }
+    ]);
+    setLinkTitle("");
+    setLinkUrl("");
+  };
+
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+    <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <PanelMiniHeading icon={ImagePlus} title="ภาพ / PDF / ลิงก์หลักฐานอ้างอิง" />
-        <label className="admin-pa-mini-button cursor-pointer">
-          <Upload className="h-4 w-4" />
-          อัปโหลดไฟล์
-          <input className="sr-only" type="file" multiple accept="image/jpeg,image/png,image/webp,application/pdf" onChange={onUpload} />
+      </div>
+
+      <div className="admin-pa-evidence-upload-grid">
+        <label className="admin-pa-evidence-upload">
+          <ImagePlus className="h-5 w-5" />
+          <strong>อัปโหลดภาพหลักฐาน</strong>
+          <span>รองรับ JPG, PNG, WebP, GIF และ AVIF</span>
+          <input className="sr-only" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={(event) => onUpload(event, "image")} />
+        </label>
+
+        <label className="admin-pa-evidence-upload">
+          <FileText className="h-5 w-5" />
+          <strong>อัปโหลด PDF หลักฐาน</strong>
+          <span>ระบบตั้งชื่อจากไฟล์ก่อน แล้วแก้ชื่อได้ในรายการด้านล่าง</span>
+          <input className="sr-only" type="file" multiple accept="application/pdf" onChange={(event) => onUpload(event, "pdf")} />
         </label>
       </div>
-      <div className="mt-4">
-        <Field label="ใส่ลิงก์ 1 รายการต่อ 1 บรรทัด รองรับภาพ PDF และลิงก์เว็บ">
-          <textarea rows={6} value={linesToText(value)} onChange={(event) => onChange(textToLines(event.target.value))} />
+
+      <div className="admin-pa-link-builder">
+        <Field label="ชื่อปุ่มลิงก์">
+          <input value={linkTitle} onChange={(event) => setLinkTitle(event.target.value)} placeholder="เช่น เอกสาร Drive / แบบประเมินออนไลน์" />
         </Field>
+        <Field label="URL ลิงก์หลักฐาน">
+          <input value={linkUrl} onChange={(event) => setLinkUrl(event.target.value)} placeholder="https://..." />
+        </Field>
+        <button className="admin-pa-mini-button" type="button" onClick={addLink}>
+          <Plus className="h-4 w-4" />
+          เพิ่มลิงก์
+        </button>
+      </div>
+
+      <div className="admin-pa-evidence-list">
+        {items.length ? (
+          items.map((item, index) => (
+            <div className="admin-pa-evidence-row" key={`${item.url}-${index}`}>
+              <select value={item.type} onChange={(event) => updateEvidence(index, "type", event.target.value as PaEvidenceType)}>
+                <option value="image">ภาพ</option>
+                <option value="pdf">PDF</option>
+                <option value="link">ลิงก์</option>
+              </select>
+              <input
+                value={item.title}
+                onChange={(event) => updateEvidence(index, "title", event.target.value)}
+                placeholder={item.type === "image" ? "ชื่อภาพ (ไม่บังคับ)" : "ชื่อหลักฐานที่จะแสดง"}
+              />
+              <input value={item.url} onChange={(event) => updateEvidence(index, "url", event.target.value)} placeholder="/uploads/example.jpg หรือ https://..." />
+              <button className="admin-pa-icon-danger-button" type="button" onClick={() => removeEvidence(index)} aria-label="ลบหลักฐานรายการนี้">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="admin-pa-empty-note">ยังไม่มีหลักฐานอ้างอิงในหัวข้อนี้</div>
+        )}
       </div>
     </div>
   );

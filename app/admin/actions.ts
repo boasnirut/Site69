@@ -20,7 +20,15 @@ export type AdminContentRecord = {
   status: AdminContentStatus;
 };
 
-export type PaEvidenceItem = string;
+export type PaEvidenceType = "image" | "pdf" | "link";
+
+export type PaEvidenceItem =
+  | string
+  | {
+      type?: PaEvidenceType;
+      title?: string;
+      url?: string;
+    };
 
 export type PaWorkloadRow = {
   activity: string;
@@ -218,6 +226,38 @@ export async function saveContentCollection(
 const cleanLines = (items: string[] | undefined) =>
   Array.isArray(items) ? items.map((item) => item.trim()).filter(Boolean) : [];
 
+const inferPaEvidenceType = (url: string, type?: PaEvidenceType): PaEvidenceType => {
+  if (type) return type;
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.endsWith(".pdf") || lowerUrl.includes("drive.google.com/file/d/")) return "pdf";
+  if (/\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url)) return "image";
+  return "link";
+};
+
+const cleanEvidenceItems = (items: PaEvidenceItem[] | undefined): PaEvidenceItem[] =>
+  Array.isArray(items)
+    ? items.reduce<PaEvidenceItem[]>((list, item) => {
+        if (typeof item === "string") {
+          const url = item.trim();
+          if (url) {
+            list.push({ type: inferPaEvidenceType(url), title: "", url });
+          }
+          return list;
+        }
+
+        const url = (item.url || "").trim();
+        if (url) {
+          list.push({
+            type: inferPaEvidenceType(url, item.type),
+            title: (item.title || "").trim(),
+            url
+          });
+        }
+
+        return list;
+      }, [])
+    : [];
+
 function normalizePaSettings(settings: PaSettings): PaSettings {
   return {
     general: {
@@ -266,7 +306,7 @@ function normalizePaSettings(settings: PaSettings): PaSettings {
             outcomes: cleanLines(item.outcomes),
             selfAssessmentLevel: ["1", "2", "3", "4"].includes(item.selfAssessmentLevel || "") ? item.selfAssessmentLevel : "3",
             indicators: cleanLines(item.indicators),
-            images: cleanLines(item.images)
+            images: cleanEvidenceItems(item.images)
           }))
           .filter((item) => item.title)
       }))
@@ -279,7 +319,7 @@ function normalizePaSettings(settings: PaSettings): PaSettings {
         methods: cleanLines(challenge.methods),
         expected: cleanLines(challenge.expected),
         selfAssessmentLevel: ["1", "2", "3", "4"].includes(challenge.selfAssessmentLevel || "") ? challenge.selfAssessmentLevel : "3",
-        images: cleanLines(challenge.images)
+        images: cleanEvidenceItems(challenge.images)
       }))
       .filter((challenge) => challenge.title || challenge.subtitle)
   };

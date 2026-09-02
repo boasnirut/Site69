@@ -1,17 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Maximize2, X, FileText, ZoomIn, ZoomOut, RotateCcw, Link2 } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
+type PaEvidenceKind = "image" | "pdf" | "link";
+type PaEvidenceInput =
+  | string
+  | {
+      type?: PaEvidenceKind;
+      title?: string;
+      url?: string;
+    };
+
+type NormalizedEvidence = {
+  type: PaEvidenceKind;
+  title: string;
+  url: string;
+};
+
 type PaEvidenceGalleryProps = {
-  images: string[];
+  images: PaEvidenceInput[];
   title: string;
 };
 
 export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
-  const [selected, setSelected] = useState<string | null>(null);
-  const visibleImages = images.slice(0, 3);
+  const [selected, setSelected] = useState<NormalizedEvidence | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const isDocument = (url: string) => {
     if (!url) return false;
@@ -26,6 +46,41 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
 
   const isLinkOnly = (url: string) => Boolean(url) && !isDocument(url) && !isImage(url);
 
+  const inferType = (url: string, type?: PaEvidenceKind): PaEvidenceKind => {
+    if (type) return type;
+    if (isDocument(url)) return "pdf";
+    if (isImage(url)) return "image";
+    return "link";
+  };
+
+  const getDefaultTitle = (url: string, index: number) => {
+    const cleanUrl = url.split("?")[0].replace(/\/$/, "");
+    const name = decodeURIComponent(cleanUrl.split("/").pop() || "");
+    return name || `หลักฐานที่ ${index + 1}`;
+  };
+
+  const evidenceItems = useMemo(
+    () =>
+      images
+        .map((item, index) => {
+          const rawUrl = typeof item === "string" ? item : item.url || "";
+          const url = rawUrl.trim();
+          if (!url) return null;
+
+          const rawTitle = typeof item === "string" ? "" : item.title || "";
+          return {
+            type: inferType(url, typeof item === "string" ? undefined : item.type),
+            title: rawTitle.trim() || getDefaultTitle(url, index),
+            url
+          };
+        })
+        .filter((item): item is NormalizedEvidence => Boolean(item)),
+    [images]
+  );
+
+  const previewItems = evidenceItems.filter((item) => item.type !== "link");
+  const linkItems = evidenceItems.filter((item) => item.type === "link");
+
   const getIframeUrl = (url: string) => {
     if (url.includes('drive.google.com/file/d/')) {
       return url.replace(/\/view.*$/, '/preview');
@@ -33,118 +88,110 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
     return url;
   };
 
+  const modal = selected ? (
+    <div className="pa-gallery-modal" onClick={() => setSelected(null)} role="dialog" aria-modal="true">
+      <button
+        className="pa-gallery-modal__close"
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation();
+          setSelected(null);
+        }}
+        aria-label="ปิดหน้าต่างดูหลักฐาน"
+      >
+        <X className="w-6 h-6" />
+      </button>
+
+      {selected.type === "pdf" ? (
+        <div className="pa-gallery-modal__document" onClick={(event) => event.stopPropagation()}>
+          <div className="pa-gallery-modal__bar">
+            <FileText aria-hidden="true" />
+            <strong>{selected.title}</strong>
+          </div>
+          <iframe src={getIframeUrl(selected.url)} title={selected.title} allow="autoplay" />
+        </div>
+      ) : (
+        <div className="pa-gallery-modal__stage" onClick={(event) => event.stopPropagation()}>
+          <TransformWrapper
+            initialScale={1}
+            minScale={0.8}
+            maxScale={4}
+            centerOnInit={true}
+            centerZoomedOut={true}
+            wheel={{ step: 0.04 }}
+            panning={{ velocityDisabled: false }}
+            doubleClick={{ step: 0.5 }}
+          >
+            {({ zoomIn, zoomOut, resetTransform }) => (
+              <>
+                <div className="pa-gallery-modal__tools">
+                  <button type="button" onClick={() => zoomOut()} title="ซูมออก">
+                    <ZoomOut className="w-5 h-5" />
+                  </button>
+                  <button type="button" onClick={() => resetTransform()} title="คืนค่าเดิม">
+                    <RotateCcw className="w-5 h-5" />
+                  </button>
+                  <button type="button" onClick={() => zoomIn()} title="ซูมเข้า">
+                    <ZoomIn className="w-5 h-5" />
+                  </button>
+                </div>
+                <TransformComponent
+                  wrapperStyle={{ width: "100vw", height: "100vh" }}
+                  contentStyle={{ width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
+                  <img src={selected.url} alt={selected.title || title} className="pa-gallery-modal__image" />
+                </TransformComponent>
+              </>
+            )}
+          </TransformWrapper>
+        </div>
+      )}
+    </div>
+  ) : null;
+
   return (
     <>
-      <div className="pa-evidence-gallery" aria-label={`ภาพหลักฐาน ${title}`}>
-        {visibleImages.map((image, index) => (
-          <button key={`${title}-${image}-${index}`} type="button" onClick={() => setSelected(image)}>
-            {isDocument(image) ? (
-              <div className="w-full h-full relative overflow-hidden bg-white/5 flex items-center justify-center min-h-[160px] rounded-lg">
+      {previewItems.length ? (
+        <div className="pa-evidence-gallery" aria-label={`ภาพหลักฐาน ${title}`}>
+          {previewItems.map((item, index) => (
+            <button
+              className={`pa-evidence-card pa-evidence-card--${item.type}`}
+              key={`${title}-${item.url}-${index}`}
+              type="button"
+              onClick={() => setSelected(item)}
+            >
+              {item.type === "pdf" ? (
+              <div className="pa-evidence-pdf-preview">
                 <iframe
-                  src={`${getIframeUrl(image)}#toolbar=0&navpanes=0&scrollbar=0`}
-                  className="w-full h-full border-none pointer-events-none select-none object-cover"
+                  src={`${getIframeUrl(item.url)}#toolbar=0&navpanes=0&scrollbar=0`}
                   title={`${title} ${index + 1}`}
                 />
-                <div className="absolute inset-0 bg-transparent" />
+                <FileText aria-hidden="true" />
               </div>
-            ) : isLinkOnly(image) ? (
-              <div className="pa-evidence-link-preview">
-                <Link2 aria-hidden="true" />
-                <strong>ลิงก์อ้างอิง</strong>
-                <small>{image}</small>
-              </div>
-            ) : (
-              <img src={image} alt={`${title} ภาพที่ ${index + 1}`} />
-            )}
-            <span>
-              {isLinkOnly(image) ? <Link2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
-              {isDocument(image) ? "เปิดเอกสาร" : isLinkOnly(image) ? "เปิดลิงก์" : "ดูภาพ"}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {selected ? (
-        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 md:p-8 backdrop-blur-sm" onClick={() => setSelected(null)}>
-          <button 
-            className="absolute top-4 right-4 text-white/70 hover:text-white bg-black/50 rounded-full p-2 z-50"
-            onClick={(e) => { e.stopPropagation(); setSelected(null); }}
-          >
-            <X className="w-6 h-6" />
-          </button>
-          
-          <div className="fixed inset-0 w-full h-full" onClick={(e) => e.stopPropagation()}>
-            <TransformWrapper
-              initialScale={1}
-              minScale={0.8}
-              maxScale={4}
-              centerOnInit={true}
-              centerZoomedOut={true}
-              wheel={{ step: 0.04 }}
-              panning={{ velocityDisabled: false }}
-              doubleClick={{ step: 0.5 }}
-            >
-              {({ zoomIn, zoomOut, resetTransform }) => (
-                <>
-                  <div className="absolute bottom-6 right-6 flex items-center gap-2 z-[110] bg-black/70 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-2xl">
-                    <button 
-                      className="text-white hover:text-orange-400 bg-white/10 hover:bg-white/20 rounded-full p-2.5 transition-all"
-                      onClick={() => zoomOut()}
-                      title="ซูมออก"
-                    >
-                      <ZoomOut className="w-5 h-5" />
-                    </button>
-                    <button 
-                      className="text-white hover:text-orange-400 bg-white/10 hover:bg-white/20 rounded-full p-2.5 transition-all"
-                      onClick={() => resetTransform()}
-                      title="คืนค่าเดิม"
-                    >
-                      <RotateCcw className="w-5 h-5" />
-                    </button>
-                    <button 
-                      className="text-white hover:text-orange-400 bg-white/10 hover:bg-white/20 rounded-full p-2.5 transition-all"
-                      onClick={() => zoomIn()}
-                      title="ซูมเข้า"
-                    >
-                      <ZoomIn className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <TransformComponent
-                    wrapperStyle={{ width: "100vw", height: "100vh" }}
-                    contentStyle={{ width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}
-                  >
-                    {isDocument(selected) ? (
-                      <div className="w-[85vw] max-w-5xl h-[85vh] bg-white rounded-xl overflow-hidden shadow-2xl border border-white/20 cursor-grab active:cursor-grabbing">
-                        <iframe 
-                          src={getIframeUrl(selected)} 
-                          className="w-full h-full border-none"
-                          title="Document Viewer"
-                          allow="autoplay"
-                        />
-                      </div>
-                    ) : isLinkOnly(selected) ? (
-                      <div className="pa-evidence-link-modal">
-                        <Link2 aria-hidden="true" />
-                        <strong>เปิดหลักฐานอ้างอิงจากลิงก์</strong>
-                        <p>{selected}</p>
-                        <a href={selected} target="_blank" rel="noreferrer">
-                          เปิดลิงก์ในแท็บใหม่
-                        </a>
-                      </div>
-                    ) : (
-                      <img 
-                        src={selected} 
-                        alt={title} 
-                        className="max-h-[88vh] max-w-[92vw] object-contain rounded-lg shadow-2xl cursor-grab active:cursor-grabbing select-none"
-                      />
-                    )}
-                  </TransformComponent>
-                </>
+              ) : (
+                <img src={item.url} alt={item.title || `${title} ภาพที่ ${index + 1}`} />
               )}
-            </TransformWrapper>
-          </div>
+              <span>
+                <Maximize2 aria-hidden="true" />
+                {item.type === "pdf" ? item.title || "เปิดเอกสาร" : "ดูภาพ"}
+              </span>
+            </button>
+          ))}
         </div>
       ) : null}
+
+      {linkItems.length ? (
+        <div className="pa-evidence-links" aria-label={`ลิงก์หลักฐาน ${title}`}>
+          {linkItems.map((item, index) => (
+            <a key={`${title}-link-${item.url}-${index}`} href={item.url} target="_blank" rel="noreferrer">
+              <Link2 aria-hidden="true" />
+              <span>{item.title || "เปิดลิงก์หลักฐาน"}</span>
+            </a>
+          ))}
+        </div>
+      ) : null}
+
+      {isMounted && modal ? createPortal(modal, document.body) : null}
     </>
   );
 }
