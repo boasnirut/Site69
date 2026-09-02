@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { PaEvidenceGallery } from "@/components/PaEvidenceGallery";
+import { PaAssessmentInfoPopover } from "@/components/PaAssessmentInfoPopover";
 import { PaTimelineNav } from "@/components/PaTimelineNav";
 import {
   paAgreementGeneral,
@@ -73,22 +74,7 @@ function SelfAssessmentBadge({ level }: { level?: string }) {
     <div className={assessment.className}>
       <div className="pa-assessment-card__header">
         <span>ระดับผลการประเมินตนเอง</span>
-        <details className="pa-assessment-info">
-          <summary aria-label="ดูคำอธิบายระดับการประเมินตนเอง">
-            <Info aria-hidden="true" />
-          </summary>
-          <div>
-            <strong>คำอธิบายระดับ</strong>
-            <ul>
-              {Object.values(assessmentLevels).map((item) => (
-                <li key={item.label}>
-                  <b>{item.label}</b>
-                  <span>{item.description}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </details>
+        <PaAssessmentInfoPopover />
       </div>
       <strong>{assessment.label}</strong>
       <p>{assessment.description}</p>
