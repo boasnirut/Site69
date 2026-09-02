@@ -1,8 +1,10 @@
 import {
   BookOpenCheck,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Download,
+  ExternalLink,
   FileText,
   GraduationCap,
   Sparkles,
@@ -21,6 +23,14 @@ import {
 } from "@/lib/pa-data";
 import { getPageVisuals } from "@/lib/site-data";
 import { fetchContent } from "@/app/admin/actions";
+
+type EducationItem = {
+  level: string;
+  credential: string;
+  school: string;
+  province: string;
+  logo: string;
+};
 
 const paMenu = [
   { id: "report-preface", label: "คำนำ" },
@@ -62,6 +72,31 @@ function WorkloadTable({ rows }: { rows: { activity: string; hours: string }[] }
   );
 }
 
+function EducationTimeline({ items }: { items: EducationItem[] }) {
+  return (
+    <div className="pa-education-timeline enhanced">
+      <div className="flex items-center gap-3">
+        <GraduationCap className="w-5 h-5 text-amber-400" />
+        <h3 className="text-base font-bold text-white">ประวัติการศึกษา</h3>
+      </div>
+      <ol>
+        {items.map((item) => (
+          <li key={`${item.school}-${item.level}`}>
+            <span className="pa-education-logo">
+              <img src={item.logo} alt={`โลโก้${item.school}`} />
+            </span>
+            <div>
+              <strong>{item.level}</strong>
+              <p>{item.credential}</p>
+              <small>{item.school} · {item.province}</small>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 export default async function PaPage() {
   const content = await fetchContent();
   const visuals = getPageVisuals(content);
@@ -70,7 +105,8 @@ export default async function PaPage() {
   const general = paSettings.general || {};
 
   const prefaceText = general.preface || paReportGeneral.preface;
-  const reportPdfUrl = general.reportPdfUrl || "/pa-report-60-68-2.pdf";
+  const agreementPdfUrl = "/pa-agreement-2569.pdf";
+  const agreementDownloadUrl = "/api/download/pa-agreement";
   const activeChallenges = paSettings.challenges?.length ? paSettings.challenges : paChallenges;
   const workloadHours = general.workloadHours || "43";
   const agreementGeneral = [
@@ -131,22 +167,7 @@ export default async function PaPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
-              <div className="flex items-center gap-3">
-                <GraduationCap className="w-5 h-5 text-amber-400" />
-                <h3 className="text-base font-bold text-white">ประวัติการศึกษา</h3>
-              </div>
-              <div className="space-y-3">
-                {paReportGeneral.education.map((item, index) => (
-                  <div key={item} className="flex items-start gap-3 text-sm text-slate-300">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs shrink-0">
-                      {index + 1}
-                    </span>
-                    <p className="leading-relaxed">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <EducationTimeline items={paReportGeneral.education} />
 
             <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
               <div className="flex items-center gap-3">
@@ -213,24 +234,30 @@ export default async function PaPage() {
 
           <div className="space-y-8">
             {paReportStandards.map((domain, domainIndex) => (
-              <div key={domain.domain} className="rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden">
-                <div className="p-5 bg-white/[0.03] border-b border-white/10 flex items-start gap-4">
-                  <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-sm shrink-0">
-                    0{domainIndex + 1}
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-bold text-white">{domain.domain}</h3>
-                    <p className="text-xs sm:text-sm text-slate-300 mt-0.5 leading-relaxed">{domain.description}</p>
+              <details key={domain.domain} className="pa-domain-disclosure" open={domainIndex === 0}>
+                <summary>
+                  <div className="flex items-start gap-4">
+                    <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-sm shrink-0">
+                      0{domainIndex + 1}
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-white">{domain.domain}</h3>
+                      <p className="text-xs sm:text-sm text-slate-300 mt-0.5 leading-relaxed">{domain.description}</p>
+                    </div>
                   </div>
-                </div>
+                  <ChevronDown className="pa-disclosure-icon" aria-hidden="true" />
+                </summary>
 
                 <div className="p-4 sm:p-6 space-y-6">
-                  {domain.items.map((item) => (
-                    <div key={item.title} className="p-5 rounded-xl bg-black/30 border border-white/5 space-y-4">
-                      <h4 className="text-sm sm:text-base font-bold text-amber-300 flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                        <span>{item.title}</span>
-                      </h4>
+                  {domain.items.map((item, itemIndex) => (
+                    <details key={item.title} className="pa-standard-disclosure" open={domainIndex === 0 && itemIndex === 0}>
+                      <summary>
+                        <h4>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <span>{item.title}</span>
+                        </h4>
+                        <ChevronDown className="pa-disclosure-icon" aria-hidden="true" />
+                      </summary>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="p-3.5 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
@@ -268,12 +295,18 @@ export default async function PaPage() {
                       </div>
 
                       {item.images?.length ? (
-                        <PaEvidenceGallery title={item.title} images={item.images} />
+                        <div className="space-y-3">
+                          <div className="pa-evidence-heading">
+                            <strong>ภาพ / หลักฐานอ้างอิง</strong>
+                            <span>รองรับไฟล์ภาพ PDF และลิงก์อ้างอิง</span>
+                          </div>
+                          <PaEvidenceGallery title={item.title} images={item.images} />
+                        </div>
                       ) : null}
-                    </div>
+                    </details>
                   ))}
                 </div>
-              </div>
+              </details>
             ))}
           </div>
         </section>
@@ -331,7 +364,13 @@ export default async function PaPage() {
                 </div>
 
                 {challenge.images?.length ? (
-                  <PaEvidenceGallery title={challenge.title} images={challenge.images} />
+                  <div className="space-y-3">
+                    <div className="pa-evidence-heading">
+                      <strong>ภาพ / หลักฐานอ้างอิง</strong>
+                      <span>รองรับไฟล์ภาพ PDF และลิงก์อ้างอิง</span>
+                    </div>
+                    <PaEvidenceGallery title={challenge.title} images={challenge.images} />
+                  </div>
                 ) : null}
               </div>
             ))}
@@ -346,25 +385,36 @@ export default async function PaPage() {
               </div>
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-400">PDF Document</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">ไฟล์รายงาน PA ฉบับเต็ม</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-white">แบบบันทึกข้อตกลงในการปฎิบัติงาน PA</h2>
               </div>
             </div>
 
-            <a
-              href={reportPdfUrl}
-              download
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 transition-all shadow-md self-start sm:self-auto"
-            >
-              <Download className="w-4 h-4 text-amber-400" />
-              <span>ดาวน์โหลดรายงาน PDF</span>
-            </a>
+            <div className="flex flex-col sm:flex-row gap-2 self-start sm:self-auto">
+              <a
+                href={agreementDownloadUrl}
+                download="pa-agreement-2569.pdf"
+                className="inline-flex min-h-11 items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 transition-all shadow-md"
+              >
+                <Download className="w-4 h-4 text-amber-400" />
+                <span>ดาวน์โหลดข้อตกลง PA</span>
+              </a>
+              <a
+                href={agreementPdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-11 items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-slate-100 bg-white/5 hover:bg-white/10 border border-white/10 transition-all shadow-md"
+              >
+                <ExternalLink className="w-4 h-4 text-cyan-200" />
+                <span>เปิดไฟล์ PDF</span>
+              </a>
+            </div>
           </div>
 
           <div className="w-full h-[600px] rounded-2xl overflow-hidden border border-white/10 bg-black/50">
             <iframe
               className="w-full h-full border-0"
-              src={`${reportPdfUrl}#toolbar=1`}
-              title="รายงาน PA PDF"
+              src={`${agreementPdfUrl}#toolbar=1`}
+              title="แบบบันทึกข้อตกลง PA PDF"
             />
           </div>
         </section>

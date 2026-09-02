@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Maximize2, X, FileText, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { Maximize2, X, FileText, ZoomIn, ZoomOut, RotateCcw, Link2 } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 type PaEvidenceGalleryProps = {
@@ -18,6 +18,13 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
     const lowerUrl = url.toLowerCase();
     return lowerUrl.endsWith('.pdf') || lowerUrl.includes('drive.google.com/file/d/');
   };
+
+  const isImage = (url: string) => {
+    if (!url) return false;
+    return /\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url);
+  };
+
+  const isLinkOnly = (url: string) => Boolean(url) && !isDocument(url) && !isImage(url);
 
   const getIframeUrl = (url: string) => {
     if (url.includes('drive.google.com/file/d/')) {
@@ -40,12 +47,18 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
                 />
                 <div className="absolute inset-0 bg-transparent" />
               </div>
+            ) : isLinkOnly(image) ? (
+              <div className="pa-evidence-link-preview">
+                <Link2 aria-hidden="true" />
+                <strong>ลิงก์อ้างอิง</strong>
+                <small>{image}</small>
+              </div>
             ) : (
               <img src={image} alt={`${title} ภาพที่ ${index + 1}`} />
             )}
             <span>
-              <Maximize2 aria-hidden="true" />
-              {isDocument(image) ? "เปิดเอกสาร" : "ดูภาพ"}
+              {isLinkOnly(image) ? <Link2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
+              {isDocument(image) ? "เปิดเอกสาร" : isLinkOnly(image) ? "เปิดลิงก์" : "ดูภาพ"}
             </span>
           </button>
         ))}
@@ -108,6 +121,15 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
                           title="Document Viewer"
                           allow="autoplay"
                         />
+                      </div>
+                    ) : isLinkOnly(selected) ? (
+                      <div className="pa-evidence-link-modal">
+                        <Link2 aria-hidden="true" />
+                        <strong>เปิดหลักฐานอ้างอิงจากลิงก์</strong>
+                        <p>{selected}</p>
+                        <a href={selected} target="_blank" rel="noreferrer">
+                          เปิดลิงก์ในแท็บใหม่
+                        </a>
                       </div>
                     ) : (
                       <img 
