@@ -5,6 +5,7 @@ import {
   BookOpenCheck,
   CheckCircle2,
   Clock,
+  Copy,
   FileText,
   GraduationCap,
   ImagePlus,
@@ -61,6 +62,12 @@ type PaEvidenceDraft = {
   url: string;
 };
 
+type EvidenceCopySource = {
+  key: string;
+  label: string;
+  items: PaEvidenceItem[];
+};
+
 const inferEvidenceType = (url: string, type?: PaEvidenceType): PaEvidenceType => {
   if (type && evidenceTypes.includes(type)) return type;
   const lowerUrl = url.toLowerCase();
@@ -93,6 +100,16 @@ const normalizeEvidenceDrafts = (items?: PaEvidenceItem[]) =>
   (items || [])
     .map(normalizeEvidenceDraft)
     .filter((item) => item.url);
+
+const countEvidenceByType = (items?: PaEvidenceItem[]) => {
+  const normalizedItems = normalizeEvidenceDrafts(items);
+  return {
+    total: normalizedItems.length,
+    image: normalizedItems.filter((item) => item.type === "image").length,
+    pdf: normalizedItems.filter((item) => item.type === "pdf").length,
+    link: normalizedItems.filter((item) => item.type === "link").length
+  };
+};
 
 const blankEducation = (): PaEducationItem => ({
   level: "",
@@ -156,6 +173,24 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
       challenges: settings.challenges.length,
       evidence: evidenceFiles
     };
+  }, [settings]);
+
+  const evidenceCopySources = useMemo<EvidenceCopySource[]>(() => {
+    const standardSources = settings.reportStandards.flatMap((domain, domainIndex) =>
+      domain.items.map((item, itemIndex) => ({
+        key: `standard-${domainIndex}-${itemIndex}`,
+        label: `${domain.domain || `ด้านที่ ${domainIndex + 1}`} / ${item.title || `หัวข้อย่อยที่ ${itemIndex + 1}`}`,
+        items: item.images || []
+      }))
+    );
+
+    const challengeSources = settings.challenges.map((challenge, index) => ({
+      key: `challenge-${index}`,
+      label: `องค์ประกอบที่ 2 / ${challenge.title || `ประเด็นที่ ${index + 1}`}`,
+      items: challenge.images || []
+    }));
+
+    return [...standardSources, ...challengeSources].filter((source) => countEvidenceByType(source.items).total > 0);
   }, [settings]);
 
   const selectedDomain = settings.reportStandards[selectedDomainIndex] || settings.reportStandards[0];
@@ -488,6 +523,7 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
             addItem={addStandardItem}
             removeItem={removeStandardItem}
             onEvidenceUpload={(event, evidenceType) => handleEvidenceUpload(event, "standard", evidenceType)}
+            copySources={evidenceCopySources.filter((source) => source.key !== `standard-${selectedDomainIndex}-${selectedItemIndex}`)}
           />
         ) : null}
 
@@ -501,6 +537,7 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
             addChallenge={addChallenge}
             removeChallenge={removeChallenge}
             onEvidenceUpload={(event, evidenceType) => handleEvidenceUpload(event, "challenge", evidenceType)}
+            copySources={evidenceCopySources.filter((source) => source.key !== `challenge-${selectedChallengeIndex}`)}
           />
         ) : null}
 
@@ -719,7 +756,8 @@ function StandardsPanel({
   addDomain,
   addItem,
   removeItem,
-  onEvidenceUpload
+  onEvidenceUpload,
+  copySources
 }: {
   domains: PaStandardDomain[];
   selectedDomainIndex: number;
@@ -734,6 +772,7 @@ function StandardsPanel({
   addItem: () => void;
   removeItem: () => void;
   onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
+  copySources: EvidenceCopySource[];
 }) {
   if (!selectedDomain || !selectedItem) return null;
 
@@ -819,7 +858,12 @@ function StandardsPanel({
             <textarea rows={6} value={linesToText(selectedItem.indicators)} onChange={(event) => updateItem("indicators", textToLines(event.target.value))} />
           </Field>
 
-          <EvidenceEditor value={selectedItem.images || []} onChange={(items) => updateItem("images", items)} onUpload={onEvidenceUpload} />
+          <EvidenceEditor
+            value={selectedItem.images || []}
+            onChange={(items) => updateItem("images", items)}
+            onUpload={onEvidenceUpload}
+            copySources={copySources}
+          />
         </section>
       </div>
     </div>
@@ -834,7 +878,8 @@ function ChallengesPanel({
   updateChallenge,
   addChallenge,
   removeChallenge,
-  onEvidenceUpload
+  onEvidenceUpload,
+  copySources
 }: {
   challenges: PaChallengeItem[];
   selectedIndex: number;
@@ -844,6 +889,7 @@ function ChallengesPanel({
   addChallenge: () => void;
   removeChallenge: () => void;
   onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
+  copySources: EvidenceCopySource[];
 }) {
   if (!selectedChallenge) return null;
 
@@ -907,7 +953,12 @@ function ChallengesPanel({
             onChange={(value) => updateChallenge("selfAssessmentLevel", value)}
           />
 
-          <EvidenceEditor value={selectedChallenge.images || []} onChange={(items) => updateChallenge("images", items)} onUpload={onEvidenceUpload} />
+          <EvidenceEditor
+            value={selectedChallenge.images || []}
+            onChange={(items) => updateChallenge("images", items)}
+            onUpload={onEvidenceUpload}
+            copySources={copySources}
+          />
         </section>
       </div>
     </div>
@@ -950,15 +1001,19 @@ function DocumentPanel({
 function EvidenceEditor({
   value,
   onChange,
-  onUpload
+  onUpload,
+  copySources
 }: {
   value: PaEvidenceItem[];
   onChange: (items: PaEvidenceItem[]) => void;
   onUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
+  copySources: EvidenceCopySource[];
 }) {
   const [linkTitle, setLinkTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+  const [copySourceKey, setCopySourceKey] = useState("");
   const items = normalizeEvidenceDrafts(value);
+  const selectedCopySource = copySources.find((source) => source.key === copySourceKey);
 
   const updateEvidence = (index: number, field: keyof PaEvidenceDraft, nextValue: string) => {
     onChange(items.map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: nextValue } : item)));
@@ -984,11 +1039,53 @@ function EvidenceEditor({
     setLinkUrl("");
   };
 
+  const copyEvidence = () => {
+    if (!selectedCopySource) return;
+
+    const existingUrls = new Set(items.map((item) => item.url));
+    const copiedItems = normalizeEvidenceDrafts(selectedCopySource.items).filter((item) => !existingUrls.has(item.url));
+
+    if (!copiedItems.length) return;
+
+    onChange([...items, ...copiedItems]);
+    setCopySourceKey("");
+  };
+
   return (
     <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <PanelMiniHeading icon={ImagePlus} title="ภาพ / PDF / ลิงก์หลักฐานอ้างอิง" />
       </div>
+
+      {copySources.length ? (
+        <div className="admin-pa-evidence-copy">
+          <div className="admin-pa-evidence-copy__heading">
+            <Copy className="h-5 w-5" />
+            <div>
+              <strong>คัดลอกหลักฐานจากหัวข้ออื่น</strong>
+              <span>เลือกหัวข้อที่มีหลักฐาน แล้วระบบจะเพิ่มเฉพาะรายการที่ยังไม่ซ้ำ</span>
+            </div>
+          </div>
+          <div className="admin-pa-evidence-copy__controls">
+            <select value={copySourceKey} onChange={(event) => setCopySourceKey(event.target.value)}>
+              <option value="">เลือกหัวข้อ/ตัวชี้วัดต้นทาง</option>
+              {copySources.map((source) => {
+                const count = countEvidenceByType(source.items);
+
+                return (
+                  <option key={source.key} value={source.key}>
+                    {source.label} ({count.total} รายการ: ภาพ {count.image}, PDF {count.pdf}, ลิงก์ {count.link})
+                  </option>
+                );
+              })}
+            </select>
+            <button className="admin-pa-mini-button" type="button" onClick={copyEvidence} disabled={!selectedCopySource}>
+              <Copy className="h-4 w-4" />
+              คัดลอก
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="admin-pa-evidence-upload-grid">
         <label className="admin-pa-evidence-upload">
