@@ -46,6 +46,13 @@ type FormState = {
   status: "published" | "draft";
 };
 
+type UploadProgressState = {
+  status: "uploading" | "success" | "error";
+  label: string;
+  done: number;
+  total: number;
+};
+
 const achievementCategories = [
   "รางวัลและผลงานตนเอง",
   "รางวัลและผลงานผู้เรียน",
@@ -125,6 +132,9 @@ const isDocument = (url: string) => {
   return lower.endsWith(".pdf") || lower.includes("drive.google.com/file/d/");
 };
 
+const adminImageAccept = "image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif,.heic,.heif";
+const adminAssetAccept = `${adminImageAccept},application/pdf,.pdf`;
+
 const formatDate = (value: string) => {
   if (!value) return "-";
   return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium" }).format(new Date(value));
@@ -145,6 +155,7 @@ export function AdminContentWorkbench({
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("ทั้งหมด");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<UploadProgressState | null>(null);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [orderSnapshot, setOrderSnapshot] = useState<AdminContentRecord[] | null>(null);
   const [hasOrderChanges, setHasOrderChanges] = useState(false);
@@ -213,6 +224,26 @@ export function AdminContentWorkbench({
     return result.url;
   };
 
+  const uploadQueuedFile = async (file: File, folder: string, done: number, total: number) => {
+    setUploadProgress({
+      status: "uploading",
+      label: `กำลังอัปโหลด ${file.name}`,
+      done,
+      total
+    });
+
+    const url = await uploadFile(file, folder);
+
+    setUploadProgress({
+      status: "uploading",
+      label: `อัปโหลดแล้ว ${done + 1}/${total} ไฟล์`,
+      done: done + 1,
+      total
+    });
+
+    return url;
+  };
+
   const persistRecords = (nextRecords: AdminContentRecord[], successText: string) => {
     startTransition(async () => {
       const result = await saveContentCollection(collection, nextRecords);
@@ -235,19 +266,43 @@ export function AdminContentWorkbench({
       try {
         let nextCover = form.imgUrl.trim();
         let nextImages = parseImages(form.imagesText);
+        const uploadTotal = (coverFile ? 1 : 0) + (config.supportsGallery ? galleryFiles.length : 0);
+        let uploadedCount = 0;
+
+        setUploadProgress(
+          uploadTotal
+            ? {
+                status: "uploading",
+                label: `เตรียมอัปโหลด ${uploadTotal} ไฟล์หลังจากกดบันทึก`,
+                done: 0,
+                total: uploadTotal
+              }
+            : null
+        );
 
         if (coverFile) {
-          nextCover = await uploadFile(coverFile, collection);
+          nextCover = await uploadQueuedFile(coverFile, collection, uploadedCount, uploadTotal);
+          uploadedCount += 1;
         }
 
         if (config.supportsGallery && galleryFiles.length > 0) {
           const uploadedImages = [];
 
           for (const file of galleryFiles) {
-            uploadedImages.push(await uploadFile(file, collection));
+            uploadedImages.push(await uploadQueuedFile(file, collection, uploadedCount, uploadTotal));
+            uploadedCount += 1;
           }
 
           nextImages = [...nextImages, ...uploadedImages];
+        }
+
+        if (uploadTotal) {
+          setUploadProgress({
+            status: "success",
+            label: "อัปโหลดไฟล์ครบแล้ว กำลังบันทึกข้อมูล",
+            done: uploadTotal,
+            total: uploadTotal
+          });
         }
 
         if (config.supportsGallery && !nextCover && nextImages.length > 0) {
@@ -278,12 +333,39 @@ export function AdminContentWorkbench({
           setHasOrderChanges(false);
           setDeleteTargetId(null);
           resetForm();
+          setUploadProgress(
+            uploadTotal
+              ? {
+                  status: "success",
+                  label: "อัปโหลดและบันทึกข้อมูลสำเร็จ",
+                  done: uploadTotal,
+                  total: uploadTotal
+                }
+              : null
+          );
           setMessage({ type: "success", text: form.id ? "แก้ไขรายการเรียบร้อยแล้ว" : "เพิ่มรายการใหม่เรียบร้อยแล้ว" });
           return;
         }
 
+        setUploadProgress((current) =>
+          current ? { ...current, status: "error", label: "อัปโหลดไฟล์แล้ว แต่บันทึกข้อมูลไม่สำเร็จ" } : current
+        );
         setMessage({ type: "error", text: result.message });
       } catch (error) {
+        setUploadProgress((current) =>
+          current
+            ? {
+                ...current,
+                status: "error",
+                label: error instanceof Error ? error.message : "อัปโหลดไฟล์ไม่สำเร็จ"
+              }
+            : {
+                status: "error",
+                label: error instanceof Error ? error.message : "อัปโหลดไฟล์ไม่สำเร็จ",
+                done: 0,
+                total: 1
+              }
+        );
         setMessage({ type: "error", text: error instanceof Error ? error.message : "บันทึกไม่สำเร็จ" });
       }
     });
@@ -408,6 +490,8 @@ export function AdminContentWorkbench({
           <span>{message.text}</span>
         </div>
       ) : null}
+
+      {uploadProgress ? <UploadProgress progress={uploadProgress} /> : null}
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.42fr)]">
         <section className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 shadow-xl shadow-black/20 xl:order-2">
@@ -619,8 +703,8 @@ export function AdminContentWorkbench({
             <label className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-amber-400/30 bg-black/25 px-4 py-5 text-center text-sm text-slate-300 transition hover:border-amber-300/60 hover:bg-amber-400/[0.06]">
               <ImagePlus className="h-8 w-8 text-amber-300" />
               <strong className="mt-2 text-white">อัปโหลดภาพ/ไฟล์หลัก</strong>
-              <span className="mt-1 text-xs text-slate-500">{coverFile ? coverFile.name : "รองรับ JPG, PNG, WebP และ PDF"}</span>
-              <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(event) => setCoverFile(event.target.files?.[0] || null)} />
+              <span className="mt-1 text-xs text-slate-500">{coverFile ? `${coverFile.name} - รอกดบันทึก` : "รองรับ JPG, PNG, WebP, GIF, AVIF, HEIC และ PDF"}</span>
+              <input className="sr-only" type="file" accept={adminAssetAccept} onChange={(event) => setCoverFile(event.target.files?.[0] || null)} />
             </label>
 
             {config.supportsGallery ? (
@@ -637,12 +721,12 @@ export function AdminContentWorkbench({
                 <label className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-cyan-300/25 bg-black/25 px-4 py-5 text-center text-sm text-slate-300 transition hover:border-cyan-300/50 hover:bg-cyan-300/[0.05]">
                   <Upload className="h-8 w-8 text-cyan-200" />
                   <strong className="mt-2 text-white">อัปโหลดหลายภาพเข้ากิจกรรม</strong>
-                  <span className="mt-1 text-xs text-slate-500">{galleryFiles.length ? `${galleryFiles.length} ไฟล์ที่เลือก` : "ระบบจะเพิ่ม URL ภาพต่อท้ายให้อัตโนมัติ"}</span>
+                  <span className="mt-1 text-xs text-slate-500">{galleryFiles.length ? `${galleryFiles.length} ไฟล์ที่เลือก - รอกดบันทึก` : "ระบบจะเพิ่ม URL ภาพต่อท้ายหลังจากกดบันทึก"}</span>
                   <input
                     className="sr-only"
                     type="file"
                     multiple
-                    accept="image/jpeg,image/png,image/webp"
+                    accept={adminImageAccept}
                     onChange={(event) => setGalleryFiles(Array.from(event.target.files || []))}
                   />
                 </label>
@@ -672,6 +756,25 @@ export function AdminContentWorkbench({
           </div>
         </section>
       </div>
+    </div>
+  );
+}
+
+function UploadProgress({ progress }: { progress: UploadProgressState }) {
+  const percent = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
+
+  return (
+    <div className={`admin-upload-progress admin-upload-progress--${progress.status}`}>
+      <div className="admin-upload-progress__heading">
+        <span>{progress.status === "uploading" ? "Uploading" : progress.status === "success" ? "Success" : "Error"}</span>
+        <strong>{progress.label}</strong>
+      </div>
+      <div className="admin-upload-progress__bar" aria-label="สถานะการอัปโหลด">
+        <span style={{ width: `${Math.max(4, percent)}%` }} />
+      </div>
+      <small>
+        {progress.done}/{progress.total} ไฟล์
+      </small>
     </div>
   );
 }

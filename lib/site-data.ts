@@ -448,7 +448,7 @@ const isDisplayableGalleryAsset = (url?: string) =>
   Boolean(
     url &&
       !isGooglePhotosAlbumUrl(url) &&
-      (url.includes("lh3.googleusercontent.com/") || /\.(jpg|jpeg|png|webp|gif|avif|pdf)(\?.*)?$/i.test(url))
+      (url.includes("lh3.googleusercontent.com/") || /\.(jpg|jpeg|png|webp|gif|avif|heic|heif|pdf)(\?.*)?$/i.test(url))
   );
 
 export const getActivityGallery = (activities: any[]) =>

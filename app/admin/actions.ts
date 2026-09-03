@@ -141,7 +141,7 @@ const isDirectDisplayAsset = (url: string) => {
   const lowerUrl = url.toLowerCase();
   return (
     lowerUrl.includes("lh3.googleusercontent.com/pw/") ||
-    /\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url) ||
+    /\.(jpg|jpeg|png|webp|gif|avif|heic|heif)(\?.*)?$/i.test(url) ||
     lowerUrl.endsWith(".pdf")
   );
 };
@@ -317,7 +317,7 @@ const inferPaEvidenceType = (url: string, type?: PaEvidenceType): PaEvidenceType
   if (type) return type;
   const lowerUrl = url.toLowerCase();
   if (lowerUrl.endsWith(".pdf") || lowerUrl.includes("drive.google.com/file/d/")) return "pdf";
-  if (/\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url)) return "image";
+  if (/\.(jpg|jpeg|png|webp|gif|avif|heic|heif)(\?.*)?$/i.test(url)) return "image";
   return "link";
 };
 
@@ -470,13 +470,23 @@ export async function uploadAdminAsset(formData: FormData): Promise<UploadResult
       return { ok: false, message: "ไม่พบไฟล์ที่ต้องการอัปโหลด" };
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+      "image/avif",
+      "image/heic",
+      "image/heif",
+      "application/pdf"
+    ];
+    const allowedExtensions = ["jpg", "jpeg", "png", "webp", "gif", "avif", "heic", "heif", "pdf"];
 
-    if (!allowedTypes.includes(file.type)) {
-      return { ok: false, message: "รองรับเฉพาะไฟล์ JPG, PNG, WebP และ PDF" };
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(extension)) {
+      return { ok: false, message: "รองรับเฉพาะไฟล์ JPG, PNG, WebP, GIF, AVIF, HEIC, HEIF และ PDF" };
     }
 
-    const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
     const safeExtension = extension === "jpeg" ? "jpg" : extension;
     const safeFolder = folder.replace(/[^a-z0-9-]/gi, "").toLowerCase() || "admin";
     const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${safeExtension}`;

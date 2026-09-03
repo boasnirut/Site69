@@ -41,7 +41,7 @@ export function PaEvidenceGallery({ images, title }: PaEvidenceGalleryProps) {
 
   const isImage = (url: string) => {
     if (!url) return false;
-    return /\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url);
+    return /\.(jpg|jpeg|png|webp|gif|avif|heic|heif)(\?.*)?$/i.test(url);
   };
 
   const isLinkOnly = (url: string) => Boolean(url) && !isDocument(url) && !isImage(url);

@@ -62,17 +62,33 @@ type PaEvidenceDraft = {
   url: string;
 };
 
+type PendingEvidenceUpload = {
+  id: string;
+  file: File;
+  type: "image" | "pdf";
+  title: string;
+};
+
+type UploadProgressState = {
+  status: "uploading" | "success" | "error";
+  label: string;
+  done: number;
+  total: number;
+};
+
 type EvidenceCopySource = {
   key: string;
   label: string;
   items: PaEvidenceItem[];
 };
 
+const adminPaImageAccept = "image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif,.heic,.heif";
+
 const inferEvidenceType = (url: string, type?: PaEvidenceType): PaEvidenceType => {
   if (type && evidenceTypes.includes(type)) return type;
   const lowerUrl = url.toLowerCase();
   if (lowerUrl.endsWith(".pdf") || lowerUrl.includes("drive.google.com/file/d/")) return "pdf";
-  if (/\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url)) return "image";
+  if (/\.(jpg|jpeg|png|webp|gif|avif|heic|heif)(\?.*)?$/i.test(url)) return "image";
   return "link";
 };
 
@@ -152,6 +168,9 @@ const blankChallenge = (): PaChallengeItem => ({
   images: []
 });
 
+const getStandardEvidenceKey = (domainIndex: number, itemIndex: number) => `standard-${domainIndex}-${itemIndex}`;
+const getChallengeEvidenceKey = (challengeIndex: number) => `challenge-${challengeIndex}`;
+
 export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSettings }) {
   const [settings, setSettings] = useState<PaSettings>(initialSettings);
   const [activeTab, setActiveTab] = useState<PaTab>("general");
@@ -159,6 +178,9 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [selectedChallengeIndex, setSelectedChallengeIndex] = useState(0);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [pendingPdfFile, setPendingPdfFile] = useState<File | null>(null);
+  const [pendingEvidenceUploads, setPendingEvidenceUploads] = useState<Record<string, PendingEvidenceUpload[]>>({});
+  const [uploadProgress, setUploadProgress] = useState<UploadProgressState | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const stats = useMemo(() => {
@@ -196,6 +218,8 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
   const selectedDomain = settings.reportStandards[selectedDomainIndex] || settings.reportStandards[0];
   const selectedItem = selectedDomain?.items[selectedItemIndex] || selectedDomain?.items[0];
   const selectedChallenge = settings.challenges[selectedChallengeIndex] || settings.challenges[0];
+  const selectedStandardEvidenceKey = getStandardEvidenceKey(selectedDomainIndex, selectedItemIndex);
+  const selectedChallengeEvidenceKey = getChallengeEvidenceKey(selectedChallengeIndex);
 
   const updateGeneral = (field: keyof PaSettings["general"], value: string) => {
     setSettings((current) => ({
@@ -368,66 +392,233 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
     return result.url;
   };
 
+  const uploadQueuedFile = async (file: File, done: number, total: number) => {
+    setUploadProgress({
+      status: "uploading",
+      label: `กำลังอัปโหลด ${file.name}`,
+      done,
+      total
+    });
+
+    const url = await uploadFile(file);
+
+    setUploadProgress({
+      status: "uploading",
+      label: `อัปโหลดแล้ว ${done + 1}/${total} ไฟล์`,
+      done: done + 1,
+      total
+    });
+
+    return url;
+  };
+
   const handlePdfUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    startTransition(async () => {
-      try {
-        const url = await uploadFile(file);
-        updateGeneral("agreementPdfUrl", url);
-        updateGeneral("agreementDownloadUrl", url);
-        setMessage({ type: "success", text: "อัปโหลดไฟล์ PDF แล้ว กดบันทึกเพื่อใช้งานบนหน้า PA" });
-      } catch (error) {
-        setMessage({ type: "error", text: error instanceof Error ? error.message : "อัปโหลดไฟล์ไม่สำเร็จ" });
-      } finally {
-        event.target.value = "";
-      }
-    });
+    setPendingPdfFile(file);
+    setMessage({ type: "success", text: "เลือกไฟล์ PDF แล้ว ระบบจะอัปโหลดหลังจากกดบันทึกข้อมูล PA ทั้งหมด" });
+    event.target.value = "";
   };
 
   const handleEvidenceUpload = (event: ChangeEvent<HTMLInputElement>, target: "standard" | "challenge", evidenceType: "image" | "pdf") => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
+    const evidenceKey = target === "standard" ? selectedStandardEvidenceKey : selectedChallengeEvidenceKey;
 
-    startTransition(async () => {
-      try {
-        const uploaded: PaEvidenceItem[] = [];
-        for (const file of files) {
-          const url = await uploadFile(file);
-          uploaded.push({
-            type: evidenceType,
-            title: evidenceType === "pdf" ? getEvidenceFileTitle(file.name) : "",
-            url
-          });
-        }
+    setPendingEvidenceUploads((current) => ({
+      ...current,
+      [evidenceKey]: [
+        ...(current[evidenceKey] || []),
+        ...files.map((file) => ({
+          id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
+          file,
+          type: evidenceType,
+          title: evidenceType === "pdf" ? getEvidenceFileTitle(file.name) : ""
+        }))
+      ]
+    }));
+    setMessage({ type: "success", text: `เพิ่มไฟล์เข้าคิว ${files.length} ไฟล์แล้ว ระบบจะอัปโหลดหลังจากกดบันทึก` });
+    event.target.value = "";
+  };
 
-        if (target === "standard") {
-          updateStandardItem("images", [...(selectedItem?.images || []), ...uploaded]);
-        } else {
-          updateChallenge("images", [...(selectedChallenge?.images || []), ...uploaded]);
-        }
+  const removePendingEvidenceUpload = (key: string, id: string) => {
+    setPendingEvidenceUploads((current) => {
+      const remaining = (current[key] || []).filter((item) => item.id !== id);
+      const next = { ...current };
 
-        setMessage({ type: "success", text: "เพิ่มไฟล์หลักฐานแล้ว กดบันทึกเพื่อเผยแพร่บนหน้า PA" });
-      } catch (error) {
-        setMessage({ type: "error", text: error instanceof Error ? error.message : "อัปโหลดไฟล์ไม่สำเร็จ" });
-      } finally {
-        event.target.value = "";
+      if (remaining.length) {
+        next[key] = remaining;
+      } else {
+        delete next[key];
       }
+
+      return next;
     });
+  };
+
+  const mergePendingUploads = async () => {
+    const nextSettings: PaSettings = {
+      ...settings,
+      general: { ...settings.general },
+      reportGeneral: {
+        ...settings.reportGeneral,
+        education: settings.reportGeneral.education.map((item) => ({ ...item })),
+        leave: [...settings.reportGeneral.leave]
+      },
+      workloadGroups: settings.workloadGroups.map((group) => ({
+        ...group,
+        rows: group.rows.map((row) => ({ ...row }))
+      })),
+      reportStandards: settings.reportStandards.map((domain) => ({
+        ...domain,
+        items: domain.items.map((item) => ({ ...item, images: [...(item.images || [])] }))
+      })),
+      challenges: settings.challenges.map((challenge) => ({ ...challenge, images: [...(challenge.images || [])] }))
+    };
+
+    const validPendingEntries = Object.entries(pendingEvidenceUploads).filter(([key]) => {
+      const standardMatch = key.match(/^standard-(\d+)-(\d+)$/);
+      const challengeMatch = key.match(/^challenge-(\d+)$/);
+
+      if (standardMatch) {
+        const domainIndex = Number(standardMatch[1]);
+        const itemIndex = Number(standardMatch[2]);
+        return Boolean(nextSettings.reportStandards[domainIndex]?.items[itemIndex]);
+      }
+
+      if (challengeMatch) {
+        const challengeIndex = Number(challengeMatch[1]);
+        return Boolean(nextSettings.challenges[challengeIndex]);
+      }
+
+      return false;
+    });
+    const evidenceUploads = validPendingEntries.flatMap(([, pendingItems]) => pendingItems);
+    const uploadTotal = (pendingPdfFile ? 1 : 0) + evidenceUploads.length;
+    let uploadedCount = 0;
+
+    setUploadProgress(
+      uploadTotal
+        ? {
+            status: "uploading",
+            label: `เตรียมอัปโหลด ${uploadTotal} ไฟล์หลังจากกดบันทึก`,
+            done: 0,
+            total: uploadTotal
+          }
+        : null
+    );
+
+    if (pendingPdfFile) {
+      const url = await uploadQueuedFile(pendingPdfFile, uploadedCount, uploadTotal);
+      uploadedCount += 1;
+      nextSettings.general.agreementPdfUrl = url;
+      nextSettings.general.agreementDownloadUrl = url;
+    }
+
+    for (const [key, pendingItems] of validPendingEntries) {
+      const standardMatch = key.match(/^standard-(\d+)-(\d+)$/);
+      const challengeMatch = key.match(/^challenge-(\d+)$/);
+      const uploadedItems: PaEvidenceItem[] = [];
+
+      if (standardMatch) {
+        const domainIndex = Number(standardMatch[1]);
+        const itemIndex = Number(standardMatch[2]);
+        const targetItem = nextSettings.reportStandards[domainIndex]?.items[itemIndex];
+
+        if (targetItem) {
+          for (const pendingItem of pendingItems) {
+            const url = await uploadQueuedFile(pendingItem.file, uploadedCount, uploadTotal);
+            uploadedCount += 1;
+            uploadedItems.push({
+              type: pendingItem.type,
+              title: pendingItem.title,
+              url
+            });
+          }
+
+          targetItem.images = [...(targetItem.images || []), ...uploadedItems];
+        }
+      } else if (challengeMatch) {
+        const challengeIndex = Number(challengeMatch[1]);
+        const targetChallenge = nextSettings.challenges[challengeIndex];
+
+        if (targetChallenge) {
+          for (const pendingItem of pendingItems) {
+            const url = await uploadQueuedFile(pendingItem.file, uploadedCount, uploadTotal);
+            uploadedCount += 1;
+            uploadedItems.push({
+              type: pendingItem.type,
+              title: pendingItem.title,
+              url
+            });
+          }
+
+          targetChallenge.images = [...(targetChallenge.images || []), ...uploadedItems];
+        }
+      }
+    }
+
+    if (uploadTotal) {
+      setUploadProgress({
+        status: "success",
+        label: "อัปโหลดไฟล์ครบแล้ว กำลังบันทึกข้อมูล",
+        done: uploadTotal,
+        total: uploadTotal
+      });
+    }
+
+    return { nextSettings, uploadTotal };
   };
 
   const saveSettings = () => {
     startTransition(async () => {
-      const result = await savePaSettings(settings);
+      try {
+        const { nextSettings, uploadTotal } = await mergePendingUploads();
+        const result = await savePaSettings(nextSettings);
 
-      if (result.ok && result.settings) {
-        setSettings(result.settings);
-        setMessage({ type: "success", text: "บันทึกข้อมูล PA เรียบร้อยแล้ว หน้า PA จะดึงข้อมูลชุดนี้ไปแสดง" });
-        return;
+        if (result.ok && result.settings) {
+          setSettings(result.settings);
+          setPendingPdfFile(null);
+          setPendingEvidenceUploads({});
+          setUploadProgress(
+            uploadTotal
+              ? {
+                  status: "success",
+                  label: "อัปโหลดและบันทึกข้อมูล PA สำเร็จ",
+                  done: uploadTotal,
+                  total: uploadTotal
+                }
+              : null
+          );
+          setMessage({ type: "success", text: "บันทึกข้อมูล PA เรียบร้อยแล้ว หน้า PA จะดึงข้อมูลชุดนี้ไปแสดง" });
+          return;
+        }
+
+        setSettings(nextSettings);
+        setPendingPdfFile(null);
+        setPendingEvidenceUploads({});
+        setUploadProgress((current) =>
+          current ? { ...current, status: "error", label: "อัปโหลดไฟล์แล้ว แต่บันทึกข้อมูล PA ไม่สำเร็จ" } : current
+        );
+        setMessage({ type: "error", text: result.message });
+      } catch (error) {
+        setUploadProgress((current) =>
+          current
+            ? {
+                ...current,
+                status: "error",
+                label: error instanceof Error ? error.message : "อัปโหลดไฟล์ไม่สำเร็จ"
+              }
+            : {
+                status: "error",
+                label: error instanceof Error ? error.message : "อัปโหลดไฟล์ไม่สำเร็จ",
+                done: 0,
+                total: 1
+              }
+        );
+        setMessage({ type: "error", text: error instanceof Error ? error.message : "บันทึกข้อมูล PA ไม่สำเร็จ" });
       }
-
-      setMessage({ type: "error", text: result.message });
     });
   };
 
@@ -458,6 +649,8 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
       </section>
 
       {message ? <StatusMessage type={message.type} text={message.text} /> : null}
+
+      {uploadProgress ? <UploadProgress progress={uploadProgress} /> : null}
 
       <div className="flex flex-wrap gap-2">
         {tabs.map((tab) => {
@@ -523,7 +716,9 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
             addItem={addStandardItem}
             removeItem={removeStandardItem}
             onEvidenceUpload={(event, evidenceType) => handleEvidenceUpload(event, "standard", evidenceType)}
-            copySources={evidenceCopySources.filter((source) => source.key !== `standard-${selectedDomainIndex}-${selectedItemIndex}`)}
+            pendingUploads={pendingEvidenceUploads[selectedStandardEvidenceKey] || []}
+            onRemovePendingUpload={(id) => removePendingEvidenceUpload(selectedStandardEvidenceKey, id)}
+            copySources={evidenceCopySources.filter((source) => source.key !== selectedStandardEvidenceKey)}
           />
         ) : null}
 
@@ -537,12 +732,20 @@ export function AdminPaWorkbench({ initialSettings }: { initialSettings: PaSetti
             addChallenge={addChallenge}
             removeChallenge={removeChallenge}
             onEvidenceUpload={(event, evidenceType) => handleEvidenceUpload(event, "challenge", evidenceType)}
-            copySources={evidenceCopySources.filter((source) => source.key !== `challenge-${selectedChallengeIndex}`)}
+            pendingUploads={pendingEvidenceUploads[selectedChallengeEvidenceKey] || []}
+            onRemovePendingUpload={(id) => removePendingEvidenceUpload(selectedChallengeEvidenceKey, id)}
+            copySources={evidenceCopySources.filter((source) => source.key !== selectedChallengeEvidenceKey)}
           />
         ) : null}
 
         {activeTab === "document" ? (
-          <DocumentPanel settings={settings} updateGeneral={updateGeneral} onPdfUpload={handlePdfUpload} />
+          <DocumentPanel
+            settings={settings}
+            updateGeneral={updateGeneral}
+            onPdfUpload={handlePdfUpload}
+            pendingPdfFile={pendingPdfFile}
+            onClearPendingPdf={() => setPendingPdfFile(null)}
+          />
         ) : null}
       </section>
 
@@ -757,6 +960,8 @@ function StandardsPanel({
   addItem,
   removeItem,
   onEvidenceUpload,
+  pendingUploads,
+  onRemovePendingUpload,
   copySources
 }: {
   domains: PaStandardDomain[];
@@ -772,6 +977,8 @@ function StandardsPanel({
   addItem: () => void;
   removeItem: () => void;
   onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
+  pendingUploads: PendingEvidenceUpload[];
+  onRemovePendingUpload: (id: string) => void;
   copySources: EvidenceCopySource[];
 }) {
   if (!selectedDomain || !selectedItem) return null;
@@ -862,6 +1069,8 @@ function StandardsPanel({
             value={selectedItem.images || []}
             onChange={(items) => updateItem("images", items)}
             onUpload={onEvidenceUpload}
+            pendingUploads={pendingUploads}
+            onRemovePendingUpload={onRemovePendingUpload}
             copySources={copySources}
           />
         </section>
@@ -879,6 +1088,8 @@ function ChallengesPanel({
   addChallenge,
   removeChallenge,
   onEvidenceUpload,
+  pendingUploads,
+  onRemovePendingUpload,
   copySources
 }: {
   challenges: PaChallengeItem[];
@@ -889,6 +1100,8 @@ function ChallengesPanel({
   addChallenge: () => void;
   removeChallenge: () => void;
   onEvidenceUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
+  pendingUploads: PendingEvidenceUpload[];
+  onRemovePendingUpload: (id: string) => void;
   copySources: EvidenceCopySource[];
 }) {
   if (!selectedChallenge) return null;
@@ -957,6 +1170,8 @@ function ChallengesPanel({
             value={selectedChallenge.images || []}
             onChange={(items) => updateChallenge("images", items)}
             onUpload={onEvidenceUpload}
+            pendingUploads={pendingUploads}
+            onRemovePendingUpload={onRemovePendingUpload}
             copySources={copySources}
           />
         </section>
@@ -968,11 +1183,15 @@ function ChallengesPanel({
 function DocumentPanel({
   settings,
   updateGeneral,
-  onPdfUpload
+  onPdfUpload,
+  pendingPdfFile,
+  onClearPendingPdf
 }: {
   settings: PaSettings;
   updateGeneral: (field: keyof PaSettings["general"], value: string) => void;
   onPdfUpload: (event: ChangeEvent<HTMLInputElement>) => void;
+  pendingPdfFile: File | null;
+  onClearPendingPdf: () => void;
 }) {
   return (
     <div className="space-y-6">
@@ -990,10 +1209,23 @@ function DocumentPanel({
         <label className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-amber-400/30 bg-black/25 px-4 py-5 text-center text-sm text-slate-300 transition hover:border-amber-300/60 hover:bg-amber-400/[0.06]">
           <Upload className="h-8 w-8 text-amber-300" />
           <strong className="mt-2 text-white">อัปโหลด PDF ใหม่</strong>
-          <span className="mt-1 text-xs text-slate-500">ระบบจะเติมลิงก์ไฟล์ให้อัตโนมัติ หลังจากนั้นกดบันทึก</span>
+          <span className="mt-1 text-xs text-slate-500">
+            {pendingPdfFile ? `${pendingPdfFile.name} - รอกดบันทึก` : "ระบบจะเติมลิงก์ไฟล์ให้อัตโนมัติหลังจากกดบันทึก"}
+          </span>
           <input className="sr-only" type="file" accept="application/pdf" onChange={onPdfUpload} />
         </label>
       </div>
+      {pendingPdfFile ? (
+        <div className="admin-pa-pending-upload">
+          <div>
+            <strong>ไฟล์ PDF ที่รออัปโหลด</strong>
+            <span>{pendingPdfFile.name}</span>
+          </div>
+          <button className="admin-pa-icon-danger-button" type="button" onClick={onClearPendingPdf} aria-label="เอาไฟล์ PDF ออกจากคิว">
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1002,11 +1234,15 @@ function EvidenceEditor({
   value,
   onChange,
   onUpload,
+  pendingUploads,
+  onRemovePendingUpload,
   copySources
 }: {
   value: PaEvidenceItem[];
   onChange: (items: PaEvidenceItem[]) => void;
   onUpload: (event: ChangeEvent<HTMLInputElement>, evidenceType: "image" | "pdf") => void;
+  pendingUploads: PendingEvidenceUpload[];
+  onRemovePendingUpload: (id: string) => void;
   copySources: EvidenceCopySource[];
 }) {
   const [linkTitle, setLinkTitle] = useState("");
@@ -1091,8 +1327,8 @@ function EvidenceEditor({
         <label className="admin-pa-evidence-upload">
           <ImagePlus className="h-5 w-5" />
           <strong>อัปโหลดภาพหลักฐาน</strong>
-          <span>รองรับ JPG, PNG, WebP, GIF และ AVIF</span>
-          <input className="sr-only" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={(event) => onUpload(event, "image")} />
+          <span>รองรับ JPG, PNG, WebP, GIF, AVIF, HEIC และ HEIF</span>
+          <input className="sr-only" type="file" multiple accept={adminPaImageAccept} onChange={(event) => onUpload(event, "image")} />
         </label>
 
         <label className="admin-pa-evidence-upload">
@@ -1102,6 +1338,28 @@ function EvidenceEditor({
           <input className="sr-only" type="file" multiple accept="application/pdf" onChange={(event) => onUpload(event, "pdf")} />
         </label>
       </div>
+
+      {pendingUploads.length ? (
+        <div className="admin-pa-pending-upload-list">
+          <div className="admin-pa-pending-upload-list__heading">
+            <strong>ไฟล์ที่รออัปโหลด</strong>
+            <span>{pendingUploads.length} ไฟล์ - จะส่งขึ้นระบบเมื่อกดบันทึกข้อมูล PA ทั้งหมด</span>
+          </div>
+          <div className="admin-pa-pending-upload-list__items">
+            {pendingUploads.map((item) => (
+              <div className="admin-pa-pending-upload" key={item.id}>
+                <div>
+                  <strong>{item.type === "pdf" ? "PDF" : "ภาพ"}</strong>
+                  <span>{item.file.name}</span>
+                </div>
+                <button className="admin-pa-icon-danger-button" type="button" onClick={() => onRemovePendingUpload(item.id)} aria-label="เอาไฟล์นี้ออกจากคิว">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="admin-pa-link-builder">
         <Field label="ชื่อปุ่มลิงก์">
@@ -1203,6 +1461,25 @@ function Stat({ label, value }: { label: string; value: number }) {
     <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
       <strong className="block text-2xl font-black text-white">{value}</strong>
       <span className="mt-1 block text-xs font-semibold text-slate-400">{label}</span>
+    </div>
+  );
+}
+
+function UploadProgress({ progress }: { progress: UploadProgressState }) {
+  const percent = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
+
+  return (
+    <div className={`admin-upload-progress admin-upload-progress--${progress.status}`}>
+      <div className="admin-upload-progress__heading">
+        <span>{progress.status === "uploading" ? "Uploading" : progress.status === "success" ? "Success" : "Error"}</span>
+        <strong>{progress.label}</strong>
+      </div>
+      <div className="admin-upload-progress__bar" aria-label="สถานะการอัปโหลด">
+        <span style={{ width: `${Math.max(4, percent)}%` }} />
+      </div>
+      <small>
+        {progress.done}/{progress.total} ไฟล์
+      </small>
     </div>
   );
 }
