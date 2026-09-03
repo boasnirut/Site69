@@ -1,6 +1,7 @@
 "use server";
 
 import fallbackContent from "@/data/content.json";
+import heicConvert from "heic-convert";
 import { getGithubFileContent, updateGithubFile, uploadGithubBase64File } from "@/lib/github-api";
 import { revalidatePath } from "next/cache";
 
@@ -145,6 +146,9 @@ const isDirectDisplayAsset = (url: string) => {
     lowerUrl.endsWith(".pdf")
   );
 };
+
+const toNodeBuffer = (value: Buffer | ArrayBuffer | Uint8Array) =>
+  value instanceof ArrayBuffer ? Buffer.from(new Uint8Array(value)) : Buffer.from(value);
 
 const normalizeGooglePhotoUrl = (url: string) => {
   const decoded = url
@@ -489,16 +493,31 @@ export async function uploadAdminAsset(formData: FormData): Promise<UploadResult
 
     const safeExtension = extension === "jpeg" ? "jpg" : extension;
     const safeFolder = folder.replace(/[^a-z0-9-]/gi, "").toLowerCase() || "admin";
-    const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${safeExtension}`;
-    const repoPath = `public/uploads/${safeFolder}-${fileName}`;
     const arrayBuffer = await file.arrayBuffer();
-    const base64Content = Buffer.from(arrayBuffer).toString("base64");
+    let uploadBuffer = Buffer.from(arrayBuffer);
+    let outputExtension = safeExtension;
+    const isHeicFile = ["heic", "heif"].includes(extension) || ["image/heic", "image/heif"].includes(file.type);
+
+    if (isHeicFile) {
+      const convertedBuffer = await heicConvert({
+        buffer: uploadBuffer,
+        format: "JPEG",
+        quality: 0.92
+      });
+
+      uploadBuffer = toNodeBuffer(convertedBuffer);
+      outputExtension = "jpg";
+    }
+
+    const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${outputExtension}`;
+    const repoPath = `public/uploads/${safeFolder}-${fileName}`;
+    const base64Content = uploadBuffer.toString("base64");
 
     await uploadGithubBase64File(repoPath, base64Content, `Upload admin asset ${fileName}`);
 
     return {
       ok: true,
-      message: "อัปโหลดไฟล์เรียบร้อยแล้ว",
+      message: isHeicFile ? "แปลงไฟล์ HEIC/HEIF เป็น JPG และอัปโหลดเรียบร้อยแล้ว" : "อัปโหลดไฟล์เรียบร้อยแล้ว",
       url: `/uploads/${safeFolder}-${fileName}`
     };
   } catch (error) {
