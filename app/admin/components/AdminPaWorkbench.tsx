@@ -41,10 +41,10 @@ const tabs: { id: PaTab; label: string; icon: React.ComponentType<{ className?: 
 ];
 
 const assessmentLevels = [
-  { value: "1", label: "ระดับ 1 ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวังมาก", tone: "red" },
-  { value: "2", label: "ระดับ 2 ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวัง", tone: "yellow" },
-  { value: "3", label: "ระดับ 3 ปฏิบัติได้ตามระดับฯที่คาดหวัง", tone: "blue" },
-  { value: "4", label: "ระดับ 4 ปฏิบัติได้สูงกว่าระดับฯที่คาดหวัง", tone: "green" }
+  { value: "1", label: "ระดับ 1 ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวังมาก", tone: "red", progress: 25 },
+  { value: "2", label: "ระดับ 2 ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวัง", tone: "yellow", progress: 50 },
+  { value: "3", label: "ระดับ 3 ปฏิบัติได้ตามระดับฯที่คาดหวัง", tone: "blue", progress: 75 },
+  { value: "4", label: "ระดับ 4 ปฏิบัติได้สูงกว่าระดับฯที่คาดหวัง", tone: "green", progress: 100 }
 ];
 
 const linesToText = (items?: string[]) => (items || []).join("\n");
@@ -148,6 +148,7 @@ const blankStandardItem = (): PaStandardItem => ({
   tasks: [],
   outcomes: [],
   selfAssessmentLevel: "3",
+  resultPercent: "",
   indicators: [],
   images: []
 });
@@ -162,8 +163,11 @@ const blankChallenge = (): PaChallengeItem => ({
   title: "ประเด็นท้าทายใหม่",
   subtitle: "",
   problem: "",
+  problemParagraphs: [],
   methods: [],
   expected: [],
+  quantitativeResults: [],
+  qualitativeResults: [],
   selfAssessmentLevel: "3",
   images: []
 });
@@ -1056,12 +1060,30 @@ function StandardsPanel({
             </Field>
           </div>
 
-          <AssessmentLevelField
-            value={selectedItem.selfAssessmentLevel || "3"}
-            onChange={(value) => updateItem("selfAssessmentLevel", value)}
-          />
+          <div className="rounded-2xl border border-amber-400/20 bg-amber-400/[0.04] p-4">
+            <div className="mb-4 text-sm font-semibold leading-relaxed text-amber-100">
+              หน้าเว็บจะสรุปองค์ประกอบที่ 1 เป็น 3 ด้านหลัก และใช้ค่าร้อยละผลการปฏิบัติจริงด้านล่างไปแสดงในตารางตัวชี้วัด
+            </div>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+              <AssessmentLevelField
+                value={selectedItem.selfAssessmentLevel || "3"}
+                onChange={(value) => updateItem("selfAssessmentLevel", value)}
+              />
+              <Field label="ร้อยละผลการปฏิบัติจริง">
+                <input
+                  inputMode="numeric"
+                  min="0"
+                  max="100"
+                  type="number"
+                  value={selectedItem.resultPercent || ""}
+                  onChange={(event) => updateItem("resultPercent", event.target.value)}
+                  placeholder="เช่น 87"
+                />
+              </Field>
+            </div>
+          </div>
 
-          <Field label="ตัวชี้วัด / หลักฐาน">
+          <Field label="ตัวชี้วัดเชิงผลลัพธ์ (บรรทัดละ 1 ตัวชี้วัด)">
             <textarea rows={6} value={linesToText(selectedItem.indicators)} onChange={(event) => updateItem("indicators", textToLines(event.target.value))} />
           </Field>
 
@@ -1151,13 +1173,40 @@ function ChallengesPanel({
           <Field label="สภาพปัญหาการจัดการเรียนรู้และคุณภาพการเรียนรู้ของผู้เรียน">
             <textarea rows={5} value={selectedChallenge.problem} onChange={(event) => updateChallenge("problem", event.target.value)} />
           </Field>
+          <Field label="ย่อหน้าปัญหาเพิ่มเติม (บรรทัดละ 1 ย่อหน้า เพื่อให้หน้าเว็บแสดงอย่างน้อย 3 ย่อหน้า)">
+            <textarea
+              rows={6}
+              value={linesToText(selectedChallenge.problemParagraphs)}
+              onChange={(event) => updateChallenge("problemParagraphs", textToLines(event.target.value))}
+              placeholder="อธิบายข้อมูลจากการติดตามผู้เรียน / เหตุผลที่กำหนดเป็นประเด็นท้าทาย"
+            />
+          </Field>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <Field label="วิธีการดำเนินการให้บรรลุเป้าหมาย">
+            <Field label="วิธีการดำเนินการให้บรรลุผล (บรรทัดละ 1 ขั้นตอนตามแบบบันทึกข้อตกลง PA)">
               <textarea rows={9} value={linesToText(selectedChallenge.methods)} onChange={(event) => updateChallenge("methods", textToLines(event.target.value))} />
             </Field>
             <Field label="ผลลัพธ์การพัฒนาที่คาดหวัง">
               <textarea rows={9} value={linesToText(selectedChallenge.expected)} onChange={(event) => updateChallenge("expected", textToLines(event.target.value))} />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <Field label="ผลลัพธ์เชิงปริมาณ (ต้องมีตัวเลขชัดเจน)">
+              <textarea
+                rows={7}
+                value={linesToText(selectedChallenge.quantitativeResults)}
+                onChange={(event) => updateChallenge("quantitativeResults", textToLines(event.target.value))}
+                placeholder="เช่น ผู้เรียนผ่านเกณฑ์ร้อยละ 85 จากเป้าหมายร้อยละ 80"
+              />
+            </Field>
+            <Field label="ผลลัพธ์เชิงคุณภาพ">
+              <textarea
+                rows={7}
+                value={linesToText(selectedChallenge.qualitativeResults)}
+                onChange={(event) => updateChallenge("qualitativeResults", textToLines(event.target.value))}
+                placeholder="เช่น ผู้เรียนอธิบายแนวทางใช้งานดิจิทัลอย่างปลอดภัยได้มั่นใจขึ้น"
+              />
             </Field>
           </div>
 
@@ -1410,6 +1459,10 @@ function AssessmentLevelField({ value, onChange }: { value: string; onChange: (v
       <div>
         <span>ระดับผลการประเมินตนเอง</span>
         <strong>{selectedLevel.label}</strong>
+        <div className="admin-pa-assessment-progress" aria-label={`ความก้าวหน้าระดับประเมิน ${selectedLevel.progress}%`}>
+          <i style={{ width: `${selectedLevel.progress}%` }} />
+          <em>{selectedLevel.progress}%</em>
+        </div>
       </div>
       <select value={value} onChange={(event) => onChange(event.target.value)}>
         {assessmentLevels.map((level) => (

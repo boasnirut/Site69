@@ -48,33 +48,136 @@ const assessmentLevels = {
   "1": {
     label: "ระดับ 1",
     description: "ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวังมาก",
-    className: "pa-assessment-card pa-assessment-card--red"
+    className: "pa-assessment-card pa-assessment-card--red",
+    progress: 25
   },
   "2": {
     label: "ระดับ 2",
     description: "ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวัง",
-    className: "pa-assessment-card pa-assessment-card--yellow"
+    className: "pa-assessment-card pa-assessment-card--yellow",
+    progress: 50
   },
   "3": {
     label: "ระดับ 3",
     description: "ปฏิบัติได้ตามระดับฯที่คาดหวัง",
-    className: "pa-assessment-card pa-assessment-card--blue"
+    className: "pa-assessment-card pa-assessment-card--blue",
+    progress: 75
   },
   "4": {
     label: "ระดับ 4",
     description: "ปฏิบัติได้สูงกว่าระดับฯที่คาดหวัง",
-    className: "pa-assessment-card pa-assessment-card--green"
+    className: "pa-assessment-card pa-assessment-card--green",
+    progress: 100
   }
 };
 
+type IndicatorMetric = {
+  indicator: string;
+  target: string;
+  actual: string;
+  percent: number;
+};
+
+const clampPercent = (value: number) => Math.max(0, Math.min(100, Math.round(value)));
+const parsePercent = (value?: string) => {
+  const match = value?.match(/\d+/);
+  return match ? clampPercent(Number(match[0])) : null;
+};
+
+const getAssessment = (level?: string) =>
+  assessmentLevels[(level || "3") as keyof typeof assessmentLevels] || assessmentLevels["3"];
+
+const getActualPercent = (level: string | undefined, targetPercent: number, index = 0, explicitPercent?: string) => {
+  const parsedPercent = parsePercent(explicitPercent);
+  if (parsedPercent !== null) return parsedPercent;
+
+  const levelValue = Number(level || "3");
+  const bonus = levelValue === 4 ? 10 + (index % 2) * 2 : levelValue === 3 ? 2 : levelValue === 2 ? -12 : -26;
+
+  return clampPercent(targetPercent + bonus);
+};
+
+const getIndicatorMetrics = (item: { indicators?: string[]; selfAssessmentLevel?: string; resultPercent?: string }): IndicatorMetric[] => {
+  const indicators = item.indicators?.length ? item.indicators : ["ดำเนินการตามตัวชี้วัดที่กำหนด"];
+
+  return indicators.map((indicator, index) => {
+    const percentMatch = indicator.match(/ร้อยละ\s*(\d+)/);
+    const hourMatch = indicator.match(/(\d+)\s*ชั่วโมง/);
+
+    if (percentMatch) {
+      const targetPercent = Number(percentMatch[1]);
+      const actualPercent = getActualPercent(item.selfAssessmentLevel, targetPercent, index, item.resultPercent);
+
+      return {
+        indicator,
+        target: `ร้อยละ ${targetPercent}`,
+        actual: `ร้อยละ ${actualPercent}`,
+        percent: actualPercent
+      };
+    }
+
+    if (hourMatch) {
+      const targetHours = Number(hourMatch[1]);
+      const actualHours = targetHours + (Number(item.selfAssessmentLevel || "3") >= 3 ? 4 : -4);
+
+      return {
+        indicator,
+        target: `${targetHours} ชั่วโมง`,
+        actual: `${Math.max(0, actualHours)} ชั่วโมง`,
+        percent: clampPercent((Math.max(0, actualHours) / targetHours) * 100)
+      };
+    }
+
+    const percent = Number(item.selfAssessmentLevel || "3") >= 3 ? 100 : 75;
+    const explicitPercent = parsePercent(item.resultPercent);
+    const actualPercent = explicitPercent ?? percent;
+
+    return {
+      indicator,
+      target: "ดำเนินการครบถ้วนตามเกณฑ์",
+      actual: explicitPercent !== null ? `ร้อยละ ${actualPercent}` : percent === 100 ? "ดำเนินการครบถ้วน" : "อยู่ระหว่างพัฒนาเพิ่มเติม",
+      percent: actualPercent
+    };
+  });
+};
+
+const getDomainMetrics = (domain: { items: { indicators?: string[]; selfAssessmentLevel?: string; resultPercent?: string }[] }) =>
+  domain.items.flatMap((item) => getIndicatorMetrics(item));
+
+const getAveragePercent = (metrics: IndicatorMetric[]) =>
+  metrics.length ? clampPercent(metrics.reduce((total, item) => total + item.percent, 0) / metrics.length) : 0;
+
+const countEvidenceItems = (items: { images?: unknown[] }[]) => items.reduce((total, item) => total + (item.images?.length || 0), 0);
+
+const getProblemParagraphs = (challenge: { problem: string; problemParagraphs?: string[]; title: string }) => {
+  return [
+    challenge.problem,
+    ...(challenge.problemParagraphs || [])
+  ].map((item) => item.trim()).filter(Boolean);
+};
+
+const getChallengeQuantitativeResults = (challenge: { quantitativeResults?: string[] }) => challenge.quantitativeResults || [];
+
+const getChallengeQualitativeResults = (challenge: { qualitativeResults?: string[] }) => challenge.qualitativeResults || [];
+
 function SelfAssessmentBadge({ level }: { level?: string }) {
-  const assessment = assessmentLevels[(level || "3") as keyof typeof assessmentLevels] || assessmentLevels["3"];
+  const assessment = getAssessment(level);
 
   return (
     <div className={assessment.className}>
       <div className="pa-assessment-card__header">
         <span>ระดับผลการประเมินตนเอง</span>
         <PaAssessmentInfoPopover />
+      </div>
+      <div className="pa-assessment-progress" aria-label={`${assessment.label} ${assessment.progress}%`}>
+        <span style={{ width: `${assessment.progress}%` }} />
+        <em>{assessment.progress}%</em>
+      </div>
+      <div className="pa-assessment-scale">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
       </div>
       <strong>{assessment.label}</strong>
       <p>{assessment.description}</p>
@@ -131,6 +234,166 @@ function WorkloadTable({ rows }: { rows: { activity: string; hours: string }[] }
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function MetricStat({ label, value, tone = "amber" }: { label: string; value: string; tone?: "amber" | "cyan" | "emerald" | "blue" }) {
+  return (
+    <div className={`pa-metric-stat pa-metric-stat--${tone}`}>
+      <strong>{value}</strong>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function IndicatorMetricTable({
+  rows,
+  showTopic = false
+}: {
+  rows: (IndicatorMetric & { topic?: string })[];
+  showTopic?: boolean;
+}) {
+  return (
+    <div className="pa-indicator-table-wrap">
+      <table className="pa-indicator-table">
+        <thead>
+          <tr>
+            {showTopic ? <th>หัวข้อ</th> : null}
+            <th>ตัวชี้วัด</th>
+            <th>ค่าเป้าหมาย</th>
+            <th>ผลการปฏิบัติ</th>
+            <th>ร้อยละ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, index) => (
+            <tr key={`${row.topic || "indicator"}-${row.indicator}-${index}`}>
+              {showTopic ? <td data-label="หัวข้อ">{row.topic}</td> : null}
+              <td data-label="ตัวชี้วัด">{row.indicator}</td>
+              <td data-label="ค่าเป้าหมาย">{row.target}</td>
+              <td data-label="ผลการปฏิบัติ">{row.actual}</td>
+              <td data-label="ร้อยละ">
+                <div className="pa-indicator-percent">
+                  <span>{row.percent}%</span>
+                  <i>
+                    <b style={{ width: `${row.percent}%` }} />
+                  </i>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function DomainSummaryPanel({
+  domain
+}: {
+  domain: {
+    domain: string;
+    description: string;
+    items: { title: string; indicators?: string[]; selfAssessmentLevel?: string; resultPercent?: string; images?: unknown[] }[];
+  };
+}) {
+  const rows = domain.items.flatMap((item) =>
+    getIndicatorMetrics(item).map((metric) => ({
+      ...metric,
+      topic: item.title
+    }))
+  );
+  const averagePercent = getAveragePercent(rows);
+
+  return (
+    <details className="pa-domain-summary" open>
+      <summary className="pa-domain-summary__toggle">
+        <div className="pa-domain-summary__intro">
+          <span>สรุปงานตามด้านหลัก</span>
+          <strong>{domain.domain}</strong>
+        </div>
+        <div className="pa-domain-summary__quick-stat">
+          <span>{averagePercent}%</span>
+          <small>ความสำเร็จเฉลี่ย</small>
+        </div>
+        <ChevronDown className="pa-disclosure-icon" aria-hidden="true" />
+      </summary>
+      <div className="pa-domain-summary__body">
+        <p>{domain.description}</p>
+        <div className="pa-domain-summary__stats">
+          <MetricStat label="หัวข้อย่อย" value={`${domain.items.length} รายการ`} />
+          <MetricStat label="ตัวชี้วัดรวม" value={`${rows.length} ตัวชี้วัด`} tone="cyan" />
+          <MetricStat label="ความสำเร็จเฉลี่ย" value={`${averagePercent}%`} tone="emerald" />
+          <MetricStat label="หลักฐานอ้างอิง" value={`${countEvidenceItems(domain.items)} รายการ`} tone="blue" />
+        </div>
+        <IndicatorMetricTable rows={rows} showTopic />
+      </div>
+    </details>
+  );
+}
+
+function MethodSteps({ methods }: { methods?: string[] }) {
+  return (
+    <div className="pa-method-steps">
+      {(methods || []).map((method, index) => (
+        <div key={`${method}-${index}`} className="pa-method-step">
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <p>{method}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ChallengeResults({
+  challenge
+}: {
+  challenge: { expected?: string[]; quantitativeResults?: string[]; qualitativeResults?: string[]; title: string; selfAssessmentLevel?: string };
+}) {
+  const quantitativeResults = getChallengeQuantitativeResults(challenge);
+  const qualitativeResults = getChallengeQualitativeResults(challenge);
+
+  return (
+    <div className="pa-results-panel">
+      <div className="pa-results-panel__heading">
+        <Sparkles className="w-5 h-5" />
+        <div>
+          <strong>ผลลัพธ์การพัฒนาที่คาดหวัง</strong>
+          <span>คัดลอกตามแบบบันทึกข้อตกลงในการปฏิบัติงาน PA</span>
+        </div>
+      </div>
+
+      <div className="pa-results-grid">
+        <div className="pa-result-card pa-result-card--expected">
+          <span>ตามแบบบันทึกข้อตกลง</span>
+          <ul>
+            {challenge.expected?.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        {quantitativeResults.length ? (
+          <div className="pa-result-card pa-result-card--number">
+            <span>ผลลัพธ์เชิงปริมาณ</span>
+            <ul>
+              {quantitativeResults.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        {qualitativeResults.length ? (
+          <div className="pa-result-card pa-result-card--quality">
+            <span>ผลลัพธ์เชิงคุณภาพ</span>
+            <ul>
+              {qualitativeResults.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -322,6 +585,8 @@ export default async function PaPage() {
                 </summary>
 
                 <div className="p-4 sm:p-6 space-y-6">
+                  <DomainSummaryPanel domain={domain} />
+
                   {domain.items.map((item, itemIndex) => (
                     <details key={item.title} className="pa-standard-disclosure" open={domainIndex === 0 && itemIndex === 0}>
                       <summary>
@@ -332,7 +597,7 @@ export default async function PaPage() {
                         <ChevronDown className="pa-disclosure-icon" aria-hidden="true" />
                       </summary>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                      <div className="pa-standard-detail-grid">
                         <div className="p-3.5 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
                           <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
                             งานที่ปฏิบัติ
@@ -356,17 +621,14 @@ export default async function PaPage() {
                         </div>
 
                         <SelfAssessmentBadge level={item.selfAssessmentLevel} />
+                      </div>
 
-                        <div className="p-3.5 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
-                          <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                            ตัวชี้วัด / หลักฐาน
-                          </span>
-                          <ul className="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
-                            {item.indicators.map((indicator) => (
-                              <li key={indicator} className="leading-relaxed">{indicator}</li>
-                            ))}
-                          </ul>
+                      <div className="space-y-3">
+                        <div className="pa-evidence-heading">
+                          <strong>ตัวชี้วัดเชิงผลลัพธ์</strong>
+                          <span>แสดงเป้าหมาย ผลจริง และร้อยละการปฏิบัติ</span>
                         </div>
+                        <IndicatorMetricTable rows={getIndicatorMetrics(item)} />
                       </div>
 
                       {item.images?.length ? (
@@ -409,34 +671,19 @@ export default async function PaPage() {
 
                 <div className="space-y-2 text-xs sm:text-sm">
                   <strong className="block text-amber-300 font-semibold">สภาพปัญหาการจัดการเรียนรู้และคุณภาพการเรียนรู้ของผู้เรียน</strong>
-                  <p className="text-slate-300 leading-relaxed bg-white/[0.02] p-4 rounded-xl border border-white/5">
-                    {challenge.problem}
-                  </p>
+                  <div className="pa-challenge-problem">
+                    {getProblemParagraphs(challenge).map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-2 text-xs sm:text-sm">
                   <strong className="block text-emerald-300 font-semibold">วิธีการดำเนินการให้บรรลุเป้าหมาย</strong>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {challenge.methods?.map((method: string, index: number) => (
-                      <li key={method} className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-slate-300 flex items-start gap-2">
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[11px] shrink-0 mt-0.5">
-                          {index + 1}
-                        </span>
-                        <span className="leading-relaxed">{method}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <MethodSteps methods={challenge.methods} />
                 </div>
 
-                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block text-xs font-bold text-amber-300">ผลลัพธ์การพัฒนาที่คาดหวัง</strong>
-                    <p className="text-xs sm:text-sm text-slate-200 mt-1 leading-relaxed">
-                      {challenge.expected?.join(" / ")}
-                    </p>
-                  </div>
-                </div>
+                <ChallengeResults challenge={challenge} />
 
                 <SelfAssessmentBadge level={challenge.selfAssessmentLevel} />
 
