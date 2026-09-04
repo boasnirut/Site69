@@ -1,4 +1,4 @@
-import { BookOpenCheck, ExternalLink, FileText, ListChecks, Package, PlayCircle, Presentation, School, ShieldCheck } from "lucide-react";
+import { BookOpenCheck, ExternalLink, ListChecks, Package, PlayCircle, Presentation, School, ShieldCheck } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { classScheduleSummary, nirutTeachingSchedule, schedulePeriods } from "@/lib/schedule-data";
 import { getPageVisuals } from "@/lib/site-data";
@@ -8,19 +8,13 @@ const courseSpaces = [
   {
     title: "ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์",
     level: "Digital Literacy & Cyber Safety • ม.3",
-    lessons: "เว็บแอปบทเรียน",
-    assessments: "Pre-test / Post-test / Dashboard",
-    href: "/classroom-lessons/digital-literacy/index1.html",
-    planHref: "/classroom-lessons/digital-literacy/lesson-plan.html",
+    href: "/classroom-lessons/digital-literacy/index.html",
     icon: ShieldCheck
   },
   {
     title: "นวัตกรบรรจุภัณฑ์อัจฉริยะ",
     level: "Smart Packaging with NFC Tag • ม.3",
-    lessons: "เว็บแอปโครงงาน",
-    assessments: "กิจกรรมจำลอง / เกียรติบัตร / Dashboard",
-    href: "/classroom-lessons/smart-packaging/index1.html",
-    planHref: "/classroom-lessons/smart-packaging/lesson-plan.html",
+    href: "/classroom-lessons/smart-packaging/index.html",
     icon: Package
   }
 ];
@@ -122,7 +116,7 @@ export default async function ClassroomPage() {
         <div className="section-heading">
           <span className="eyebrow">Learning Units</span>
           <h2>หน่วยการเรียนรู้ออนไลน์</h2>
-          <p>รวบรวมเว็บแอปบทเรียนที่จัดทำไว้เป็นรายเนื้อหา พร้อมเปิดใช้งานสื่อ แบบประเมิน และแผนการจัดการเรียนรู้ได้ทันที</p>
+          <p>รวบรวมบทเรียนออนไลน์เป็นรายเนื้อหา พร้อมใช้งานสื่อ แบบประเมิน เกียรติบัตร และ Dashboard ภายในเว็บไซต์เดียว</p>
         </div>
         <div className="course-grid lesson-grid">
           {courseSpaces.map((course) => {
@@ -132,22 +126,13 @@ export default async function ClassroomPage() {
             <article className="course-card lesson-card" key={course.title}>
               <div className="course-card-head">
                 <Icon aria-hidden="true" />
-                <span>นำเข้าแล้ว</span>
               </div>
               <h3>{course.title}</h3>
               <p>{course.level}</p>
-              <div className="meta-row">
-                <strong>{course.lessons}</strong>
-                <strong>{course.assessments}</strong>
-              </div>
               <div className="lesson-card-actions">
-                <a className="button primary" href={course.href} aria-label={`เปิดบทเรียน ${course.title}`}>
+                <a className="button primary" href={course.href} target="_blank" rel="noreferrer" aria-label={`เข้าสู่บทเรียน ${course.title}`}>
                   <ExternalLink aria-hidden="true" />
-                  เปิดบทเรียน
-                </a>
-                <a className="button ghost" href={course.planHref} aria-label={`เปิดแผนการจัดการเรียนรู้ ${course.title}`}>
-                  <FileText aria-hidden="true" />
-                  แผนการจัดการเรียนรู้
+                  เข้าสู่บทเรียน
                 </a>
               </div>
             </article>

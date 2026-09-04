@@ -1958,8 +1958,9 @@ p {
 
 .lesson-card-actions {
   display: grid;
-  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  grid-template-columns: 1fr;
   gap: 10px;
+  margin-top: auto;
 }
 
 .lesson-card-actions .button {
