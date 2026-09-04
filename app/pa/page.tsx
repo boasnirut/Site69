@@ -49,24 +49,28 @@ const assessmentLevels = {
     label: "ระดับ 1",
     description: "ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวังมาก",
     className: "pa-assessment-card pa-assessment-card--red",
+    tone: "red",
     progress: 25
   },
   "2": {
     label: "ระดับ 2",
     description: "ปฏิบัติได้ต่ำกว่าระดับฯที่คาดหวัง",
     className: "pa-assessment-card pa-assessment-card--yellow",
+    tone: "yellow",
     progress: 50
   },
   "3": {
     label: "ระดับ 3",
     description: "ปฏิบัติได้ตามระดับฯที่คาดหวัง",
     className: "pa-assessment-card pa-assessment-card--blue",
+    tone: "blue",
     progress: 75
   },
   "4": {
     label: "ระดับ 4",
     description: "ปฏิบัติได้สูงกว่าระดับฯที่คาดหวัง",
     className: "pa-assessment-card pa-assessment-card--green",
+    tone: "green",
     progress: 100
   }
 };
@@ -162,6 +166,7 @@ const getChallengeQualitativeResults = (challenge: { qualitativeResults?: string
 
 function SelfAssessmentBadge({ level }: { level?: string }) {
   const assessment = getAssessment(level);
+  const currentLevel = Math.max(1, Math.min(4, Number(level || "3") || 3));
 
   return (
     <div className={assessment.className}>
@@ -169,15 +174,21 @@ function SelfAssessmentBadge({ level }: { level?: string }) {
         <span>ระดับผลการประเมินตนเอง</span>
         <PaAssessmentInfoPopover />
       </div>
-      <div className="pa-assessment-progress" aria-label={`${assessment.label} ${assessment.progress}%`}>
-        <span style={{ width: `${assessment.progress}%` }} />
-        <em>{assessment.progress}%</em>
-      </div>
-      <div className="pa-assessment-scale">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
+      <div className="pa-assessment-meter" aria-label={assessment.label}>
+        {Object.entries(assessmentLevels).map(([value, item]) => {
+          const segmentLevel = Number(value);
+          const isCurrent = segmentLevel === currentLevel;
+
+          return (
+            <span
+              className={`pa-assessment-meter__segment pa-assessment-meter__segment--${item.tone}${isCurrent ? " is-current" : ""}`}
+              key={value}
+              aria-current={isCurrent ? "step" : undefined}
+            >
+              <small>{segmentLevel}</small>
+            </span>
+          );
+        })}
       </div>
       <strong>{assessment.label}</strong>
       <p>{assessment.description}</p>
