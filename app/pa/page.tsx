@@ -320,14 +320,12 @@ function DomainSummaryPanel({
         <ChevronDown className="pa-disclosure-icon" aria-hidden="true" />
       </summary>
       <div className="pa-domain-summary__body">
-        <p>{domain.description}</p>
         <div className="pa-domain-summary__stats">
           <MetricStat label="หัวข้อย่อย" value={`${domain.items.length} รายการ`} />
           <MetricStat label="ตัวชี้วัดรวม" value={`${rows.length} ตัวชี้วัด`} tone="cyan" />
           <MetricStat label="ความสำเร็จเฉลี่ย" value={`${averagePercent}%`} tone="emerald" />
           <MetricStat label="หลักฐานอ้างอิง" value={`${countEvidenceItems(domain.items)} รายการ`} tone="blue" />
         </div>
-        <IndicatorMetricTable rows={rows} showTopic />
       </div>
     </details>
   );
