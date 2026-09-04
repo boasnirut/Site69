@@ -2196,7 +2196,43 @@
               "ร้อยละ 80 ของผู้เรียนสามารถใช้งานสื่อ/นวัตกรรมและผ่านเกณฑ์การประเมิน",
               "ร้อยละ 100 ของผู้เรียนมีบรรจุภัณฑ์อัจฉริยะที่ใช้เทคโนโลยี NFC Tag"
             ],
-            "images": []
+            "images": [
+              {
+                "type": "pdf",
+                "title": "ปพ.5 ออกแบบและเทคโนโลยี ม.1",
+                "url": "https://drive.google.com/file/d/1pIOV6I_7stAxVt-S98RhO3PUiWtDnVLB/view?usp=drive_link"
+              },
+              {
+                "type": "pdf",
+                "title": "ปพ.5 ออกแบบและเทคโนโลยี ม.2",
+                "url": "https://drive.google.com/file/d/1R7pAkaIAqv1morNMUEz7a1YUCfmtAnMV/view?usp=drive_link"
+              },
+              {
+                "type": "pdf",
+                "title": "ปพ.5 ออกแบบและเทคโนโลยี ม.3",
+                "url": "https://drive.google.com/file/d/15RZQJ6LT1wJIVLD6lwtnTSukbhbDsWJO/view?usp=drive_link"
+              },
+              {
+                "type": "link",
+                "title": "การวัดและการประเมินความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ ม.3",
+                "url": "https://boasnirut.in.th/classroom-lessons/digital-literacy/app.html"
+              },
+              {
+                "type": "link",
+                "title": "การวัดและการประเมินผลนวัตกรอาชีพดิจิทัล: บรรจุภัณฑ์อัจฉริยะ (NFC Tag) ม.3",
+                "url": "https://boasnirut.in.th/classroom-lessons/smart-packaging/app.html#dashboard"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788541066101-450.png"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788541068185-81.png"
+              }
+            ]
           },
           {
             "title": "1.6 การศึกษา วิเคราะห์ สังเคราะห์ เพื่อแก้ปัญหาหรือพัฒนาการเรียนรู้",
