@@ -2156,7 +2156,28 @@
               "ร้อยละ 80 ของผู้เรียน มีความรู้ผ่านเกณฑ์การประเมินตามที่สถานศึกษากำหนด",
               "ร้อยละ 80 ของผู้เรียนมีผลสัมฤทธิ์สูงขึ้น เป็นไปตามค่าเป้าหมายที่สถานศึกษากำหนด"
             ],
-            "images": []
+            "images": [
+              {
+                "type": "link",
+                "title": "สื่อ ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ ม.3",
+                "url": "https://boasnirut.in.th/classroom-lessons/digital-literacy/index.html"
+              },
+              {
+                "type": "link",
+                "title": "สื่อ นวัตกรอาชีพดิจิทัล: บรรจุภัณฑ์อัจฉริยะ (NFC Tag) ม.3",
+                "url": "https://boasnirut.in.th/classroom-lessons/smart-packaging/index.html"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788540817090-431.png"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788540819806-596.png"
+              }
+            ]
           },
           {
             "title": "1.5 การวัดและการประเมินผลการเรียนรู้",
