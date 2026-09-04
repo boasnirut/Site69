@@ -2312,7 +2312,23 @@
             "indicators": [
               "ร้อยละ 80 ของผู้เรียน มีผลการประเมินในด้านคุณลักษณะนิสัยอันพึงประสงค์"
             ],
-            "images": []
+            "images": [
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788541599545-71.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788541606902-541.jpg"
+              },
+              {
+                "type": "image",
+                "title": "",
+                "url": "/uploads/pa-1788541613310-971.jpg"
+              }
+            ]
           }
         ]
       },
