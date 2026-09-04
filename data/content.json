@@ -2250,7 +2250,23 @@
               "ร้อยละ 80 ของผู้เรียน มีความรู้ผ่านเกณฑ์การประเมินของสถานศึกษา",
               "ร้อยละ 80 ของผู้เรียน มีผลการประเมินในด้านคุณลักษณะอันพึงประสงค์และสมรรถนะสำคัญตามหลักสูตร"
             ],
-            "images": []
+            "images": [
+              {
+                "type": "link",
+                "title": "งานประจำชั้น",
+                "url": "https://boasnirut.in.th/homeroom"
+              },
+              {
+                "type": "link",
+                "title": "การวัดและการประเมินความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ ม.3",
+                "url": "https://boasnirut.in.th/classroom-lessons/digital-literacy/app.html"
+              },
+              {
+                "type": "link",
+                "title": "การวัดและการประเมินผลนวัตกรอาชีพดิจิทัล: บรรจุภัณฑ์อัจฉริยะ (NFC Tag) ม.3",
+                "url": "https://boasnirut.in.th/classroom-lessons/smart-packaging/app.html#dashboard"
+              }
+            ]
           },
           {
             "title": "1.7 การจัดบรรยากาศที่ส่งเสริมและพัฒนาผู้เรียน",
