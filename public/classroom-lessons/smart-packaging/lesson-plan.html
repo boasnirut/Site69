@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนการจัดการเรียนรู้บูรณาการ: บรรจุภัณฑ์อัจฉริยะ (Smart Packaging) ด้วย NFC Tag ม.3 | โรงเรียนบ้านน้ำพร</title>
+    
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1e3a8a',
+                            navy: '#0f172a',
+                            emerald: '#059669',
+                            amber: '#d97706',
+                            cyan: '#0891b2'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'Prompt', 'sans-serif'],
+                        heading: ['Prompt', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.7;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Prompt', sans-serif;
+        }
+        
+        /* Print Stylesheet for Official A4 Document */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 14pt !important;
+                line-height: 1.5 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .avoid-break {
+                page-break-inside: avoid;
+            }
+            a {
+                text-decoration: none !important;
+                color: inherit !important;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- ==================== IN-CONTENT NAVIGATION TOOLBAR (NO HEADER TAG) ==================== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 no-print">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- School Logo & Subject Info -->
+            <div class="flex items-center gap-3.5">
+                <a href="index.html" class="flex-shrink-0">
+                    <img src="1-small.png" alt="โลโก้โรงเรียนบ้านน้ำพร" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm hover:rotate-3 transition duration-300">
+                </a>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-900 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">โรงเรียนบ้านน้ำพร</span>
+                        <span class="text-[11px] text-slate-500">สพป.เลย เขต 1</span>
+                        <span class="text-[11px] text-amber-600 font-semibold">ปีการศึกษา 2569</span>
+                    </div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight mt-1">
+                        นวัตกรอาชีพดิจิทัล: บรรจุภัณฑ์อัจฉริยะ (NFC Tag) <span class="text-emerald-700 font-extrabold">ม.3</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- In-Content Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Button 1: หน้าหลัก -->
+                <a href="index.html" title="หน้าหลักภาพรวมและทะเบียนคะแนน" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าหลัก</span>
+                </a>
+
+                <!-- Button 2: เว็บแอป -->
+                <a href="app.html" title="เข้าสู่เว็บแอปสื่อการสอนและแล็บเสมือนจริง" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <span>เว็บแอป</span>
+                </a>
+
+                <!-- Button 3: แผนการสอน -->
+                <a href="lesson-plan.html" title="เปิดแผนการจัดการเรียนรู้บูรณาการ" class="bg-amber-600 text-white shadow hover:bg-amber-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                    <span>แผนการสอน</span>
+                </a>
+
+                <!-- Button 4: สั่งพิมพ์ A4 -->
+                <button onclick="window.print()" title="พิมพ์เอกสาร A4" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-print text-slate-600"></i>
+                    <span class="hidden sm:inline">พิมพ์ A4</span>
+                </button>
+
+                <!-- Teacher Mode Button -->
+                <button onclick="openTeacherLogin()" title="โหมดครูผู้สอน" class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+                    <i class="fa-solid fa-chalkboard-user text-amber-400"></i>
+                    <span class="hidden sm:inline">ครูผู้สอน</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MAIN A4 DOCUMENT CONTAINER ==================== -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-8 my-6 print-container">
+        
+        <article class="bg-white rounded-[32px] p-8 sm:p-12 border border-slate-200 shadow-xl print-container space-y-8">
+            
+            <!-- Official Document Header -->
+            <div class="text-center border-b-2 border-slate-900 pb-6 space-y-2">
+                <img src="1-small.png" alt="ตราโรงเรียนบ้านน้ำพร" class="w-20 h-20 mx-auto object-contain mb-3 drop-shadow-sm">
+                <h1 class="font-heading font-bold text-xl sm:text-2xl text-slate-900">
+                    แผนการจัดการเรียนรู้บูรณาการเพื่อพัฒนาทักษะแห่งศตวรรษที่ 21
+                </h1>
+                <h2 class="font-heading font-semibold text-base sm:text-lg text-blue-950">
+                    โครงการพัฒนาทักษะนวัตกรอาชีพดิจิทัล (Digital Career Innovator)
+                </h2>
+                <p class="font-heading text-sm sm:text-base text-slate-700">
+                    ผ่านการสร้างสรรค์ "บรรจุภัณฑ์อัจฉริยะ (Smart Packaging)" ด้วยเทคโนโลยี NFC Tag เชื่อมโยงผลิตภัณฑ์ชุมชน
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-medium text-slate-600 pt-2">
+                    <span>กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</span>
+                    <span>•</span>
+                    <span>วิชา การออกแบบและเทคโนโลยี 3 (รหัสวิชา ว23104)</span>
+                    <span>•</span>
+                    <span class="font-bold text-blue-900">ชั้นมัธยมศึกษาปีที่ 3</span>
+                    <span>•</span>
+                    <span>ภาคเรียนที่ 1 ปีการศึกษา 2569</span>
+                </div>
+                <div class="text-xs text-slate-500 font-semibold">
+                    โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1 (สพป.เลย เขต 1)
+                </div>
+            </div>
+
+            <!-- Meta Information Box -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+                <div>
+                    <span class="text-slate-500 block">หน่วยการเรียนรู้ที่:</span>
+                    <span class="font-heading font-bold text-slate-900 text-sm">หน่วยบูรณาการพิเศษ</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">เวลาที่ใช้จัดการเรียนรู้:</span>
+                    <span class="font-heading font-bold text-blue-900 text-sm">4 คาบ (240 นาที)</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">ครูผู้สอน:</span>
+                    <span class="font-heading font-bold text-slate-900 text-sm">นายนิรุทธิ์ เสวะนา</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">ผู้อำนวยการโรงเรียน:</span>
+                    <span class="font-heading font-bold text-slate-900 text-sm">นางศิวาลัย แก้วเขียว</span>
+                </div>
+            </div>
+
+            <!-- ================= 1. มาตรฐานการเรียนรู้และตัวชี้วัด ================= -->
+            <section class="space-y-3">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-blue-900 pl-3">
+                    1. มาตรฐานการเรียนรู้และตัวชี้วัด
+                </h3>
+                <div class="pl-4 space-y-2 text-sm text-slate-700">
+                    <p>
+                        <strong>สาระที่ 4 เทคโนโลยี (การออกแบบและเทคโนโลยี):</strong>
+                    </p>
+                    <ul class="list-disc list-inside pl-2 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li>
+                            <strong>มาตรฐาน ว 4.1 ม.3/1 - ม.3/5:</strong> วิเคราะห์ปัญหาหรือความต้องการในชุมชนหรือท้องถิ่น เพื่อพัฒนางานอาชีพ ออกแบบวิธีการแก้ปัญหาโดยประยุกต์ใช้ความรู้ด้านเทคโนโลยีสมัยใหม่ เลือกใช้วัสดุ อุปกรณ์ และเครื่องมือได้อย่างถูกต้องเหมาะสมและปลอดภัย สร้างต้นแบบนวัตกรรม และนำเสนอผลการแก้ปัญหาอย่างมีประสิทธิภาพ
+                        </li>
+                    </ul>
+
+                    <p class="pt-2">
+                        <strong>สาระที่ 4 เทคโนโลยี (วิทยาการคำนวณ):</strong>
+                    </p>
+                    <ul class="list-disc list-inside pl-2 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li>
+                            <strong>มาตรฐาน ว 4.2 ม.3/4:</strong> ใช้เทคโนโลยีสารสนเทศอย่างปลอดภัย มีความรับผิดชอบ สร้างและจัดการข้อมูลอย่างเป็นระบบ และสร้างสรรค์นวัตกรรมดิจิทัลเพื่อส่งเสริมอาชีพและยกระดับเศรษฐกิจชุมชนอย่างยั่งยืน
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ================= 2. สาระสำคัญ / ความคิดรวบยอด ================= -->
+            <section class="space-y-3">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-blue-900 pl-3">
+                    2. สาระสำคัญ / ความคิดรวบยอด (Core Concept)
+                </h3>
+                <div class="pl-4 text-xs sm:text-sm text-slate-700 leading-relaxed text-justify space-y-2">
+                    <p>
+                        <strong>บรรจุภัณฑ์อัจฉริยะ (Smart Packaging)</strong> โดยเฉพาะประเภท <em>Connected Packaging</em> คือการบูรณาการเทคโนโลยีคลื่นความถี่วิทยุระยะใกล้ <strong>13.56 MHz (NFC - Near Field Communication)</strong> เข้ากับบรรจุภัณฑ์ทางกายภาพ ผ่านชิปสติกเกอร์ชนิด <strong>NTAG213 / NTAG215</strong> ที่บันทึกข้อมูลมาตรฐาน <strong>NDEF (NFC Data Exchange Format)</strong> เพื่อให้ผู้บริโภคสามารถนำสมาร์ตโฟนมาแตะสัมผัส (Tap & Go) แล้วเข้าถึง Digital Landing Page ได้ทันทีโดยไม่ต้องติดตั้งแอปพลิเคชันหรือเปิดกล้องสแกน
+                    </p>
+                    <p>
+                        การนำเทคโนโลยี NFC มาประยุกต์ใช้กับ <strong>4 ผลิตภัณฑ์ชุมชนบ้านน้ำพรและจังหวัดเลย</strong> (ผ้าฝ้ายทอมือย้อมสีธรรมชาติ, มะคาเดเมียคั่วอบธรรมชาติภูหลวง, กาแฟอาราบิกาดริปดอยน้ำพร, และน้ำผึ้งป่าเดือนห้าอินทรีย์) ช่วยเพิ่มมูลค่าทางเศรษฐกิจ (Value Creation) ผ่าน 4 มิติ ได้แก่ <strong>Storytelling</strong> (การเล่าขานอัตลักษณ์แหล่งกำเนิด), <strong>Anti-Counterfeiting</strong> (การป้องกันสินค้าลอกเลียนแบบด้วยชิป UID เฉพาะ), <strong>Direct Re-Ordering</strong> (การสั่งซื้อซ้ำสะดวกรวดเร็ว), และ <strong>Sustainability</strong> (การลดขยะเอกสารตามแนวคิดโมเดลเศรษฐกิจ BCG) ส่งเสริมให้นักเรียนชั้นมัธยมศึกษาปีที่ 3 มีสมรรถนะการเป็น <strong>"นวัตกรอาชีพดิจิทัล (Digital Career Innovator)"</strong> ที่สามารถวิเคราะห์ต้นทุน จุดคุ้มทุน และผลตอบแทนทางธุรกิจ (ROI) ได้อย่างเป็นรูปธรรม
+                    </p>
+                </div>
+            </section>
+
+            <!-- ================= 3. จุดประสงค์การเรียนรู้ (K-P-A) ================= -->
+            <section class="space-y-3">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-blue-900 pl-3">
+                    3. จุดประสงค์การเรียนรู้ (Learning Objectives)
+                </h3>
+                <div class="pl-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm">
+                    
+                    <!-- K: ด้านความรู้ -->
+                    <div class="p-4 bg-blue-50/70 rounded-2xl border border-blue-200 space-y-2">
+                        <div class="font-heading font-bold text-blue-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-brain text-blue-700"></i> ด้านความรู้ (K)
+                        </div>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-700 text-xs leading-relaxed">
+                            <li>อธิบายหลักการทำงานของเทคโนโลยี NFC คลื่น 13.56 MHz และมาตรฐาน NDEF ได้ถูกต้อง (100%)</li>
+                            <li>จำแนกประเภท Smart Packaging และคุณสมบัติของชิป NTAG แต่ละตระกูลได้</li>
+                            <li>วิเคราะห์โมเดลธุรกิจ การคำนวณต้นทุน และผลตอบแทน (ROI) ของนวัตกรดิจิทัลได้</li>
+                        </ul>
+                    </div>
+
+                    <!-- P: ด้านทักษะ/กระบวนการ -->
+                    <div class="p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2">
+                        <div class="font-heading font-bold text-emerald-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-gears text-emerald-700"></i> ด้านทักษะ/กระบวนการ (P)
+                        </div>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-700 text-xs leading-relaxed">
+                            <li>สามารถจำลองการเขียนข้อมูล NDEF Record ลงชิป NFC (ฐานที่ 1: NFC Writer) ได้สำเร็จ</li>
+                            <li>ทดสอบการแตะสมาร์ตโฟนอ่านข้อมูลดิจิทัล (ฐานที่ 2: Virtual Tap) ได้อย่างคล่องแคล่ว</li>
+                            <li>ออกแบบบรรจุภัณฑ์รักษ์โลกและวางตำแหน่งฝังชิป (ฐานที่ 3: Packaging Builder) ได้คะแนนเต็ม 100%</li>
+                            <li>คำนวณต้นทุน จุดคุ้มทุน และกำไรสุทธิ (ฐานที่ 4: ROI Calculator) ได้แม่นยำ</li>
+                        </ul>
+                    </div>
+
+                    <!-- A: ด้านเจตคติ/คุณลักษณะ -->
+                    <div class="p-4 bg-amber-50/70 rounded-2xl border border-amber-200 space-y-2">
+                        <div class="font-heading font-bold text-amber-900 text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-heart text-amber-700"></i> ด้านเจตคติ (A)
+                        </div>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-700 text-xs leading-relaxed">
+                            <li>มีความตระหนักและภาคภูมิใจในภูมิปัญญาท้องถิ่นบ้านน้ำพรและเมืองเลย</li>
+                            <li>มีจิตสำนึกรักษ์สิ่งแวดล้อม เลือกใช้วัสดุย่อยสลายได้ตามหลัก BCG Model</li>
+                            <li>มีความมุ่งมั่นในการเป็นนวัตกรอาชีพดิจิทัลที่มีความรับผิดชอบต่อสังคม</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ================= 4. สาระการเรียนรู้ 4 หน่วย ================= -->
+            <section class="space-y-3">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-blue-900 pl-3">
+                    4. สาระการเรียนรู้บูรณาการ (Learning Units)
+                </h3>
+                <div class="pl-4 space-y-2 text-xs sm:text-sm text-slate-700">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>หน่วยที่ 1:</strong> มหัศจรรย์เทคโนโลยี NFC & Internet of Packaging (IoP)
+                            <p class="text-slate-500 text-xs mt-0.5">คลื่น 13.56 MHz, สถาปัตยกรรม NTAG213/215/216, เปรียบเทียบ Barcode vs QR Code vs NFC</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>นวัตกรบรรจุภัณฑ์อัจฉริยะ (NFC Tag):</strong> บรรจุภัณฑ์อัจฉริยะกับการเพิ่มมูลค่าผลิตภัณฑ์ชุมชน
+                            <p class="text-slate-500 text-xs mt-0.5">Active, Intelligent, Connected Packaging, โมเดลเพิ่มมูลค่าสินค้าชุมชนบ้านน้ำพร 4 ผลิตภัณฑ์</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>หน่วยที่ 3:</strong> กระบวนการออกแบบบรรจุภัณฑ์และอัตลักษณ์ชุมชน
+                            <p class="text-slate-500 text-xs mt-0.5">Design Thinking 5 ขั้น, วัสดุ Eco-friendly, ข้อพิจารณาการฝังชิปและป้องกันคลื่นสะท้อนโลหะ (Anti-Metal)</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong>หน่วยที่ 4:</strong> การเขียนข้อมูล NFC (NDEF) และ Digital Landing Page
+                            <p class="text-slate-500 text-xs mt-0.5">โครงสร้างข้อมูล NDEF Record, การออกแบบ Landing Page, การคำนวณต้นทุน จุดคุ้มทุน และผลตอบแทน (ROI)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 5. กิจกรรมการจัดการเรียนรู้ (5E + Design Thinking) ================= -->
+            <section class="space-y-4">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-blue-900 pl-3">
+                    5. กิจกรรมการจัดการเรียนรู้ (บูรณาการกระบวนการสืบเสาะ 5E ร่วมกับ Design Thinking)
+                </h3>
+                
+                <div class="pl-4 space-y-3 text-xs sm:text-sm text-slate-800">
+                    
+                    <!-- ขั้นที่ 1: Engagement & Empathize -->
+                    <div class="p-4 rounded-2xl border-l-4 border-blue-600 bg-blue-50/40 space-y-1">
+                        <div class="font-heading font-bold text-blue-950">
+                            ขั้นที่ 1: ขั้นสร้างความสนใจ (Engagement) ร่วมกับ Empathize (เข้าใจปัญหา) [30 นาที]
+                        </div>
+                        <p class="text-slate-700 leading-relaxed text-xs">
+                            1. ครูนำตัวอย่างบรรจุภัณฑ์สินค้าชุมชนบ้านน้ำพรแบบเดิม (ถุงพลาสติกธรรมดา, กล่องกระดาษไร้เรื่องราว) มาให้นักเรียนสังเกตและตั้งคำถามว่า <em>"หากนักท่องเที่ยวซื้อสินค้าเหล่านี้ไป จะทราบเรื่องราวภูมิปัญญาชาวบ้าน หรือจะสั่งซื้อซ้ำได้อย่างไรเมื่อสินค้าหมด?"</em><br>
+                            2. นักเรียนร่วมกันทำ <strong>แบบทดสอบก่อนเรียน (Pre-test จำนวน 10 ข้อ)</strong> บนเว็บแอปพลิเคชัน เพื่อประเมินความรู้พื้นฐานเรื่อง NFC และบรรจุภัณฑ์อัจฉริยะ<br>
+                            3. ครูสาธิตการนำสมาร์ตโฟนแตะลงบนกล่องบรรจุภัณฑ์ตัวอย่างที่มีชิป NFC แล้วเปิดหน้าเว็บสตอรี่ผ้าฝ้ายทอมือบ้านน้ำพรทันที เพื่อสร้างแรงบันดาลใจและความอยากรู้
+                        </p>
+                    </div>
+
+                    <!-- ขั้นที่ 2: Exploration & Define & Ideate -->
+                    <div class="p-4 rounded-2xl border-l-4 border-cyan-600 bg-cyan-50/40 space-y-1">
+                        <div class="font-heading font-bold text-cyan-950">
+                            ขั้นที่ 2: ขั้นสำรวจและค้นหา (Exploration) ร่วมกับ Define & Ideate (ระบุโจทย์และระดมไอเดีย) [50 นาที]
+                        </div>
+                        <p class="text-slate-700 leading-relaxed text-xs">
+                            1. นักเรียนเข้าศึกษาบทเรียนบูรณาการ 4 หน่วยการเรียนรู้บนเว็บแอปพลิเคชัน ทำความเข้าใจคลื่นความถี่ 13.56 MHz ชนิดของชิป NTAG และข้อแตกต่างระหว่าง Barcode, QR Code และ NFC Tag<br>
+                            2. นักเรียนแบ่งกลุ่มวิเคราะห์ 4 ผลิตภัณฑ์ชุมชนบ้านน้ำพร ได้แก่ ผ้าฝ้ายทอมือ, มะคาเดเมียคั่วอบ, กาแฟอาราบิกาดริป, และน้ำผึ้งป่าเดือนห้า โดยระบุว่าสินค้าใดควรใช้ชิปประเภทใด และจะสื่อสารสตอรี่ใดให้โดนใจผู้บริโภค
+                        </p>
+                    </div>
+
+                    <!-- ขั้นที่ 3: Explanation & Prototype -->
+                    <div class="p-4 rounded-2xl border-l-4 border-emerald-600 bg-emerald-50/40 space-y-1">
+                        <div class="font-heading font-bold text-emerald-950">
+                            ขั้นที่ 3: ขั้นอธิบายและลงข้อสรุป (Explanation) ร่วมกับ Prototype (สร้างต้นแบบ) [70 นาที]
+                        </div>
+                        <p class="text-slate-700 leading-relaxed text-xs">
+                            1. นักเรียนเข้าสู่ <strong>ห้องปฏิบัติการเสมือนจริง 4 ฐาน (Virtual Labs):</strong><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;• <strong>ฐานที่ 1 (NFC Writer):</strong> ฝึกเขียนข้อมูล NDEF URL Record ลงบนสติกเกอร์ NTAG213 จำลองการเบิร์นข้อมูล 144 ไบต์<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;• <strong>ฐานที่ 2 (Virtual Tap):</strong> จำลองการนำสมาร์ตโฟนแตะที่กล่องสินค้าชุมชน ตรวจสอบการเปิดหน้า Landing Page และระบบตรวจสอบของแท้ (Anti-Counterfeit)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;• <strong>ฐานที่ 3 (Packaging Builder):</strong> ออกแบบกล่องบรรจุภัณฑ์รักษ์โลก เลือกทรงกล่อง ฉลากมาตรฐาน อย./มผช. และกำหนดจุดติดตั้งชิป NFC ไม่ให้คลื่นถูกรบกวน
+                        </p>
+                    </div>
+
+                    <!-- ขั้นที่ 4: Elaboration & Business ROI -->
+                    <div class="p-4 rounded-2xl border-l-4 border-indigo-600 bg-indigo-50/40 space-y-1">
+                        <div class="font-heading font-bold text-indigo-950">
+                            ขั้นที่ 4: ขั้นขยายความรู้ (Elaboration) ร่วมกับ Test & Business Canvas [50 นาที]
+                        </div>
+                        <p class="text-slate-700 leading-relaxed text-xs">
+                            1. นักเรียนเข้าสู่ <strong>ฐานที่ 4 (ROI & Business Model Canvas):</strong> ใช้เครื่องคำนวณจำลองเพื่อปรับสไลเดอร์ต้นทุนสินค้า กล่องกระดาษคราฟต์ ชิป NFC และราคาขายแบบ Smart Packaging<br>
+                            2. วิเคราะห์กำไรสุทธิต่อหน่วย จุดคุ้มทุน (Break-even Point) และมูลค่าเพิ่มทางเศรษฐกิจที่หมุนเวียนกลับสู่ชุมชนบ้านน้ำพร<br>
+                            3. นำเสนอแนวคิดนวัตกรอาชีพดิจิทัลแลกเปลี่ยนเรียนรู้ระหว่างกลุ่ม
+                        </p>
+                    </div>
+
+                    <!-- ขั้นที่ 5: Evaluation & Certification -->
+                    <div class="p-4 rounded-2xl border-l-4 border-amber-600 bg-amber-50/40 space-y-1">
+                        <div class="font-heading font-bold text-amber-950">
+                            ขั้นที่ 5: ขั้นประเมินผล (Evaluation) [40 นาที]
+                        </div>
+                        <p class="text-slate-700 leading-relaxed text-xs">
+                            1. นักเรียนทำ <strong>แบบทดสอบหลังเรียน (Post-test จำนวน 10 ข้อ)</strong> บนเว็บแอปพลิเคชัน<br>
+                            2. ระบบประมวลผลคะแนนและพัฒนาการ (Gain Score) แสดงเกณฑ์การผ่าน (70% หรือ 7/10 คะแนนขึ้นไป)<br>
+                            3. นักเรียนที่ผ่านเกณฑ์ทำการสร้างและดาวน์โหลด <strong>เกียรติบัตรนวัตกรอาชีพดิจิทัล (E-Certificate)</strong> ที่มีลายเซ็นรับรองของครูผู้สอนและผู้อำนวยการโรงเรียนบ้านน้ำพร
+                        </p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ================= 6. สื่อ แหล่งการเรียนรู้ และเทคโนโลยี ================= -->
+            <section class="space-y-3">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-blue-900 pl-3">
+                    6. สื่อ นวัตกรรม และแหล่งการเรียนรู้
+                </h3>
+                <div class="pl-4 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                    <ul class="list-disc list-inside space-y-1 pl-2">
+                        <li><strong>เว็บแอปพลิเคชันเพื่อการเรียนรู้:</strong> ระบบจำลองบรรจุภัณฑ์อัจฉริยะ (Smart Packaging with NFC Tag) โรงเรียนบ้านน้ำพร</li>
+                        <li><strong>ห้องปฏิบัติการเสมือนจริง 4 ฐาน (Interactive Virtual Labs):</strong> NFC Writer, Virtual Tap, Packaging Builder, และ ROI Calculator</li>
+                        <li><strong>ชุดตัวอย่างวัสดุจริง:</strong> สติกเกอร์ NFC Tag (NTAG213, NTAG215), Anti-Metal Tag, กล่องกระดาษคราฟต์รีไซเคิล, ซองกระดาษชีวภาพ (Bio Pouch)</li>
+                        <li><strong>ผลิตภัณฑ์ชุมชนบ้านน้ำพร:</strong> ผ้าฝ้ายทอมือ, มะคาเดเมียคั่วอบธรรมชาติ, กาแฟอาราบิกาดริป, น้ำผึ้งป่าเดือนห้า</li>
+                        <li><strong>ระบบประเมินผลและเกียรติบัตรอิเล็กทรอนิกส์ (Canvas E-Certificate Generator)</strong> พร้อมลายเซ็นดิจิทัลจริง</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ================= 7. การวัดและประเมินผล (Rubric) ================= -->
+            <section class="space-y-3">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-blue-900 pl-3">
+                    7. การวัดและประเมินผลการเรียนรู้
+                </h3>
+                <div class="pl-4 overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse border border-slate-200">
+                        <thead class="bg-slate-100 text-slate-800 font-bold">
+                            <tr>
+                                <th class="p-2.5 border">สิ่งที่ต้องการวัด</th>
+                                <th class="p-2.5 border">วิธีการวัด</th>
+                                <th class="p-2.5 border">เครื่องมือวัด</th>
+                                <th class="p-2.5 border">เกณฑ์การประเมิน</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="p-2.5 border font-semibold">1. ด้านความรู้ (K)</td>
+                                <td class="p-2.5 border">ทดสอบความรู้</td>
+                                <td class="p-2.5 border">แบบทดสอบหลังเรียน (Post-test) 10 ข้อ</td>
+                                <td class="p-2.5 border text-emerald-700 font-bold">ได้คะแนนร้อยละ 70 ขึ้นไป (ผ่านเกณฑ์)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 border font-semibold">2. ด้านทักษะ/กระบวนการ (P)</td>
+                                <td class="p-2.5 border">ประเมินการปฏิบัติใน Virtual Labs 4 ฐาน</td>
+                                <td class="p-2.5 border">ระบบบันทึกความก้าวหน้า Lab Mission</td>
+                                <td class="p-2.5 border text-emerald-700 font-bold">ปฏิบัติภารกิจสำเร็จครบทั้ง 4 ฐาน (ระดับดีเยี่ยม)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 border font-semibold">3. ด้านเจตคติ (A)</td>
+                                <td class="p-2.5 border">สังเกตพฤติกรรม</td>
+                                <td class="p-2.5 border">แบบประเมินสมรรถนะนวัตกรดิจิทัล</td>
+                                <td class="p-2.5 border text-emerald-700 font-bold">ได้คะแนนระดับดี (ผ่านเกณฑ์)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ================= 8. บันทึกผลหลังการจัดการเรียนรู้ ================= -->
+            <section class="space-y-4 pt-4 border-t border-slate-200 avoid-break">
+                <h3 class="font-heading font-bold text-base text-slate-900 border-l-4 border-emerald-600 pl-3">
+                    8. บันทึกผลหลังการจัดการเรียนรู้ (Post-Lesson Report)
+                </h3>
+                <div class="pl-4 space-y-3 text-sm text-slate-800">
+                    <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl">
+                        <h4 class="font-heading font-bold text-emerald-950 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-square-poll-vertical text-emerald-600"></i>
+                            ผลสัมฤทธิ์ทางการเรียนของนักเรียนชั้นมัธยมศึกษาปีที่ 3 (จำนวน 20 คน):
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center my-3">
+                            <div class="p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
+                                <div class="text-xs text-slate-500">คะแนนเฉลี่ยก่อนเรียน (Pre-test)</div>
+                                <div class="font-heading text-xl font-extrabold text-slate-700">4.4 / 10</div>
+                                <div class="text-[11px] text-slate-400">ร้อยละ 44.0</div>
+                            </div>
+                            <div class="p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
+                                <div class="text-xs text-slate-500">คะแนนเฉลี่ยหลังเรียน (Post-test)</div>
+                                <div class="font-heading text-xl font-extrabold text-blue-700">8.3 / 10</div>
+                                <div class="text-[11px] text-slate-400">ร้อยละ 83.0</div>
+                            </div>
+                            <div class="p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
+                                <div class="text-xs text-slate-500">พัฒนาการเฉลี่ยรวม (+Gain Score)</div>
+                                <div class="font-heading text-xl font-extrabold text-emerald-600">+3.9</div>
+                                <div class="text-[11px] text-emerald-700 font-bold">ผ่านเกณฑ์ทุกคน 100%</div>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-700 mt-2 leading-relaxed">
+                            <strong>สรุปผลสัมฤทธิ์:</strong> นักเรียนชั้นมัธยมศึกษาปีที่ 3 จำนวน 20 คน มีผลการทดสอบหลังเรียนสูงกว่าก่อนเรียนอย่างมีนัยสำคัญ คะแนนเฉลี่ยเพิ่มขึ้น +3.9 คะแนน ผ่านเกณฑ์การประเมินร้อยละ 70 ครบทุกคน (100%) และสามารถผ่านภารกิจในห้องปฏิบัติการเสมือนจริงทั้ง 4 ฐาน ได้รับเกียรติบัตรนวัตกรอาชีพดิจิทัลครบทั้ง 20 คน
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong class="text-slate-900 block mb-1">ปัญหาและอุปสรรค:</strong>
+                            <p class="text-slate-600">ในขั้นต้นนักเรียนบางคนยังสับสนระหว่างคลื่นความถี่ NFC กับ QR Code และยังไม่เข้าใจข้อจำกัดเรื่องคลื่นสะท้อนบนวัสดุโลหะ</p>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong class="text-slate-900 block mb-1">ข้อเสนอแนะและแนวทางแก้ไข:</strong>
+                            <p class="text-slate-600">การให้ทดลองในฐานจำลองที่ 1 และ 3 ช่วยให้นักเรียนเห็นการทำงานจริงของการเขียนชิปและการเลือกใช้ Anti-Metal Tag ได้ชัดเจนและเข้าใจง่ายยิ่งขึ้น</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 9. ลายมือชื่อและการรับรองแผน ================= -->
+            <section class="mt-12 pt-8 border-t-2 border-slate-200 avoid-break">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 text-center text-xs text-slate-800">
+                    
+                    <!-- Teacher Signature Box -->
+                    <div class="flex flex-col items-center">
+                        <div class="h-20 flex items-end justify-center mb-1">
+                            <img src="ลายเซ็น นิรุทธิ์.png" alt="ลายเซ็น นายนิรุทธิ์ เสวะนา" class="max-h-20 max-w-[130px] object-contain drop-shadow-sm">
+                        </div>
+                        <div class="w-56 border-b border-slate-400 mb-2"></div>
+                        <div class="font-heading font-bold text-sm text-slate-900">( นายนิรุทธิ์ เสวะนา )</div>
+                        <div class="text-slate-600">ครูประจำชั้นมัธยมศึกษาปีที่ 3 / ครูผู้สอน</div>
+                        <div class="text-slate-500 mt-1">วันที่ 24 เดือน สิงหาคม พ.ศ. 2569</div>
+                    </div>
+
+                    <!-- Director Signature Box -->
+                    <div class="flex flex-col items-center">
+                        <div class="h-20 flex items-end justify-center mb-1">
+                            <img src="ลายเซ็น ผอ.ศิวาลัย.png" alt="ลายเซ็น นางศิวาลัย แก้วเขียว" class="max-h-20 max-w-[150px] object-contain drop-shadow-sm">
+                        </div>
+                        <div class="w-56 border-b border-slate-400 mb-2"></div>
+                        <div class="font-heading font-bold text-sm text-slate-900">( นางศิวาลัย แก้วเขียว )</div>
+                        <div class="text-slate-600">ผู้อำนวยการโรงเรียนบ้านน้ำพร</div>
+                        <div class="text-slate-500 mt-1">วันที่ 25 เดือน สิงหาคม พ.ศ. 2569</div>
+                    </div>
+
+                </div>
+
+                <!-- Administrative Approval Stamp Note -->
+                <div class="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center text-[11px] text-slate-500 avoid-break">
+                    <span class="font-bold text-blue-900">บันทึกการอนุมัติ:</span> แผนการจัดการเรียนรู้นี้ผ่านการตรวจสอบความสอดคล้องกับหลักสูตรสถานศึกษา และได้รับอนุมัติให้ใช้จัดการเรียนการสอนประจำปีการศึกษา 2569 โรงเรียนบ้านน้ำพร สพป.เลย เขต 1
+                </div>
+            </section>
+
+        </article>
+
+    </main>
+
+    <!-- Teacher Login Modal -->
+    <div id="teacher-login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-sm">เข้าสู่โหมดครูผู้สอน</h4>
+                    <p class="text-[11px] text-slate-500">สำหรับนายนิรุทธิ์ เสวะนา</p>
+                </div>
+            </div>
+            <form onsubmit="handleTeacherSubmit(event)" class="space-y-3">
+                <input type="password" id="teacher-pwd-input" placeholder="กรุณากรอกรหัสผ่านครูผู้สอน" class="w-full py-2.5 px-3 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-blue-600">
+                <div id="teacher-login-error" class="text-rose-600 text-[11px] hidden font-semibold">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeTeacherLogin()" class="flex-1 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">ยืนยัน</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <script>
+        function openTeacherLogin() {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'เข้าสู่โหมดครูผู้สอน',
+                    html: '<p class="text-xs text-slate-500 mb-2">สำหรับคุณครูนิรุทธิ์ เสวะนา</p>',
+                    input: 'password',
+                    inputPlaceholder: 'กรุณากรอกรหัสผ่านครูผู้สอน',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'เข้าสู่ระบบ',
+                    cancelButtonText: 'ยกเลิก',
+                    confirmButtonColor: '#0f172a',
+                    preConfirm: (pwd) => {
+                        if (pwd && pwd.trim() === '42010113') {
+                            return true;
+                        } else {
+                            Swal.showValidationMessage('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+                            return false;
+                        }
+                    }
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ยินดีต้อนรับครูผู้สอน',
+                            text: 'เข้าสู่ระบบจัดการข้อมูลการสอน ม.3 โรงเรียนบ้านน้ำพร สำเร็จ',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            } else {
+                const m = document.getElementById("teacher-login-modal");
+                if (m) {
+                    m.classList.remove("hidden");
+                    const inp = document.getElementById("teacher-pwd-input");
+                    if (inp) { inp.value = ""; inp.focus(); }
+                }
+            }
+        }
+        function closeTeacherLogin() {
+            const m = document.getElementById("teacher-login-modal");
+            if (m) m.classList.add("hidden");
+        }
+    </script>
+
+
+    <!-- In-Content Bottom Note (No Footer Tag) -->
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 no-print">
+        <p class="font-medium text-slate-600">โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1</p>
+        <p class="text-[11px] text-slate-400 mt-1">นตฺถิ ปญฺญา สมา อาภา — ไม่มีแสงสว่างใดเสมอด้วยปัญญา • ครูผู้สอน: นายนิรุทธิ์ เสวะนา • ผู้อำนวยการโรงเรียน: นางศิวาลัย แก้วเขียว</p>
+    </div>
+    
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { BookOpenCheck, ExternalLink, ListChecks, PlayCircle, Presentation, School } from "lucide-react";
+import { BookOpenCheck, ExternalLink, FileText, ListChecks, Package, PlayCircle, Presentation, School, ShieldCheck } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { classScheduleSummary, nirutTeachingSchedule, schedulePeriods } from "@/lib/schedule-data";
 import { getPageVisuals } from "@/lib/site-data";
@@ -6,22 +6,22 @@ import { fetchContent } from "@/app/admin/actions";
 
 const courseSpaces = [
   {
-    title: "ห้องเรียนออนไลน์ ม.1",
-    level: "สังคมศึกษา ประวัติศาสตร์ วิทยาศาสตร์เพิ่มเติม และพลศึกษา",
-    lessons: "6 คาบ/สัปดาห์",
-    assessments: "แฟ้มหลักฐาน"
+    title: "ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์",
+    level: "Digital Literacy & Cyber Safety • ม.3",
+    lessons: "เว็บแอปบทเรียน",
+    assessments: "Pre-test / Post-test / Dashboard",
+    href: "/classroom-lessons/digital-literacy/index1.html",
+    planHref: "/classroom-lessons/digital-literacy/lesson-plan.html",
+    icon: ShieldCheck
   },
   {
-    title: "ห้องเรียนออนไลน์ ม.2",
-    level: "สังคมศึกษา ประวัติศาสตร์ วิทยาศาสตร์เพิ่มเติม และพลศึกษา",
-    lessons: "6 คาบ/สัปดาห์",
-    assessments: "ใบงาน/แบบทดสอบ"
-  },
-  {
-    title: "ห้องเรียนออนไลน์ ม.3",
-    level: "สังคมศึกษา ประวัติศาสตร์ วิทยาศาสตร์เพิ่มเติม พลศึกษา และหน้าที่พลเมือง",
-    lessons: "7 คาบ/สัปดาห์",
-    assessments: "ชิ้นงานผู้เรียน"
+    title: "นวัตกรบรรจุภัณฑ์อัจฉริยะ",
+    level: "Smart Packaging with NFC Tag • ม.3",
+    lessons: "เว็บแอปโครงงาน",
+    assessments: "กิจกรรมจำลอง / เกียรติบัตร / Dashboard",
+    href: "/classroom-lessons/smart-packaging/index1.html",
+    planHref: "/classroom-lessons/smart-packaging/lesson-plan.html",
+    icon: Package
   }
 ];
 
@@ -120,16 +120,19 @@ export default async function ClassroomPage() {
 
       <section className="section-block">
         <div className="section-heading">
-          <span className="eyebrow">Course Spaces</span>
-          <h2>ห้องเรียนและชุดบทเรียน</h2>
-          <p>แยกห้องเรียนตามระดับชั้น พร้อมสถานะบทเรียน แบบประเมิน และแฟ้มหลักฐานการเรียนรู้</p>
+          <span className="eyebrow">Learning Units</span>
+          <h2>หน่วยการเรียนรู้ออนไลน์</h2>
+          <p>รวบรวมเว็บแอปบทเรียนที่จัดทำไว้เป็นรายเนื้อหา พร้อมเปิดใช้งานสื่อ แบบประเมิน และแผนการจัดการเรียนรู้ได้ทันที</p>
         </div>
-        <div className="course-grid">
-          {courseSpaces.map((course) => (
-            <article className="course-card" key={course.title}>
+        <div className="course-grid lesson-grid">
+          {courseSpaces.map((course) => {
+            const Icon = course.icon;
+
+            return (
+            <article className="course-card lesson-card" key={course.title}>
               <div className="course-card-head">
-                <Presentation aria-hidden="true" />
-                <span>พร้อมใช้งาน</span>
+                <Icon aria-hidden="true" />
+                <span>นำเข้าแล้ว</span>
               </div>
               <h3>{course.title}</h3>
               <p>{course.level}</p>
@@ -137,12 +140,19 @@ export default async function ClassroomPage() {
                 <strong>{course.lessons}</strong>
                 <strong>{course.assessments}</strong>
               </div>
-              <a className="button ghost" href="#" aria-label={`เปิด${course.title}`}>
-                <ExternalLink aria-hidden="true" />
-                ลิงก์ห้องเรียน
-              </a>
+              <div className="lesson-card-actions">
+                <a className="button primary" href={course.href} aria-label={`เปิดบทเรียน ${course.title}`}>
+                  <ExternalLink aria-hidden="true" />
+                  เปิดบทเรียน
+                </a>
+                <a className="button ghost" href={course.planHref} aria-label={`เปิดแผนการจัดการเรียนรู้ ${course.title}`}>
+                  <FileText aria-hidden="true" />
+                  แผนการจัดการเรียนรู้
+                </a>
+              </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </section>
 

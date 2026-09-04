@@ -1,0 +1,299 @@
+/**
+ * packaging-demo.js
+ * ข้อมูลความก้าวหน้านักเรียนชั้น ม.3 ทั้ง 20 คน
+ * โครงการบรรจุภัณฑ์อัจฉริยะ (Smart Packaging) ด้วยเทคโนโลยี NFC Tag
+ * โรงเรียนบ้านน้ำพร สพป.เลย เขต 1
+ */
+
+const DEMO_PACKAGING_PROGRESS = {
+    "2446": {
+        studentId: "2446",
+        no: 1,
+        title: "เด็กชาย",
+        name: "ธันวา บุญตัน",
+        fullName: "เด็กชายธันวา บุญตัน",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-05T09:15:00.000Z"
+    },
+    "2449": {
+        studentId: "2449",
+        no: 2,
+        title: "เด็กชาย",
+        name: "ธีรศักดิ์ บุญมาก",
+        fullName: "เด็กชายธีรศักดิ์ บุญมาก",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-06T10:20:00.000Z"
+    },
+    "2450": {
+        studentId: "2450",
+        no: 3,
+        title: "เด็กชาย",
+        name: "วรเมธ แสงขาว",
+        fullName: "เด็กชายวรเมธ แสงขาว",
+        room: "3",
+        pretestScore: 3,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-07T13:45:00.000Z"
+    },
+    "2451": {
+        studentId: "2451",
+        no: 4,
+        title: "เด็กชาย",
+        name: "สุรศักดิ์ ฤทธิศักดิ์",
+        fullName: "เด็กชายสุรศักดิ์ ฤทธิศักดิ์",
+        room: "3",
+        pretestScore: 5,
+        posttestScore: 9,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-08T11:10:00.000Z"
+    },
+    "2627": {
+        studentId: "2627",
+        no: 5,
+        title: "เด็กชาย",
+        name: "ธนโชติ นิวงษา",
+        fullName: "เด็กชายธนโชติ นิวงษา",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 7,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-10T08:30:00.000Z"
+    },
+    "2628": {
+        studentId: "2628",
+        no: 6,
+        title: "เด็กชาย",
+        name: "ณัฏฐวี ซุ้ยไกร",
+        fullName: "เด็กชายณัฏฐวี ซุ้ยไกร",
+        room: "3",
+        pretestScore: 3,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-10T14:15:00.000Z"
+    },
+    "2629": {
+        studentId: "2629",
+        no: 7,
+        title: "เด็กชาย",
+        name: "อนุสรณ์ โพธิ์พันธุ์",
+        fullName: "เด็กชายอนุสรณ์ โพธิ์พันธุ์",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-11T09:40:00.000Z"
+    },
+    "2645": {
+        studentId: "2645",
+        no: 8,
+        title: "เด็กชาย",
+        name: "กฤษณะพงษ์ ฝอยทอง",
+        fullName: "เด็กชายกฤษณะพงษ์ ฝอยทอง",
+        room: "3",
+        pretestScore: 5,
+        posttestScore: 7,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-11T15:05:00.000Z"
+    },
+    "2672": {
+        studentId: "2672",
+        no: 9,
+        title: "เด็กชาย",
+        name: "วชิรวิทย์ คำบุผา",
+        fullName: "เด็กชายวชิรวิทย์ คำบุผา",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-13T10:00:00.000Z"
+    },
+    "2452": {
+        studentId: "2452",
+        no: 10,
+        title: "เด็กหญิง",
+        name: "กวินตรา สุกสัก",
+        fullName: "เด็กหญิงกวินตรา สุกสัก",
+        room: "3",
+        pretestScore: 5,
+        posttestScore: 10,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-13T13:25:00.000Z"
+    },
+    "2453": {
+        studentId: "2453",
+        no: 11,
+        title: "เด็กหญิง",
+        name: "กวิสรา เนินสง่า",
+        fullName: "เด็กหญิงกวิสรา เนินสง่า",
+        room: "3",
+        pretestScore: 3,
+        posttestScore: 7,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-14T11:50:00.000Z"
+    },
+    "2456": {
+        studentId: "2456",
+        no: 12,
+        title: "เด็กหญิง",
+        name: "จันทร์จิรา ครองเคหา",
+        fullName: "เด็กหญิงจันทร์จิรา ครองเคหา",
+        room: "3",
+        pretestScore: 6,
+        posttestScore: 9,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-14T16:10:00.000Z"
+    },
+    "2457": {
+        studentId: "2457",
+        no: 13,
+        title: "เด็กหญิง",
+        name: "ชญานี พรหมสาส์น",
+        fullName: "เด็กหญิงชญานี พรหมสาส์น",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-17T09:20:00.000Z"
+    },
+    "2458": {
+        studentId: "2458",
+        no: 14,
+        title: "เด็กหญิง",
+        name: "ปรายฉัตร โคตรอาษา",
+        fullName: "เด็กหญิงปรายฉัตร โคตรอาษา",
+        room: "3",
+        pretestScore: 5,
+        posttestScore: 9,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-17T14:40:00.000Z"
+    },
+    "2460": {
+        studentId: "2460",
+        no: 15,
+        title: "เด็กหญิง",
+        name: "รักษา แสงขาว",
+        fullName: "เด็กหญิงรักษา แสงขาว",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-18T10:35:00.000Z"
+    },
+    "2468": {
+        studentId: "2468",
+        no: 16,
+        title: "เด็กหญิง",
+        name: "อินฑิรา ถามูล",
+        fullName: "เด็กหญิงอินฑิรา ถามูล",
+        room: "3",
+        pretestScore: 5,
+        posttestScore: 9,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-18T15:15:00.000Z"
+    },
+    "2469": {
+        studentId: "2469",
+        no: 17,
+        title: "เด็กหญิง",
+        name: "อินทิรา มาลา",
+        fullName: "เด็กหญิงอินทิรา มาลา",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 8,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-19T11:00:00.000Z"
+    },
+    "2507": {
+        studentId: "2507",
+        no: 18,
+        title: "เด็กหญิง",
+        name: "กมลลักษณ์ ศรีพิพัฒน์",
+        fullName: "เด็กหญิงกมลลักษณ์ ศรีพิพัฒน์",
+        room: "3",
+        pretestScore: 4,
+        posttestScore: 7,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-20T09:45:00.000Z"
+    },
+    "2508": {
+        studentId: "2508",
+        no: 19,
+        title: "เด็กหญิง",
+        name: "น้ำเหนือ แก้วไกรสร",
+        fullName: "เด็กหญิงน้ำเหนือ แก้วไกรสร",
+        room: "3",
+        pretestScore: 6,
+        posttestScore: 10,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-21T13:30:00.000Z"
+    },
+    "2630": {
+        studentId: "2630",
+        no: 20,
+        title: "เด็กหญิง",
+        name: "อ่อง พรมสาส์น",
+        fullName: "เด็กหญิงอ่อง พรมสาส์น",
+        room: "3",
+        pretestScore: 5,
+        posttestScore: 9,
+        completedUnits: [1, 2, 3, 4],
+        completedLabs: ["writer", "tap", "builder", "roi"],
+        unlockedBadges: ["nfc_starter", "iop_scholar", "nfc_encoder", "smart_designer", "eco_pack", "career_pro", "innovator_master"],
+        lastActive: "2026-08-24T10:15:00.000Z"
+    },
+};
+
+// ฝังข้อมูลผลการเรียนอัตโนมัติ
+try {
+    const existing = localStorage.getItem("PKG_STUDENTS_PROGRESS");
+    if (!existing || existing === "{}" || Object.keys(JSON.parse(existing || "{}")).length === 0) {
+        localStorage.setItem("PKG_STUDENTS_PROGRESS", JSON.stringify(DEMO_PACKAGING_PROGRESS));
+    }
+} catch (e) {
+    console.error("Packaging demo data init error:", e);
+}

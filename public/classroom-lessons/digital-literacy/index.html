@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์: ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ ม.3 • โรงเรียนบ้านน้ำพร</title>
+    
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        heading: ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#1e3a8a',
+                            navy: '#0f172a',
+                            gold: '#d97706',
+                            cyan: '#0284c7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Prompt', sans-serif;
+        }
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+            animation: float-slow 3.5s ease-in-out infinite;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+    <!-- ==================== IN-CONTENT NAVIGATION TOOLBAR (NO HEADER TAG) ==================== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 no-print">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- School Logo & Subject Info -->
+            <div class="flex items-center gap-3.5">
+                <a href="index.html" class="flex-shrink-0">
+                    <img src="1-small.png" alt="โลโก้โรงเรียนบ้านน้ำพร" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm hover:rotate-3 transition duration-300">
+                </a>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-900 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">โรงเรียนบ้านน้ำพร</span>
+                        <span class="text-[11px] text-slate-500">สพป.เลย เขต 1</span>
+                        <span class="text-[11px] text-amber-600 font-semibold">ปีการศึกษา 2569</span>
+                    </div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight mt-1">
+                        ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ <span class="text-blue-600 font-extrabold">ม.3</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- In-Content Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Button 1: หน้าหลัก -->
+                <a href="index.html" title="หน้าหลักภาพรวมและทะเบียนคะแนน" class="bg-blue-900 text-white shadow hover:bg-blue-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าหลัก</span>
+                </a>
+
+                <!-- Button 2: เว็บแอป -->
+                <a href="app.html" title="เข้าสู่เว็บแอปสื่อการสอนและแล็บเสมือนจริง" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <span>เว็บแอป</span>
+                </a>
+
+                <!-- Button 3: แผนการสอน -->
+                <a href="lesson-plan.html" title="เปิดแผนการจัดการเรียนรู้บูรณาการ" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                    <span>แผนการสอน</span>
+                </a>
+
+                <!-- Button 4: สั่งพิมพ์ A4 -->
+                <button onclick="window.print()" title="พิมพ์เอกสาร A4" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-print text-slate-600"></i>
+                    <span class="hidden sm:inline">พิมพ์ A4</span>
+                </button>
+
+                <!-- Teacher Mode Button -->
+                <button onclick="openTeacherLogin()" title="โหมดครูผู้สอน" class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+                    <i class="fa-solid fa-chalkboard-user text-amber-400"></i>
+                    <span class="hidden sm:inline">ครูผู้สอน</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden rounded-[36px] bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white p-8 sm:p-12 shadow-2xl border border-blue-900/50">
+            <div class="relative z-10 max-w-3xl space-y-4">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-cyan-300 border border-white/15">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี (วิทยาการคำนวณ) • ม.3 • สพป.เลย เขต 1
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight">
+                    การพัฒนาความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ <br class="hidden sm:inline">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-amber-300">
+                        (Digital Literacy & Cyber Safety)
+                    </span>
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+                    พัฒนาผู้เรียนสู่การเป็น <strong>"พลเมืองดิจิทัลรู้เท่าทันและปลอดภัย (Smart & Safe Digital Citizen)"</strong> มุ่งเน้นการประเมินความน่าเชื่อถือของสื่อ การรู้เท่าทันกลโกงออนไลน์ การตั้งค่าความปลอดภัยไซเบอร์ มารยาทดิจิทัล ตลอดจนกฎหมายคอมพิวเตอร์และลิขสิทธิ์ พร้อมห้องปฏิบัติการจำลอง 4 ฐาน และระบบประเมินพัฒนาการรายบุคคล
+                </p>
+                <div class="pt-3 flex flex-wrap items-center gap-3">
+                    <a href="app.html" class="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-rocket text-cyan-200"></i> เข้าสู่ระบบเว็บแอปสื่อการสอน
+                    </a>
+                    <a href="lesson-plan.html" class="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm rounded-2xl backdrop-blur-md border border-white/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-book-open-reader text-cyan-300"></i> แผนการจัดการเรียนรู้บูรณาการ (A4)
+                    </a>
+                    <a href="#progress-section" class="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm rounded-2xl backdrop-blur-md border border-white/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-amber-300"></i> ทะเบียนผลการเรียนรู้และเกียรติบัตร
+                    </a>
+                </div>
+            </div>
+
+            <!-- Background Graphic Elements -->
+            <div class="absolute right-6 bottom-4 opacity-10 hidden lg:block pointer-events-none">
+                <i class="fa-solid fa-shield-halved text-[260px] text-white"></i>
+            </div>
+        </section>
+
+        <!-- Quick Metrics Overview -->
+        <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm text-center">
+                <div class="text-xs text-slate-400 font-medium">นักเรียนกลุ่มเป้าหมาย ม.3</div>
+                <div class="text-3xl font-extrabold text-blue-900 mt-1">20 <span class="text-sm font-normal text-slate-500">คน</span></div>
+                <div class="text-[11px] text-emerald-600 font-semibold mt-1"><i class="fa-solid fa-users"></i> ทะเบียน นร. 1-69</div>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm text-center">
+                <div class="text-xs text-slate-400 font-medium">บทเรียนเนื้อหาหลัก</div>
+                <div class="text-3xl font-extrabold text-blue-600 mt-1">4 <span class="text-sm font-normal text-slate-500">มิติ</span></div>
+                <div class="text-[11px] text-blue-600 font-semibold mt-1"><i class="fa-solid fa-book"></i> Interactive Learning</div>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm text-center">
+                <div class="text-xs text-slate-400 font-medium">ฐานแล็บจำลองเสมือนจริง</div>
+                <div class="text-3xl font-extrabold text-indigo-600 mt-1">4 <span class="text-sm font-normal text-slate-500">ฐาน</span></div>
+                <div class="text-[11px] text-indigo-600 font-semibold mt-1"><i class="fa-solid fa-flask"></i> Hands-on Virtual Labs</div>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm text-center">
+                <div class="text-xs text-slate-400 font-medium">เกียรติบัตรรับรองสมรรถนะ</div>
+                <div class="text-3xl font-extrabold text-amber-600 mt-1">1 <span class="text-sm font-normal text-slate-500">ฉบับ</span></div>
+                <div class="text-[11px] text-amber-600 font-semibold mt-1"><i class="fa-solid fa-award"></i> รหัส NP-DL69 (เกณฑ์ 70%)</div>
+            </div>
+        </section>
+
+        <!-- Course Structure & 4 Dimensions -->
+        <section class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 pb-4">
+                <div>
+                    <span class="text-xs font-bold text-blue-600 tracking-wider uppercase">Curriculum Structure</span>
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">4 มิติการเรียนรู้ความปลอดภัยดิจิทัล ม.3 (ว23103)</h3>
+                </div>
+                <div class="text-xs text-slate-500 font-medium">มาตรฐาน ว 4.2 ม.3/3 และ ว 4.2 ม.3/4</div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Unit 1 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <div class="text-xs font-bold text-blue-600">มิติที่ 1</div>
+                    <h4 class="font-bold text-slate-900 text-base">การรู้เท่าทันสื่อและสารสนเทศ</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        การวิเคราะห์แหล่งที่มา ข้อเท็จจริง vs ความคิดเห็น ข่าวปลอม (Fake News) และการตรวจสอบภาพตัดต่อด้วยเครื่องมือสืบค้น
+                    </p>
+                </div>
+
+                <!-- Unit 2 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-shield-virus"></i>
+                    </div>
+                    <div class="text-xs font-bold text-rose-600">มิติที่ 2</div>
+                    <h4 class="font-bold text-slate-900 text-base">ภัยคุกคามไซเบอร์และกลลวง</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        รู้เท่าทัน Phishing Email, SMS หลอกลวง, มัลแวร์เรียกค่าไถ่ (Ransomware) และการสร้างเกราะป้องกันรหัสผ่าน 2 ชั้น (2FA)
+                    </p>
+                </div>
+
+                <!-- Unit 3 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div class="text-xs font-bold text-amber-600">มิติที่ 3</div>
+                    <h4 class="font-bold text-slate-900 text-base">การกลั่นแกล้งและมารยาทดิจิทัล</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        การรับมือ Cyberbullying, การไม่เป็นผู้กระทำ, สิทธิความเป็นส่วนตัวของตนเองและผู้อื่น, และการสื่อสารอย่างสร้างสรรค์ (Netiquette)
+                    </p>
+                </div>
+
+                <!-- Unit 4 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div class="text-xs font-bold text-purple-600">มิติที่ 4</div>
+                    <h4 class="font-bold text-slate-900 text-base">กฎหมายคอมพิวเตอร์และลิขสิทธิ์</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        พ.ร.บ.ว่าด้วยการกระทำความผิดเกี่ยวกับคอมพิวเตอร์, กฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA), สัญญาอนุญาต Creative Commons และ Fair Use
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 Virtual Labs Showcase -->
+        <section class="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <span class="text-xs font-bold text-cyan-400 tracking-wider uppercase">Interactive Virtual Labs</span>
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-white mt-1">4 ฐานปฏิบัติการจำลองเสมือนจริง</h3>
+                    <p class="text-xs text-slate-400">ฝึกทักษะการตัดสินใจในสถานการณ์จำลองจริงโดยไม่ต้องติดตั้งโปรแกรม</p>
+                </div>
+                <a href="app.html#labs" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition inline-flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-flask-vial text-cyan-200"></i> ทดลองทำแล็บในเว็บแอป
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-100">ฐานที่ 1: Phishing Inspector</h4>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">ตรวจจับอีเมลและข้อความลวง วิเคราะห์จุดสังเกต URL แฝง</p>
+                </div>
+                <div class="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-100">ฐานที่ 2: Password Shield</h4>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">ทดสอบความแข็งแกร่งรหัสผ่านและจำลองการถอดรหัส Brute-force</p>
+                </div>
+                <div class="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-user-lock"></i>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-100">ฐานที่ 3: Privacy Guard</h4>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">จำลองการตั้งค่าความเป็นส่วนตัวบน Social Media เพื่อป้องกันภัยคุกคาม</p>
+                </div>
+                <div class="p-5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-shoe-prints"></i>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-100">ฐานที่ 4: Digital Footprint</h4>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">สืบรอยเท้าดิจิทัล วิเคราะห์ผลกระทบต่ออนาคตและการสร้างภาพลักษณ์ที่ดี</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Progress & Evaluation Section -->
+        <section id="progress-section" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-lg space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+                <div>
+                    <span class="text-xs font-bold text-blue-600 tracking-wider uppercase">Individual Assessment Matrix</span>
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">ผลสัมฤทธิ์ทางการเรียนและพัฒนาการ ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ (20 คน)</h3>
+                    <p class="text-xs text-slate-500">ผลการประเมินรายบุคคลเปรียบเทียบคะแนนก่อนเรียน (Pre-test) และหลังเรียน (Post-test)</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportUnit1CSV()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-file-csv"></i> ดาวน์โหลด CSV
+                    </button>
+                    <a href="app.html" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบเรียน
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search & Filter Controls -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <input type="text" id="unit1-search" oninput="filterTable()" placeholder="ค้นหาตามชื่อ, นามสกุล หรือ รหัสนักเรียน..." class="w-full py-2.5 pl-10 pr-4 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-blue-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                </div>
+                <select id="unit1-filter-status" onchange="filterTable()" class="py-2.5 px-3 rounded-xl border border-slate-200 text-xs text-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="all">สถานะทั้งหมด (20 คน)</option>
+                    <option value="passed">ผ่านเกณฑ์แล้ว (เกียรติบัตรพร้อม)</option>
+                    <option value="excellent">ระดับดีเยี่ยม (8-10 คะแนน)</option>
+                </select>
+            </div>
+
+            <!-- Student Table -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                        <tr>
+                            <th class="py-3.5 px-4 text-center w-14">เลขที่</th>
+                            <th class="py-3.5 px-4 text-center w-24">รหัส นร.</th>
+                            <th class="py-3.5 px-4">ชื่อ - นามสกุล</th>
+                            <th class="py-3.5 px-4 text-center">ก่อนเรียน (Pre)</th>
+                            <th class="py-3.5 px-4 text-center">หลังเรียน (Post)</th>
+                            <th class="py-3.5 px-4 text-center">พัฒนาการ (Gain)</th>
+                            <th class="py-3.5 px-4 text-center">ผลการประเมิน</th>
+                            <th class="py-3.5 px-4 text-center">สถานะเกียรติบัตร</th>
+                        </tr>
+                    </thead>
+                    <tbody id="unit1-table-body" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                        <!-- Rendered dynamically by script -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Teacher & Leadership Section -->
+        <section class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm">
+            <div class="text-center max-w-2xl mx-auto space-y-2 mb-8">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Instructional Management</span>
+                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">ผู้รับผิดชอบการจัดการเรียนรู้</h3>
+                <p class="text-xs text-slate-500">โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto pt-4 border-t border-slate-100">
+                <!-- ครูผู้สอน -->
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-3">
+                    <div class="h-16 flex items-end justify-center">
+                        <img src="ลายเซ็น นิรุทธิ์.png" alt="ลายเซ็น นายนิรุทธิ์ เสวะนา" class="max-h-16 max-w-[120px] object-contain drop-shadow-sm">
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-900 text-sm">( นายนิรุทธิ์ เสวะนา )</div>
+                        <div class="text-xs text-blue-600 font-semibold mt-0.5">ครูประจำชั้นมัธยมศึกษาปีที่ 3</div>
+                        <div class="text-[11px] text-slate-400 mt-1">กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</div>
+                    </div>
+                </div>
+
+                <!-- ผู้อำนวยการโรงเรียน -->
+                <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-3">
+                    <div class="h-16 flex items-end justify-center">
+                        <img src="ลายเซ็น ผอ.ศิวาลัย.png" alt="ลายเซ็น นางศิวาลัย แก้วเขียว" class="max-h-16 max-w-[140px] object-contain drop-shadow-sm">
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-900 text-sm">( นางศิวาลัย แก้วเขียว )</div>
+                        <div class="text-xs text-amber-600 font-semibold mt-0.5">ผู้อำนวยการโรงเรียนบ้านน้ำพร</div>
+                        <div class="text-[11px] text-slate-400 mt-1">วิทยฐานะ ชำนาญการพิเศษ</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+        <!-- Teacher Modal -->
+    <div id="teacher-login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-sm">เข้าสู่โหมดครูผู้สอน</h4>
+                    <p class="text-[11px] text-slate-500">สำหรับนายนิรุทธิ์ เสวะนา</p>
+                </div>
+            </div>
+            <form onsubmit="handleTeacherSubmit(event)" class="space-y-3">
+                <input type="password" id="teacher-pwd-input" placeholder="กรุณากรอกรหัสผ่านครูผู้สอน" class="w-full py-2.5 px-3 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-blue-600">
+                <div id="teacher-login-error" class="text-rose-600 text-[11px] hidden font-semibold">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeTeacherLogin()" class="flex-1 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">ยืนยัน</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script to populate Unit 1 student table -->
+    <script>
+        const unit1Students = [
+            { no: 1, id: "2446", name: "เด็กชายธันวา บุญตัน",  pre: 5, post: 9, gain: 4 },
+            { no: 2, id: "2449", name: "เด็กชายธีรศักดิ์ บุญมาก",  pre: 3, post: 7, gain: 4 },
+            { no: 3, id: "2450", name: "เด็กชายวรเมธ แสงขาว",  pre: 2, post: 7, gain: 5 },
+            { no: 4, id: "2451", name: "เด็กชายสุรศักดิ์ ฤทธิศักดิ์",  pre: 6, post: 10, gain: 4 },
+            { no: 5, id: "2627", name: "เด็กชายธนโชติ นิวงษา", pre: 3, post: 7, gain: 4 },
+            { no: 6, id: "2628", name: "เด็กชายณัฏฐวี ซุ้ยไกร", pre: 4, post: 7, gain: 3 },
+            { no: 7, id: "2629", name: "เด็กชายอนุสรณ์ โพธิ์พันธุ์",  pre: 3, post: 7, gain: 4 },
+            { no: 8, id: "2645", name: "เด็กชายกฤษณะพงษ์ ฝอยทอง",  pre: 4, post: 7, gain: 3 },
+            { no: 9, id: "2672", name: "เด็กชายวชิรวิทย์ คำบุผา",  pre: 5, post: 9, gain: 4 },
+            { no: 10, id: "2452", name: "เด็กหญิงกวินตรา สุกสัก",  pre: 4, post: 9, gain: 5 },
+            { no: 11, id: "2453", name: "เด็กหญิงกวิสรา เนินสง่า",  pre: 4, post: 8, gain: 4 },
+            { no: 12, id: "2456", name: "เด็กหญิงจันทร์จิรา ครองเคหา",  pre: 6, post: 10, gain: 4 },
+            { no: 13, id: "2457", name: "เด็กหญิงชญานี พรหมสาส์น",  pre: 3, post: 7, gain: 4 },
+            { no: 14, id: "2458", name: "เด็กหญิงปรายฉัตร โคตรอาษา",  pre: 4, post: 8, gain: 4 },
+            { no: 15, id: "2460", name: "เด็กหญิงรักษา แสงขาว",  pre: 5, post: 9, gain: 4 },
+            { no: 16, id: "2468", name: "เด็กหญิงอินฑิรา ถามูล",  pre: 4, post: 9, gain: 5 },
+            { no: 17, id: "2469", name: "เด็กหญิงอินทิรา มาลา",  pre: 3, post: 7, gain: 4 },
+            { no: 18, id: "2507", name: "เด็กหญิงกมลลักษณ์ ศรีพิพัฒน์",  pre: 4, post: 8, gain: 4 },
+            { no: 19, id: "2508", name: "เด็กหญิงน้ำเหนือ แก้วไกรสร",  pre: 5, post: 9, gain: 4 },
+            { no: 20, id: "2630", name: "เด็กหญิงอ่อง พรมสาส์น",  pre: 6, post: 10, gain: 4 }
+        ];
+
+        function renderUnit1Table(data) {
+            const tbody = document.getElementById("unit1-table-body");
+            if (!tbody) return;
+            let html = "";
+            data.forEach(s => {
+                const evalLevel = s.post >= 8 ? '<span class="text-emerald-700 font-bold">ดีเยี่ยม</span>' : '<span class="text-blue-700 font-bold">ดี</span>';
+                html += `
+                    <tr class="hover:bg-blue-50/40 transition">
+                        <td class="py-3 px-4 text-center font-bold text-slate-400">${s.no}</td>
+                        <td class="py-3 px-4 text-center font-mono font-bold text-blue-900">${s.id}</td>
+                        <td class="py-3 px-4 font-bold text-slate-900 flex items-center gap-2">
+                             <span>${s.name}</span>
+                        </td>
+                        <td class="py-3 px-4 text-center text-slate-600 font-semibold">${s.pre} / 10</td>
+                        <td class="py-3 px-4 text-center font-extrabold text-blue-900 text-sm">${s.post} / 10</td>
+                        <td class="py-3 px-4 text-center text-emerald-600 font-extrabold">+${s.gain}</td>
+                        <td class="py-3 px-4 text-center">${evalLevel}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                <i class="fa-solid fa-circle-check text-[10px]"></i> ผ่าน (NP-DL69-${s.id})
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function filterTable() {
+            const query = (document.getElementById("unit1-search").value || "").trim().toLowerCase();
+            const status = document.getElementById("unit1-filter-status").value;
+
+            let filtered = unit1Students.filter(s => {
+                const matchQuery = s.name.toLowerCase().includes(query) || s.id.includes(query);
+                let matchStatus = true;
+                if (status === 'excellent') {
+                    matchStatus = s.post >= 8;
+                }
+                return matchQuery && matchStatus;
+            });
+            renderUnit1Table(filtered);
+        }
+
+        function exportUnit1CSV() {
+            let csv = "\uFEFF"; // UTF-8 BOM
+            csv += "เลขที่,รหัสนักเรียน,ชื่อ-สกุล,คะแนนก่อนเรียน (Pre-test),คะแนนหลังเรียน (Post-test),ระดับพัฒนาการ (Gain),รหัสเกียรติบัตร\n";
+            unit1Students.forEach(s => {
+                csv += `${s.no},${s.id},"${s.name}",${s.pre},${s.post},+${s.gain},NP-DL69-${s.id}\n`;
+            });
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "รายงานผลการเรียนรู้_หน่วย1_ความปลอดภัยดิจิทัล_ม3.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function openTeacherLogin() {
+            document.getElementById("teacher-login-modal").classList.remove("hidden");
+            document.getElementById("teacher-pwd-input").value = "";
+            document.getElementById("teacher-login-error").classList.add("hidden");
+            document.getElementById("teacher-pwd-input").focus();
+        }
+
+        function closeTeacherLogin() {
+            document.getElementById("teacher-login-modal").classList.add("hidden");
+        }
+
+        function handleTeacherSubmit(e) {
+            e.preventDefault();
+            const pwd = document.getElementById("teacher-pwd-input").value;
+            if (pwd.trim() === "42010113") {
+                if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ยินดีต้อนรับคุณครู',
+                    text: 'ยินดีต้อนรับคุณครูนิรุทธิ์ เสวะนา สู่ระบบจัดการข้อมูลการสอน ม.3 โรงเรียนบ้านน้ำพร',
+                    confirmButtonColor: '#0f172a'
+                });
+            } else {
+                alert("ยินดีต้อนรับคุณครูนิรุทธิ์ เสวะนา สู่ระบบจัดการข้อมูลการสอน ม.3 โรงเรียนบ้านน้ำพร");
+            }
+                closeTeacherLogin();
+            } else {
+                document.getElementById("teacher-login-error").classList.remove("hidden");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderUnit1Table(unit1Students);
+        });
+    </script>
+
+    <!-- In-Content Bottom Note (No Footer Tag) -->
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 no-print">
+        <p class="font-medium text-slate-600">โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1</p>
+        <p class="text-[11px] text-slate-400 mt-1">นตฺถิ ปญฺญา สมา อาภา — ไม่มีแสงสว่างใดเสมอด้วยปัญญา • ครูผู้สอน: นายนิรุทธิ์ เสวะนา • ผู้อำนวยการโรงเรียน: นางศิวาลัย แก้วเขียว</p>
+    </div>
+    
+</body>
+</html>

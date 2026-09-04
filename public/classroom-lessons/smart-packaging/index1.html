@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การพัฒนาทักษะนวัตกรอาชีพดิจิทัล: บรรจุภัณฑ์อัจฉริยะ (Smart Packaging) ด้วย NFC Tag | โรงเรียนบ้านน้ำพร</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            emerald: '#059669',
+                            forest: '#065f46',
+                            mint: '#10b981',
+                            amber: '#d97706',
+                            slate: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'Sarabun', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/packaging-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
+    <!-- ==================== IN-CONTENT NAVIGATION TOOLBAR (NO HEADER TAG) ==================== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 no-print">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- School Logo & Subject Info -->
+            <div class="flex items-center gap-3.5">
+                <a href="index.html" class="flex-shrink-0">
+                    <img src="1-small.png" alt="โลโก้โรงเรียนบ้านน้ำพร" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm hover:rotate-3 transition duration-300">
+                </a>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-900 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">โรงเรียนบ้านน้ำพร</span>
+                        <span class="text-[11px] text-slate-500">สพป.เลย เขต 1</span>
+                        <span class="text-[11px] text-amber-600 font-semibold">ปีการศึกษา 2569</span>
+                    </div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight mt-1">
+                        นวัตกรอาชีพดิจิทัล: บรรจุภัณฑ์อัจฉริยะ (NFC Tag) <span class="text-emerald-700 font-extrabold">ม.3</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- In-Content Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Button 1: หน้าหลัก -->
+                <a href="index.html" title="หน้าหลักภาพรวมและทะเบียนคะแนน" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าหลัก</span>
+                </a>
+
+                <!-- Button 2: เว็บแอป -->
+                <a href="app.html" title="เข้าสู่เว็บแอปสื่อการสอนและแล็บเสมือนจริง" class="bg-emerald-600 text-white shadow hover:bg-emerald-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <span>เว็บแอป</span>
+                </a>
+
+                <!-- Button 3: แผนการสอน -->
+                <a href="lesson-plan.html" title="เปิดแผนการจัดการเรียนรู้บูรณาการ" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                    <span>แผนการสอน</span>
+                </a>
+
+                <!-- Button 4: สั่งพิมพ์ A4 -->
+                <button onclick="window.print()" title="พิมพ์เอกสาร A4" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-print text-slate-600"></i>
+                    <span class="hidden sm:inline">พิมพ์ A4</span>
+                </button>
+        <!-- Dashboard Quick Button -->
+        <button onclick="PackagingApp.navigateTo('dashboard')" class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-chart-pie text-emerald-700"></i>
+            <span class="hidden sm:inline">Dashboard</span>
+        </button>
+
+        <!-- Audio FX Toggle -->
+        <button onclick="PackagingApp.toggleSound()" title="เปิด/ปิดเสียงเอฟเฟกต์" class="w-9 h-9 rounded-full border border-slate-200 hover:bg-slate-100 flex items-center justify-center transition">
+            <i id="sound-toggle-icon" class="fa-solid fa-volume-high text-emerald-600 text-sm"></i>
+        </button>
+
+        <!-- Student Avatar / Profile Badge -->
+        <div class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 py-1.5 px-3 rounded-full cursor-pointer transition border border-slate-200" onclick="PackagingApp.navigateTo('home')">
+            <span id="header-avatar-display" class="text-base"><i class="fa-solid fa-user-check text-blue-600"></i></span>
+            <span id="header-student-name" class="text-xs font-semibold text-slate-700 max-w-[120px] md:max-w-[160px] truncate">
+                ยังไม่ได้เข้าสู่ระบบ
+            </span>
+        </div>
+
+        <!-- Switch Student / Logout Button -->
+        <button id="header-logout-btn" onclick="PackagingApp.logoutStudent()" title="ออกจากระบบ / สลับผู้เรียน" class="w-9 h-9 rounded-xl border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition hidden">
+            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+        </button>
+
+                <!-- Teacher Mode Button -->
+                <button onclick="openTeacherLogin()" title="โหมดครูผู้สอน" class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+                    <i class="fa-solid fa-chalkboard-user text-amber-400"></i>
+                    <span class="hidden sm:inline">ครูผู้สอน</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= SECTION 1: HOME & LOGIN WITH STUDENT ID ================= -->
+        <section id="section-home" class="app-section">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left Column: Hero Banner & Curriculum Intro -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-950 text-white rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+                        <div class="absolute -right-10 -bottom-10 opacity-15 pointer-events-none">
+                            <img src="2-small.png" alt="ตราสัญลักษณ์" class="w-80 h-80 object-contain">
+                        </div>
+                        
+                        <div class="inline-flex items-center gap-2 bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 px-3 py-1 rounded-full text-xs font-semibold text-emerald-200 mb-4">
+                            <i class="fa-solid fa-microchip text-emerald-300"></i> โครงการพัฒนาทักษะนวัตกรอาชีพดิจิทัล
+                        </div>
+
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight tracking-tight">
+                            สร้างสรรค์ <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-amber-300">"บรรจุภัณฑ์อัจฉริยะ" (Smart Packaging)</span> ด้วย NFC Tag
+                        </h2>
+
+                        <p class="text-sm text-emerald-100/90 leading-relaxed mt-4 font-light">
+                            ยินดีต้อนรับนักเรียนชั้นมัธยมศึกษาปีที่ 3 สู่บทเรียนแบบโต้ตอบ กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี (การออกแบบและเทคโนโลยี) โรงเรียนบ้านน้ำพร บูรณาการชิป NFC 13.56 MHz สู่บรรจุภัณฑ์ผลิตภัณฑ์ชุมชนบ้านน้ำพรและเมืองเลย เพื่อสร้างมูลค่าเพิ่มและพัฒนาทักษะนวัตกรดิจิทัล
+                        </p>
+
+                        <!-- Highlights Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-emerald-700/50 text-center">
+                            <div class="p-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+                                <div class="text-2xl font-bold text-emerald-300">20</div>
+                                <div class="text-[11px] text-emerald-200">นักเรียน ม.3</div>
+                            </div>
+                            <div class="p-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+                                <div class="text-2xl font-bold text-amber-300">4</div>
+                                <div class="text-[11px] text-emerald-200">หน่วยการเรียนรู้</div>
+                            </div>
+                            <div class="p-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+                                <div class="text-2xl font-bold text-teal-300">4</div>
+                                <div class="text-[11px] text-emerald-200">ห้องแล็บจำลอง</div>
+                            </div>
+                            <div class="p-3 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+                                <div class="text-2xl font-bold text-cyan-300">1</div>
+                                <div class="text-[11px] text-emerald-200">เกียรติบัตร รร.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Curriculum Objectives Card -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-bullseye text-emerald-700"></i>
+                                วัตถุประสงค์การเรียนรู้และตัวชี้วัด (ว 4.1)
+                            </h3>
+                            <span class="text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full font-bold">ว 4.1 ม.3/1 - ม.3/5</span>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-2 leading-relaxed">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                                <span>เข้าใจหลักการเทคโนโลยีการสื่อสารระยะใกล้ (NFC Tag 13.56 MHz) และมาตรฐานข้อมูล NDEF</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                                <span>สามารถออกแบบสตอรี่และนำเสนอเรื่องราวคุณค่าผลิตภัณฑ์ชุมชนผ่านหน้าเว็บเสมือนจริง</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                                <span>ออกแบบกล่องบรรจุภัณฑ์ตามแนวคิดเศรษฐกิจหมุนเวียน (BCG Model) ที่เป็นมิตรต่อสิ่งแวดล้อม</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                                <span>สามารถวิเคราะห์โมเดลธุรกิจ คำนวณต้นทุน จุดคุ้มทุน และผลตอบแทนจากการลงทุน (ROI)</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 4 Community Products Showcase -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-boxes-stacked text-emerald-700"></i>
+                                4 ผลิตภัณฑ์ชุมชนบ้านน้ำพรและเมืองเลยที่นำมาพัฒนา
+                            </h3>
+                            <span class="text-xs text-slate-400 font-semibold">กรณีศึกษาจริง</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:border-emerald-300 transition text-center space-y-1">
+                                <div class="text-2xl">🧵</div>
+                                <div class="font-bold text-slate-900">ผ้าฝ้ายทอมือ</div>
+                                <div class="text-[10px] text-emerald-700 font-semibold">หัตถกรรมพื้นถิ่น</div>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:border-emerald-300 transition text-center space-y-1">
+                                <div class="text-2xl">🌰</div>
+                                <div class="font-bold text-slate-900">มะคาเดเมียอบ</div>
+                                <div class="text-[10px] text-emerald-700 font-semibold">เกษตรแปรรูป</div>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:border-emerald-300 transition text-center space-y-1">
+                                <div class="text-2xl">☕</div>
+                                <div class="font-bold text-slate-900">กาแฟดริปน้ำพร</div>
+                                <div class="text-[10px] text-emerald-700 font-semibold">เครื่องดื่มพรีเมียม</div>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:border-emerald-300 transition text-center space-y-1">
+                                <div class="text-2xl">🍯</div>
+                                <div class="font-bold text-slate-900">น้ำผึ้งป่าเดือนห้า</div>
+                                <div class="text-[10px] text-emerald-700 font-semibold">ผลผลิตธรรมชาติ</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Dedicated Student Login Card -->
+                <div class="lg:col-span-5">
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-emerald-100 shadow-xl space-y-6 sticky top-28">
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-microchip"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-base">เข้าสู่ระบบการเรียนรู้ ม.3</h3>
+                                <p class="text-xs text-slate-500">กรอกเลขประจำตัวนักเรียน 4 หลักตามทะเบียนโรงเรียน</p>
+                            </div>
+                        </div>
+
+                        <form onsubmit="PackagingApp.loginWithStudentId(event)" class="space-y-4">
+                            <!-- Student ID Input Box -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                    เลขประจำตัวนักเรียน (Student ID) <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="text" id="login-student-id" maxlength="6" autofocus placeholder="เช่น 2446, 2449, 2450..." class="w-full py-3.5 pl-11 pr-4 rounded-2xl border-2 border-slate-300 text-base font-mono font-bold tracking-widest text-emerald-950 focus:border-emerald-600 focus:outline-none transition">
+                                    <i class="fa-solid fa-id-badge absolute left-4 top-4 text-slate-400 text-base"></i>
+                                </div>
+                            </div>
+
+
+                            <!-- Live Student Detection Preview Box -->
+                            <div id="login-student-preview" class="hidden transition-all duration-300">
+                                <!-- Injected dynamically when ID is recognized -->
+                            </div>
+
+                            
+
+                            <!-- School Label -->
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-school text-emerald-700"></i>
+                                    <span>สถานศึกษา: <strong>โรงเรียนบ้านน้ำพร</strong></span>
+                                </div>
+                                <span class="text-emerald-700 font-semibold">ชั้น ม.3</span>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="btn-login-submit" class="w-full py-3.5 px-4 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-emerald-600/25 transition flex items-center justify-center gap-2 mt-4">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                                <span>เข้าสู่ระบบและเริ่มเรียนรู้</span>
+                            </button>
+                        </form>
+
+                        <!-- View Dashboard shortcut -->
+                        <div class="mt-4 pt-4 border-t border-slate-100 text-center">
+                            <button onclick="PackagingApp.navigateTo('dashboard')" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold inline-flex items-center gap-1">
+                                <i class="fa-solid fa-chart-line"></i> ดู Dashboard ติดตามความก้าวหน้าของเพื่อนทั้งห้อง
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: PRE-TEST ================= -->
+        <section id="section-pretest" class="app-section hidden">
+            <div id="pretest-questions-container">
+                <!-- Rendered dynamically by PackagingApp.renderQuiz('pretest') -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: UNITS OVERVIEW ================= -->
+        <section id="section-units" class="app-section hidden space-y-6">
+            <div class="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-book-bookmark text-emerald-700"></i>
+                        ห้องบทเรียนนวัตกรดิจิทัล ม.3
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">ศึกษาบทเรียนตามลำดับเพื่อปลดล็อกทักษะนวัตกรอาชีพดิจิทัลและห้องปฏิบัติการ</p>
+                </div>
+                <button onclick="PackagingApp.navigateTo('labs')" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-2 self-start sm:self-auto">
+                    <i class="fa-solid fa-microchip"></i> ข้ามไปห้องแล็บจำลอง
+                </button>
+            </div>
+
+            <div id="units-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Injected dynamically by PackagingApp.renderUnitsList() -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: VIRTUAL LABS (4 TABS) ================= -->
+        <section id="section-labs" class="app-section hidden space-y-6">
+            
+            <div class="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-emerald-700"></i>
+                        4 ฐานปฏิบัติการเสมือนจริง (Virtual Laboratories)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">ลงมือปฏิบัติการเขียนชิป ทดสอบการแตะสมาร์ตโฟน ออกแบบกล่องรักษ์โลก และคำนวณผลตอบแทน</p>
+                </div>
+            </div>
+
+            <!-- Labs Navigation Tabs -->
+            <div class="flex flex-wrap items-center gap-2 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200 w-fit">
+                <button id="lab-tab-writer" onclick="PackagingApp.switchLabTab('writer')" class="lab-tab-btn active">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>ฐานที่ 1: NFC Writer (เขียนชิป)</span>
+                </button>
+                <button id="lab-tab-tap" onclick="PackagingApp.switchLabTab('tap')" class="lab-tab-btn inactive">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <span>ฐานที่ 2: Virtual Tap (แตะมือถือ)</span>
+                </button>
+                <button id="lab-tab-builder" onclick="PackagingApp.switchLabTab('builder')" class="lab-tab-btn inactive">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>ฐานที่ 3: Packaging Builder (ออกแบบ)</span>
+                </button>
+                <button id="lab-tab-roi" onclick="PackagingApp.switchLabTab('roi')" class="lab-tab-btn inactive">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>ฐานที่ 4: ROI & Business Canvas</span>
+                </button>
+            </div>
+
+            <!-- Lab Panels -->
+            <div id="lab-panel-writer">
+                <div id="lab-container-writer"></div>
+            </div>
+
+            <div id="lab-panel-tap" class="hidden">
+                <div id="lab-container-tap"></div>
+            </div>
+
+            <div id="lab-panel-builder" class="hidden">
+                <div id="lab-container-builder"></div>
+            </div>
+
+            <div id="lab-panel-roi" class="hidden">
+                <div id="lab-container-roi"></div>
+            </div>
+
+        </section>
+
+        <!-- ================= SECTION 5: POST-TEST ================= -->
+        <section id="section-posttest" class="app-section hidden">
+            <div id="posttest-questions-container">
+                <!-- Injected dynamically by PackagingApp.renderQuiz('posttest') -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 6: RESULTS & CERTIFICATE ================= -->
+        <section id="section-cert" class="app-section hidden">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <!-- Score Summary Card -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-200 text-center">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-3">
+                        <i class="fa-solid fa-flag-checkered"></i> สำเร็จหลักสูตรนวัตกรอาชีพดิจิทัล ม.3
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">
+                        รายงานสรุปผลการเรียนรู้และพัฒนาการ
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">เปรียบเทียบคะแนนก่อนเรียนและหลังเรียน (Smart Packaging NFC)</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+                        <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200">
+                            <span class="text-xs font-semibold text-teal-700">คะแนนก่อนเรียน (Pre-test)</span>
+                            <div id="res-pre-score" class="text-3xl font-extrabold text-teal-900 mt-1">0 / 10</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
+                            <span class="text-xs font-semibold text-emerald-700">คะแนนหลังเรียน (Post-test)</span>
+                            <div id="res-post-score" class="text-3xl font-extrabold text-emerald-900 mt-1">0 / 10</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200">
+                            <span class="text-xs font-semibold text-amber-700">ระดับพัฒนาการ (Gain)</span>
+                            <div id="res-gain-score" class="text-3xl font-extrabold text-amber-900 mt-1">+0</div>
+                        </div>
+                    </div>
+
+                    <p id="res-gain-text" class="text-xs text-slate-600 font-medium"></p>
+                </div>
+
+                <div id="cert-status-notice"></div>
+
+                <!-- Certificate HTML Preview Area (Printable A4 Landscape) -->
+                <div id="cert-print-area" class="w-full">
+                    <div class="cert-container rounded-3xl overflow-hidden max-w-3xl mx-auto">
+                        <div class="cert-inner-border rounded-2xl text-center relative bg-white">
+                            <div class="cert-corner top-left"></div>
+                            <div class="cert-corner top-right"></div>
+                            <div class="cert-corner bottom-left"></div>
+                            <div class="cert-corner bottom-right"></div>
+
+                            <img src="1-small.png" alt="โลโก้โรงเรียนบ้านน้ำพร" class="w-24 h-24 mx-auto object-contain mb-2">
+
+                            <h3 class="text-lg md:text-xl font-bold text-emerald-900">โรงเรียนบ้านน้ำพร</h3>
+                            <p class="text-xs italic text-slate-500 mb-2">นตฺถิ ปญฺญา สมา อาภา (ไม่มีแสงสว่างใดเสมอด้วยปัญญา)</p>
+                            
+                            <div class="text-amber-700 font-bold text-base md:text-lg my-2">
+                                ประกาศนียบัตรนวัตกรอาชีพดิจิทัล (Digital Career Innovator)
+                            </div>
+                            <div class="text-xs text-slate-500 mb-1">
+                                ให้ไว้เพื่อแสดงว่า
+                            </div>
+
+                            <div id="pkg-cert-preview-name" class="text-2xl md:text-3xl font-bold text-slate-900 my-2">
+                                เด็กชายธันวา บุญตัน
+                            </div>
+
+                            <div id="pkg-cert-preview-class" class="text-xs text-slate-600 mb-3">
+                                ชั้นมัธยมศึกษาปีที่ 3 เลขที่ 1
+                            </div>
+
+                            <p class="text-xs text-slate-700 max-w-lg mx-auto leading-relaxed">
+                                ได้ผ่านการเรียนรู้และการพัฒนาทักษะนวัตกรอาชีพดิจิทัล<br>
+                                <strong class="text-emerald-900 text-sm">ผ่านการสร้างสรรค์ "บรรจุภัณฑ์อัจฉริยะ (Smart Packaging)" ด้วยเทคโนโลยี NFC Tag เชื่อมโยงผลิตภัณฑ์ชุมชน</strong><br>
+                                กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี (การออกแบบและเทคโนโลยี) ประจำปีการศึกษา 2569
+                            </p>
+
+                            <div id="pkg-cert-preview-score" class="text-xs font-bold text-emerald-700 my-3">
+                                ผลการประเมิน: 8 / 10 คะแนน (80%) - ระดับ ดีเยี่ยม (Excellent Innovator)
+                            </div>
+
+                            <div id="pkg-cert-preview-date" class="text-xs text-slate-500 mb-6">
+                                ให้ไว้ ณ วันที่ 3 กันยายน พ.ศ. 2569
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-8 max-w-md mx-auto pt-2 border-t border-slate-200 text-xs text-slate-700">
+                                <div class="text-center">
+                                    <div class="h-14 flex items-end justify-center mb-1">
+                                        <img src="ลายเซ็น นิรุทธิ์.png" alt="ลายเซ็น นายนิรุทธิ์ เสวะนา" class="max-h-14 max-w-[100px] object-contain drop-shadow-sm">
+                                    </div>
+                                    <div class="font-signature text-sm font-semibold mb-1 text-slate-700">( นายนิรุทธิ์ เสวะนา )</div>
+                                    <div>ครูประจำชั้นมัธยมศึกษาปีที่ 3</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="h-14 flex items-end justify-center mb-1">
+                                        <img src="ลายเซ็น ผอ.ศิวาลัย.png" alt="ลายเซ็น นางศิวาลัย แก้วเขียว" class="max-h-14 max-w-[120px] object-contain drop-shadow-sm">
+                                    </div>
+                                    <div class="font-signature text-sm font-semibold mb-1 text-slate-700">( นางศิวาลัย แก้วเขียว )</div>
+                                    <div>ผู้อำนวยการโรงเรียนบ้านน้ำพร</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-2 border-t border-slate-100 flex justify-between text-[10px] text-slate-400">
+                                <span id="pkg-cert-preview-code">รหัสอ้างอิง: NP-NFC69-XXXX</span>
+                                <span>BAN NAM PHORN SCHOOL • DIGITAL CAREER INNOVATOR M.3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas Container (Synchronous Rendering) -->
+                <div class="flex justify-center cert-canvas-box my-4">
+                    <canvas id="pkg-cert-canvas" width="1200" height="850" class="max-w-full h-auto rounded-2xl shadow-xl border-4 border-white"></canvas>
+                </div>
+
+                <!-- Action Buttons -->
+                <div id="cert-action-buttons" class="flex flex-wrap gap-3 justify-center no-print">
+                    <button onclick="PackagingApp.printCertificate()" class="px-6 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> สั่งพิมพ์เกียรติบัตร (A4 แนวนอน)
+                    </button>
+                    <button onclick="PackagingApp.downloadCertificate()" class="px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> ดาวน์โหลดรูปภาพเกียรติบัตร (PNG)
+                    </button>
+                    <button onclick="PackagingApp.navigateTo('dashboard')" class="px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie"></i> ดู Dashboard ความก้าวหน้า
+                    </button>
+                    <button onclick="PackagingApp.retakeQuiz('posttest')" class="px-5 py-3 border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> สอบแก้ตัวใหม่
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 7: CLASS PROGRESS DASHBOARD ================= -->
+        <section id="section-dashboard" class="app-section hidden">
+            <div class="space-y-6">
+                
+                <!-- Dashboard Header -->
+                <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-950 text-white p-6 md:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-semibold mb-2">
+                            <i class="fa-solid fa-chalkboard-user"></i> แดชบอร์ดติดตามความก้าวหน้ารายบุคคล
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-extrabold">
+                            ความก้าวหน้าการเรียนรู้ ชั้นมัธยมศึกษาปีที่ 3 (20 คน)
+                        </h2>
+                        <p class="text-xs text-slate-300 mt-1">
+                            โรงเรียนบ้านน้ำพร • ภาคเรียนที่ 1 ปีการศึกษา 2569 • ครูประจำวิชา: <strong>นายนิรุทธิ์ เสวะนา</strong>
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="PackagingApp.exportCSV()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-excel"></i> ส่งออกไฟล์ Excel/CSV
+                        </button>
+                        <button onclick="PackagingApp.navigateTo('home')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-house"></i> หน้าหลัก
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6 KPI Summary Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-center">
+                        <div class="text-[11px] text-slate-500 font-semibold">นักเรียนทั้งหมด</div>
+                        <div id="dash-kpi-total" class="text-2xl font-extrabold text-slate-900 mt-1">20 คน</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">ชั้น ม.3 ประจำปี 2569</div>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-2xl border border-emerald-200 shadow-sm text-center">
+                        <div class="text-[11px] text-emerald-700 font-semibold">เข้าเรียนแล้ว</div>
+                        <div id="dash-kpi-active" class="text-2xl font-extrabold text-emerald-800 mt-1">20 / 20</div>
+                        <div class="text-[10px] text-emerald-500 mt-0.5">อัตราการมีส่วนร่วม 100%</div>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-2xl border border-emerald-200 shadow-sm text-center">
+                        <div class="text-[11px] text-emerald-700 font-semibold whitespace-nowrap">สำเร็จหลักสูตร</div>
+                        <div id="dash-kpi-completed" class="text-2xl font-extrabold text-emerald-800 mt-1">20 คน</div>
+                        <div class="text-[10px] text-emerald-500 mt-0.5">ทำ Post-test ครบ 100%</div>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-center">
+                        <div class="text-[11px] text-slate-500 font-semibold">เฉลี่ยก่อนเรียน</div>
+                        <div id="dash-kpi-avg-pre" class="text-2xl font-extrabold text-teal-600 mt-1">-</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">จากเต็ม 10 คะแนน</div>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-center">
+                        <div class="text-[11px] text-slate-500 font-semibold">เฉลี่ยหลังเรียน</div>
+                        <div id="dash-kpi-avg-post" class="text-2xl font-extrabold text-emerald-600 mt-1">-</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">จากเต็ม 10 คะแนน</div>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-center">
+                        <div class="text-[11px] text-slate-500 font-semibold">พัฒนาการเฉลี่ย</div>
+                        <div id="dash-kpi-avg-gain" class="text-2xl font-extrabold text-amber-600 mt-1">-</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">Mean Score Gain</div>
+                    </div>
+                </div>
+
+                <!-- Table Controls & Search Bar -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <!-- Filter Pills -->
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="PackagingApp.setDashboardFilter('all')" data-filter="all" class="dash-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition">
+                            ทั้งหมด (20)
+                        </button>
+                        <button onclick="PackagingApp.setDashboardFilter('in_progress')" data-filter="in_progress" class="dash-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">
+                            ⏳ กำลังศึกษา
+                        </button>
+                        <button onclick="PackagingApp.setDashboardFilter('completed')" data-filter="completed" class="dash-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">
+                            <span class="whitespace-nowrap">✅ สำเร็จหลักสูตร</span>
+                        </button>
+                        <button onclick="PackagingApp.setDashboardFilter('not_started')" data-filter="not_started" class="dash-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">
+                            ยังไม่เริ่ม
+                        </button>
+                    </div>
+
+                    <!-- Search Input Box -->
+                    <div class="relative w-full md:w-72">
+                        <input type="text" id="dash-search-input" placeholder="ค้นหาชื่อ, เลขประจำตัว, เลขที่..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Students Progress Individual Cards Grid -->
+                <div id="dash-student-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <!-- Cards injected dynamically by JS -->
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Core Scripts -->
+    <script src="js/school-logo.js"></script>
+    <script src="js/signatures-data.js"></script>
+    <script src="js/packaging-data.js"></script>
+    <script src="js/packaging-demo.js"></script>
+    <script src="js/packaging-sim.js"></script>
+    <script src="js/packaging-cert.js"></script>
+    <script src="js/packaging-app.js"></script>
+
+    <!-- Guest Name Input Modal -->
+    <div id="guest-name-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-fadeIn">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-bold">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg">ระบุชื่อผู้ทดลองใช้งาน</h3>
+                    <p class="text-xs text-slate-500">รหัสผู้เยี่ยมชม 0000 (Guest User)</p>
+                </div>
+            </div>
+            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                กรุณาระบุ <strong>ชื่อ-นามสกุลจริงของคุณ</strong> เพื่อใช้ในการบันทึกผลการทดลองทำกิจกรรมและพิมพ์เกียรติบัตรรับรอง (ระบบจะบังคับระบุชื่อทุกครั้งที่เข้าสู่ระบบด้วยรหัส 0000)
+            </p>
+            <form id="guest-name-form" onsubmit="PackagingApp.submitGuestLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                        ชื่อ-นามสกุลของคุณ <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="guest-name-input" required placeholder="เช่น นายทดสอบ ระบบ หรือ ศศิธร ใจดี" class="w-full py-3 pl-10 pr-4 rounded-xl border-2 border-slate-300 text-sm font-semibold text-slate-800 focus:border-amber-500 focus:outline-none transition">
+                        <i class="fa-solid fa-signature absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="PackagingApp.closeGuestNameModal()" class="flex-1 py-3 px-4 border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl transition">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-arrow-right"></i> ยืนยันและเริ่มใช้งาน
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Teacher Login Modal -->
+    <div id="teacher-login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-sm">เข้าสู่โหมดครูผู้สอน</h4>
+                    <p class="text-[11px] text-slate-500">สำหรับนายนิรุทธิ์ เสวะนา</p>
+                </div>
+            </div>
+            <form onsubmit="handleTeacherSubmit(event)" class="space-y-3">
+                <input type="password" id="teacher-pwd-input" placeholder="กรุณากรอกรหัสผ่านครูผู้สอน" class="w-full py-2.5 px-3 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-blue-600">
+                <div id="teacher-login-error" class="text-rose-600 text-[11px] hidden font-semibold">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeTeacherLogin()" class="flex-1 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">ยืนยัน</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <script>
+        function openTeacherLogin() {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'เข้าสู่โหมดครูผู้สอน',
+                    html: '<p class="text-xs text-slate-500 mb-2">สำหรับคุณครูนิรุทธิ์ เสวะนา</p>',
+                    input: 'password',
+                    inputPlaceholder: 'กรุณากรอกรหัสผ่านครูผู้สอน',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'เข้าสู่ระบบ',
+                    cancelButtonText: 'ยกเลิก',
+                    confirmButtonColor: '#0f172a',
+                    preConfirm: (pwd) => {
+                        if (pwd && pwd.trim() === '42010113') {
+                            return true;
+                        } else {
+                            Swal.showValidationMessage('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+                            return false;
+                        }
+                    }
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ยินดีต้อนรับครูผู้สอน',
+                            text: 'เข้าสู่ระบบจัดการข้อมูลการสอน ม.3 โรงเรียนบ้านน้ำพร สำเร็จ',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            } else {
+                const m = document.getElementById("teacher-login-modal");
+                if (m) {
+                    m.classList.remove("hidden");
+                    const inp = document.getElementById("teacher-pwd-input");
+                    if (inp) { inp.value = ""; inp.focus(); }
+                }
+            }
+        }
+        function closeTeacherLogin() {
+            const m = document.getElementById("teacher-login-modal");
+            if (m) m.classList.add("hidden");
+        }
+    </script>
+
+
+    <!-- In-Content Bottom Note (No Footer Tag) -->
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 no-print">
+        <p class="font-medium text-slate-600">โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1</p>
+        <p class="text-[11px] text-slate-400 mt-1">นตฺถิ ปญฺญา สมา อาภา — ไม่มีแสงสว่างใดเสมอด้วยปัญญา • ครูผู้สอน: นายนิรุทธิ์ เสวะนา • ผู้อำนวยการโรงเรียน: นางศิวาลัย แก้วเขียว</p>
+    </div>
+    
+</body>
+</html>

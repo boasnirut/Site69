@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนการจัดการเรียนรู้บูรณาการสื่อดิจิทัล | โรงเรียนบ้านน้ำพร</title>
+    
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1e3a8a',
+                            navy: '#0f172a',
+                            gold: '#d97706',
+                            emerald: '#059669',
+                            slate: '#334155'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'Prompt', 'sans-serif'],
+                        heading: ['Prompt', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.7;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Prompt', sans-serif;
+        }
+        .thai-num {
+            font-feature-settings: "tnum";
+        }
+        
+        /* Print Stylesheet for Official A4 Document */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 14pt !important;
+                line-height: 1.5 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .avoid-break {
+                page-break-inside: avoid;
+            }
+            a {
+                text-decoration: none !important;
+                color: inherit !important;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- ==================== IN-CONTENT NAVIGATION TOOLBAR (NO HEADER TAG) ==================== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 no-print">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- School Logo & Subject Info -->
+            <div class="flex items-center gap-3.5">
+                <a href="index.html" class="flex-shrink-0">
+                    <img src="1-small.png" alt="โลโก้โรงเรียนบ้านน้ำพร" class="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm hover:rotate-3 transition duration-300">
+                </a>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-900 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">โรงเรียนบ้านน้ำพร</span>
+                        <span class="text-[11px] text-slate-500">สพป.เลย เขต 1</span>
+                        <span class="text-[11px] text-amber-600 font-semibold">ปีการศึกษา 2569</span>
+                    </div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight mt-1">
+                        ความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ <span class="text-blue-600 font-extrabold">ม.3</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- In-Content Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Button 1: หน้าหลัก -->
+                <a href="index.html" title="หน้าหลักภาพรวมและทะเบียนคะแนน" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าหลัก</span>
+                </a>
+
+                <!-- Button 2: เว็บแอป -->
+                <a href="app.html" title="เข้าสู่เว็บแอปสื่อการสอนและแล็บเสมือนจริง" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    <span>เว็บแอป</span>
+                </a>
+
+                <!-- Button 3: แผนการสอน -->
+                <a href="lesson-plan.html" title="เปิดแผนการจัดการเรียนรู้บูรณาการ" class="bg-amber-600 text-white shadow hover:bg-amber-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                    <span>แผนการสอน</span>
+                </a>
+
+                <!-- Button 4: สั่งพิมพ์ A4 -->
+                <button onclick="window.print()" title="พิมพ์เอกสาร A4" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-print text-slate-600"></i>
+                    <span class="hidden sm:inline">พิมพ์ A4</span>
+                </button>
+
+                <!-- Teacher Mode Button -->
+                <button onclick="openTeacherLogin()" title="โหมดครูผู้สอน" class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+                    <i class="fa-solid fa-chalkboard-user text-amber-400"></i>
+                    <span class="hidden sm:inline">ครูผู้สอน</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MAIN DOCUMENT CONTAINER ==================== -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-8 py-8">
+        
+        <!-- White Paper Sheet Container -->
+        <article class="bg-white rounded-3xl shadow-xl border border-slate-200 p-8 sm:p-14 print-container">
+
+            <!-- ================= HEADER BLOCK / ตราครุฑ/ตราโรงเรียน ================= -->
+            <div class="text-center pb-8 border-b-2 border-slate-200 avoid-break">
+                <div class="flex justify-center mb-4">
+                    <img src="1-small.png" alt="ตราสัญลักษณ์โรงเรียนบ้านน้ำพร" class="w-24 h-24 object-contain drop-shadow">
+                </div>
+                <h1 class="font-heading text-2xl sm:text-3xl font-extrabold text-blue-950 mb-1">
+                    แผนการจัดการเรียนรู้เชิงรุก (Active Learning)
+                </h1>
+                <h2 class="font-heading text-lg sm:text-xl font-bold text-amber-700 mb-2">
+                    เรื่อง การพัฒนาความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์
+                </h2>
+                <div class="text-sm font-semibold text-slate-600 max-w-2xl mx-auto space-y-1">
+                    <p>กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี • รายวิชา เทคโนโลยี (วิทยาการคำนวณ 3) รหัสวิชา ว23103</p>
+                    <p>ชั้นมัธยมศึกษาปีที่ 3 • ภาคเรียนที่ 1 • ปีการศึกษา 2569 • เวลาเรียนรวม 8 ชั่วโมง</p>
+                    <p class="text-blue-900 font-bold pt-1">โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1</p>
+                </div>
+            </div>
+
+            <!-- Quick Metadata Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6 text-center text-xs avoid-break no-print">
+                <div class="p-3 bg-blue-50/80 rounded-2xl border border-blue-100">
+                    <div class="text-slate-500 mb-0.5">กลุ่มเป้าหมาย</div>
+                    <div class="font-bold text-blue-950 text-sm">นักเรียน ม.3 (20 คน)</div>
+                </div>
+                <div class="p-3 bg-amber-50/80 rounded-2xl border border-amber-100">
+                    <div class="text-slate-500 mb-0.5">เวลาจัดการเรียนรู้</div>
+                    <div class="font-bold text-amber-900 text-sm">8 ชั่วโมง (4 หน่วย)</div>
+                </div>
+                <div class="p-3 bg-emerald-50/80 rounded-2xl border border-emerald-100">
+                    <div class="text-slate-500 mb-0.5">สื่อนวัตกรรมหลัก</div>
+                    <div class="font-bold text-emerald-950 text-sm">เว็บแอปแบบโต้ตอบ</div>
+                </div>
+                <div class="p-3 bg-purple-50/80 rounded-2xl border border-purple-100">
+                    <div class="text-slate-500 mb-0.5">รูปแบบการสอน</div>
+                    <div class="font-bold text-purple-950 text-sm">5E Model + แล็บจำลอง</div>
+                </div>
+            </div>
+
+            <!-- ================= 1. มาตรฐานการเรียนรู้และตัวชี้วัด ================= -->
+            <section class="mt-8 avoid-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    1. มาตรฐานการเรียนรู้และตัวชี้วัด
+                </h3>
+                <div class="space-y-2 text-sm text-slate-800 pl-4">
+                    <p>
+                        <strong>สาระที่ 4 เทคโนโลยี</strong>
+                    </p>
+                    <p>
+                        <strong>มาตรฐาน ว 4.2 :</strong> เข้าใจและใช้แนวคิดเชิงคำนวณในการแก้ปัญหาที่พบในชีวิตจริงอย่างเป็นขั้นตอนและเป็นระบบ ใช้เทคโนโลยีสารสนเทศและการสื่อสารในการเรียนรู้ การทำงาน และการแก้ปัญหาได้อย่างมีประสิทธิภาพ รู้เท่าทัน และมีจริยธรรม
+                    </p>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                        <strong class="text-blue-900">ตัวชี้วัดชั้นปี ว 4.2 ม.3/4 :</strong>
+                        <span>ใช้เทคโนโลยีสารสนเทศอย่างปลอดภัย และมีความรับผิดชอบต่อสังคม ปฏิบัติตามกฎหมายเกี่ยวกับคอมพิวเตอร์ ใช้ลิขสิทธิ์ของผู้อื่นโดยชอบธรรม</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 2. สาระสำคัญ / ความคิดรวบยอด ================= -->
+            <section class="mt-8 avoid-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    2. สาระสำคัญ / ความคิดรวบยอด (Key Concepts)
+                </h3>
+                <div class="text-sm text-slate-800 pl-4 space-y-2 leading-relaxed">
+                    <p>
+                        ในยุคดิจิทัล การใช้งานอินเทอร์เน็ตและสื่อสังคมออนไลน์ของนักเรียนชั้นมัธยมศึกษาปีที่ 3 มีความหลากหลายและซับซ้อน ผู้เรียนจำเป็นต้องมีความรู้เท่าทันดิจิทัล (Digital Literacy) สามารถคัดกรองข้อมูล แยกแยะข้อเท็จจริงออกจากข่าวปลอม (Fake News) และข้อมูลเท็จทั้ง 3 ระดับ (Misinformation, Disinformation, Malinformation) รวมถึงตระหนักถึงเทคโนโลยีบิดเบือนภาพและเสียง (Deepfake)
+                    </p>
+                    <p>
+                        นอกจากนี้ ผู้เรียนต้องเข้าใจสิทธิความเป็นส่วนตัวและการคุ้มครองข้อมูลส่วนบุคคลตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) มีทักษะการรักษาความปลอดภัยไซเบอร์ ได้แก่ การสร้างรหัสผ่านที่ปลอดภัย การยืนยันตัวตนแบบ 2 ขั้นตอน (2FA) การสังเกตและรับมือภัยหลอกลวงแบบฟิชชิง (Phishing) และมัลแวร์ ตลอดจนมีจริยธรรมดิจิทัล ปฏิบัติตาม พ.ร.บ. ว่าด้วยการกระทำความผิดเกี่ยวกับคอมพิวเตอร์ และไม่กระทำหรือร่วมการระรานทางไซเบอร์ (Cyberbullying) เพื่อการเป็นพลเมืองดิจิทัลที่มีความรับผิดชอบ (Responsible Digital Citizen)
+                    </p>
+                </div>
+            </section>
+
+            <!-- ================= 3. จุดประสงค์การเรียนรู้ ================= -->
+            <section class="mt-8 avoid-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    3. จุดประสงค์การเรียนรู้ (สู่การพัฒนา K-P-A)
+                </h3>
+                <div class="pl-4 space-y-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold rounded text-xs shrink-0 mt-0.5">ด้านความรู้ (K)</span>
+                        <p class="text-slate-800">
+                            1. อธิบายลักษณะ ประเภท และความรุนแรงของข้อมูลเท็จและข่าวปลอมในสังคมออนไลน์ได้ถูกต้อง<br>
+                            2. อธิบายหลักการคุ้มครองข้อมูลส่วนบุคคล (PDPA) และวิธีการรักษาความปลอดภัยของบัญชีผู้ใช้ได้ถูกต้อง<br>
+                            3. อธิบายรูปแบบภัยคุกคามทางไซเบอร์ (Phishing, Malware) และบทบัญญัติสำคัญของกฎหมายคอมพิวเตอร์ได้ถูกต้อง
+                        </p>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded text-xs shrink-0 mt-0.5">ด้านทักษะ (P)</span>
+                        <p class="text-slate-800">
+                            1. วิเคราะห์และตรวจสอบความน่าเชื่อถือของข่าวสารผ่านฐานปฏิบัติการจำลอง Fact-Checker ได้อย่างเป็นระบบ<br>
+                            2. ตรวจจับอีเมลและข้อความฟิชชิง (Phishing Email Detector) และกำหนดรหัสผ่านที่ปลอดภัยสูงได้ถูกต้อง<br>
+                            3. ประเมินสถานการณ์จำลอง (Scenario Simulation) และเลือกตัดสินใจรับมือการระรานทางไซเบอร์ได้อย่างถูกต้องตามหลักการ
+                        </p>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-bold rounded text-xs shrink-0 mt-0.5">ด้านเจตคติ (A)</span>
+                        <p class="text-slate-800">
+                            1. ตระหนักถึงความปลอดภัยในการเปิดเผยข้อมูลส่วนบุคคลในโลกออนไลน์<br>
+                            2. มีความรับผิดชอบต่อพฤติกรรมในโลกดิจิทัล เคารพสิทธิของผู้อื่น และต่อต้านการกลั่นแกล้งออนไลน์ (Cyberbullying)
+                        </p>
+                    </div>
+
+                    <div class="flex items-start gap-2">
+                        <span class="px-2 py-0.5 bg-purple-100 text-purple-800 font-bold rounded text-xs shrink-0 mt-0.5">สมรรถนะสำคัญ</span>
+                        <p class="text-slate-800">
+                            ความสามารถในการสื่อสาร, ความสามารถในการคิดวิเคราะห์, ความสามารถในการแก้ปัญหา, และความสามารถในการใช้เทคโนโลยี
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 4. โครงสร้างหน่วยการเรียนรู้ (8 ชั่วโมง) ================= -->
+            <section class="mt-8 avoid-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    4. โครงสร้างหน่วยการเรียนรู้และการบูรณาการสื่อนวัตกรรม (รวม 8 ชั่วโมง)
+                </h3>
+                <div class="overflow-x-auto pl-4">
+                    <table class="w-full text-xs sm:text-sm text-left border-collapse border border-slate-200">
+                        <thead class="bg-slate-100 text-slate-700 font-heading">
+                            <tr>
+                                <th class="border border-slate-300 p-2 text-center w-12">หน่วย</th>
+                                <th class="border border-slate-300 p-2">ชื่อหน่วยการเรียนรู้</th>
+                                <th class="border border-slate-300 p-2">ประเด็นการเรียนรู้หลัก</th>
+                                <th class="border border-slate-300 p-2">ฐานปฏิบัติการในเว็บแอป</th>
+                                <th class="border border-slate-300 p-2 text-center w-16">เวลา</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-700 divide-y divide-slate-200">
+                            <tr>
+                                <td class="border border-slate-300 p-2 text-center font-bold">1</td>
+                                <td class="border border-slate-300 p-2 font-bold text-blue-900">รู้ทันสื่อดิจิทัลและภัยข่าวปลอม</td>
+                                <td class="border border-slate-300 p-2">Digital Literacy, ข้อมูลเท็จ 3 แบบ, Clickbait, เทคโนโลยี Deepfake</td>
+                                <td class="border border-slate-300 p-2 text-emerald-700">ฐานที่ 3: Fake News Fact-Checker</td>
+                                <td class="border border-slate-300 p-2 text-center">2 ชม.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2 text-center font-bold">2</td>
+                                <td class="border border-slate-300 p-2 font-bold text-blue-900">ความเป็นส่วนตัวและข้อมูลส่วนบุคคล</td>
+                                <td class="border border-slate-300 p-2">ความสำคัญของ Privacy, กฎหมาย PDPA, รอยเท้าดิจิทัล (Digital Footprint)</td>
+                                <td class="border border-slate-300 p-2 text-emerald-700">ฐานที่ 2: Password Strength Tester</td>
+                                <td class="border border-slate-300 p-2 text-center">2 ชม.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2 text-center font-bold">3</td>
+                                <td class="border border-slate-300 p-2 font-bold text-blue-900">ความปลอดภัยไซเบอร์และภัยคุกคาม</td>
+                                <td class="border border-slate-300 p-2">Phishing, Malware/Ransomware, วิศวกรรมสังคม, การเปิด 2FA</td>
+                                <td class="border border-slate-300 p-2 text-emerald-700">ฐานที่ 1: Phishing Email Detector</td>
+                                <td class="border border-slate-300 p-2 text-center">2 ชม.</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2 text-center font-bold">4</td>
+                                <td class="border border-slate-300 p-2 font-bold text-blue-900">จริยธรรม กฎหมาย และ Cyberbullying</td>
+                                <td class="border border-slate-300 p-2">พ.ร.บ.คอมพิวเตอร์ฯ, ลิขสิทธิ์, วงจรรังแกออนไลน์ และการเป็น Upstander</td>
+                                <td class="border border-slate-300 p-2 text-emerald-700">ฐานที่ 4: Cyberbullying Scenario</td>
+                                <td class="border border-slate-300 p-2 text-center">2 ชม.</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-blue-50 font-bold text-blue-900">
+                            <tr>
+                                <td colspan="4" class="border border-slate-300 p-2 text-right">รวมระยะเวลาการจัดการเรียนรู้ตลอดหลักสูตร</td>
+                                <td class="border border-slate-300 p-2 text-center">8 ชม.</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ================= 5. กิจกรรมการเรียนรู้ (5E Model) ================= -->
+            <section class="mt-8 page-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    5. กิจกรรมการเรียนรู้เชิงรุก (Active Learning ด้วยกระบวนการ 5E ร่วมกับเว็บแอปพลิเคชัน)
+                </h3>
+                <div class="pl-4 space-y-4 text-sm text-slate-800">
+                    
+                    <!-- Step 1 -->
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <div class="flex items-center gap-2 font-heading font-bold text-blue-900 mb-1">
+                            <span class="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs">1</span>
+                            <span>ขั้นสร้างความสนใจ (Engagement) — ประมาณ 30 นาที</span>
+                        </div>
+                        <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+                            <li>ครูผู้สอนสนทนากับนักเรียนเกี่ยวกับประสบการณ์ถูกหลอกทางออนไลน์ ข่าวปลอมที่เคยพบเห็นใน TikTok หรือ Facebook</li>
+                            <li>ให้นักเรียนล็อกอินเข้าสู่เว็บแอปพลิเคชันด้วย <strong>เลขประจำตัวนักเรียน</strong> เพื่อเข้าสู่โปรไฟล์ประจำตัวของตนเอง</li>
+                            <li>นักเรียนทำ <strong>แบบทดสอบก่อนเรียน (Pre-test) จำนวน 10 ข้อ</strong> ในระบบ เพื่อสำรวจพื้นฐานความรู้เดิม ระบบจะบันทึกคะแนนเข้าสู่ฐานข้อมูลอัตโนมัติ</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <div class="flex items-center gap-2 font-heading font-bold text-blue-900 mb-1">
+                            <span class="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs">2</span>
+                            <span>ขั้นสำรวจและค้นหา (Exploration) — ประมาณ 90 นาที</span>
+                        </div>
+                        <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+                            <li>นักเรียนศึกษาเนื้อหาบทเรียนแบบโต้ตอบทั้ง 4 หน่วยในระบบด้วยตนเอง (Self-Paced Learning) ผ่านคอมพิวเตอร์หรือแท็บเล็ต</li>
+                            <li>ในแต่ละหน่วยการเรียนรู้ มีภาพประกอบ การสรุปประเด็นด้วยการ์ดเปรียบเทียบ และตัวอย่างคดีจริงในสังคม</li>
+                            <li>นักเรียนทำแบบฝึกหัดทบทวนย่อย (Mini-Quiz) ท้ายหน่วยเพื่อตรวจเช็กความเข้าใจและปลดล็อกเข็มกลัดความสำเร็จ (Badges)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <div class="flex items-center gap-2 font-heading font-bold text-blue-900 mb-1">
+                            <span class="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs">3</span>
+                            <span>ขั้นอธิบายและลงข้อสรุป (Explanation) — ประมาณ 60 นาที</span>
+                        </div>
+                        <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+                            <li>ครูผู้สอนร่วมกับนักเรียนอภิปรายสรุปหลักการสำคัญ: เทคนิคการสังเกตจุดผิดปกติของข่าวปลอม, ข้อกำหนดของกฎหมาย PDPA, และบทลงโทษตาม พ.ร.บ.คอมพิวเตอร์</li>
+                            <li>เปิดโอกาสให้นักเรียนซักถามข้อสงสัย และแลกเปลี่ยนกรณีตัวอย่างที่นักเรียนเคยประสบในชีวิตประจำวัน</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <div class="flex items-center gap-2 font-heading font-bold text-blue-900 mb-1">
+                            <span class="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs">4</span>
+                            <span>ขั้นขยายความรู้ (Elaboration: ปฏิบัติการในห้องแล็บจำลอง) — ประมาณ 180 นาที</span>
+                        </div>
+                        <p class="mb-2 text-slate-700">นักเรียนเข้าสู่เมนู <strong>"ฐานปฏิบัติการจำลองสถานการณ์จริง (Interactive Labs)"</strong> และปฏิบัติภารกิจทั้ง 4 ฐาน:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="p-2.5 bg-white rounded-xl border border-slate-200">
+                                <strong>ฐาน 1: ตรวจจับอีเมลฟิชชิง</strong> วิเคราะห์โดเมนผู้ส่ง ลิงก์แนบ และข้อความเร่งเร้า เพื่อระบุอีเมลหลอกลวง
+                            </div>
+                            <div class="p-2.5 bg-white rounded-xl border border-slate-200">
+                                <strong>ฐาน 2: ทดสอบความแข็งแกร่งรหัสผ่าน</strong> พิมพ์และประเมินรหัสผ่านพร้อมคำนวณเวลาที่แฮกเกอร์ใช้แคร็ก
+                            </div>
+                            <div class="p-2.5 bg-white rounded-xl border border-slate-200">
+                                <strong>ฐาน 3: ตรวจสอบข่าวปลอม</strong> คัดกรองภาพตัดต่อ แหล่งอ้างอิง และบริบทของข่าวลวง
+                            </div>
+                            <div class="p-2.5 bg-white rounded-xl border border-slate-200">
+                                <strong>ฐาน 4: รับมือการระรานทางไซเบอร์</strong> เลือกแนวทางแก้ปัญหาในสถานการณ์ Social Dilemma และการเป็นผู้ช่วยเหลือ
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <div class="flex items-center gap-2 font-heading font-bold text-blue-900 mb-1">
+                            <span class="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs">5</span>
+                            <span>ขั้นประเมินผล (Evaluation) — ประมาณ 120 นาที</span>
+                        </div>
+                        <ul class="list-disc list-inside space-y-1 pl-2 text-slate-700">
+                            <li>นักเรียนทำ <strong>แบบทดสอบหลังเรียน (Post-test) จำนวน 10 ข้อ</strong> ในระบบเพื่อวัดผลสัมฤทธิ์ทางการเรียน</li>
+                            <li>ระบบคำนวณคะแนนพัฒนาการ (+Gain Score) และออก <strong>เกียรติบัตรอิเล็กทรอนิกส์ (E-Certificate)</strong> อัตโนมัติสำหรับนักเรียนที่ผ่านเกณฑ์</li>
+                            <li>ครูผู้สอนเข้าสู่ <strong>Dashboard ติดตามความก้าวหน้า</strong> ตรวจดูผลการพัฒนาของทั้ง 20 คน และส่งออกรายงาน (CSV/Excel)</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ================= 6. สื่อ นวัตกรรม และแหล่งเรียนรู้ ================= -->
+            <section class="mt-8 avoid-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    6. สื่อ นวัตกรรม และแหล่งการเรียนรู้
+                </h3>
+                <div class="pl-4 space-y-2 text-sm text-slate-800">
+                    <p>
+                        <strong>1. สื่อและนวัตกรรมหลัก:</strong> เว็บแอปพลิเคชันสื่อการสอนแบบโต้ตอบ เรื่อง การพัฒนาความรู้เท่าทันดิจิทัลและความปลอดภัยออนไลน์ของนักเรียนชั้นมัธยมศึกษาปีที่ 3 โรงเรียนบ้านน้ำพร
+                    </p>
+                    <p>
+                        <strong>2. อุปกรณ์สนับสนุน:</strong> เครื่องคอมพิวเตอร์และสัญญาณเครือข่ายอินเทอร์เน็ต ห้องปฏิบัติการคอมพิวเตอร์โรงเรียนบ้านน้ำพร
+                    </p>
+                    <p>
+                        <strong>3. แหล่งเรียนรู้เพิ่มเติม:</strong> เว็บไซต์ศูนย์ต่อต้านข่าวปลอม ประเทศไทย (Anti-Fake News Center), สำนักงานคณะกรรมการคุ้มครองข้อมูลส่วนบุคคล (สคส. PDPA), และกองบัญชาการตำรวจสืบสวนสอบสวนอาชญากรรมทางเทคโนโลยี (บช.สอท.)
+                    </p>
+                </div>
+            </section>
+
+            <!-- ================= 7. การวัดและประเมินผล ================= -->
+            <section class="mt-8 avoid-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    7. การวัดและประเมินผลการเรียนรู้
+                </h3>
+                <div class="overflow-x-auto pl-4">
+                    <table class="w-full text-xs sm:text-sm text-left border-collapse border border-slate-200">
+                        <thead class="bg-slate-100 text-slate-700 font-heading">
+                            <tr>
+                                <th class="border border-slate-300 p-2">สิ่งที่ต้องการวัดผล</th>
+                                <th class="border border-slate-300 p-2">วิธีการวัดผล</th>
+                                <th class="border border-slate-300 p-2">เครื่องมือวัดผล</th>
+                                <th class="border border-slate-300 p-2 text-center">เกณฑ์การผ่าน</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-700 divide-y divide-slate-200">
+                            <tr>
+                                <td class="border border-slate-300 p-2 font-semibold">1. ด้านความรู้ (K)</td>
+                                <td class="border border-slate-300 p-2">ทดสอบหลังเรียน (Post-test)</td>
+                                <td class="border border-slate-300 p-2">แบบทดสอบปรนัย 10 ข้อในระบบ</td>
+                                <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">ร้อยละ 60 ขึ้นไป (6/10)</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2 font-semibold">2. ด้านทักษะกระบวนการ (P)</td>
+                                <td class="border border-slate-300 p-2">ตรวจภารกิจแล็บจำลองสถานการณ์</td>
+                                <td class="border border-slate-300 p-2">บันทึกผลการผ่าน 4 ฐานปฏิบัติการ</td>
+                                <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">ผ่านครบทั้ง 4 ฐาน (100%)</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2 font-semibold">3. ด้านคุณลักษณะอันพึงประสงค์ (A)</td>
+                                <td class="border border-slate-300 p-2">สังเกตพฤติกรรมการเรียนรู้</td>
+                                <td class="border border-slate-300 p-2">แบบประเมินคุณลักษณะพลเมืองดิจิทัล</td>
+                                <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">ระดับคุณภาพ "ดี" ขึ้นไป</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Rubric Criteria Box -->
+                <div class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 ml-4 text-xs text-slate-700 space-y-1">
+                    <div class="font-bold text-slate-800 text-sm mb-1">เกณฑ์ระดับคุณภาพการประเมินผลสัมฤทธิ์:</div>
+                    <p>• <strong>ระดับดีเยี่ยม (Excellent):</strong> คะแนนร้อยละ 80 ขึ้นไป (8 - 10 คะแนน)</p>
+                    <p>• <strong>ระดับดี (Good):</strong> คะแนนร้อยละ 70 - 79 (7 คะแนน)</p>
+                    <p>• <strong>ระดับผ่านเกณฑ์ (Pass):</strong> คะแนนร้อยละ 60 - 69 (6 คะแนน)</p>
+                    <p>• <strong>ระดับควรพัฒนา:</strong> คะแนนต่ำกว่าร้อยละ 60 (น้อยกว่า 6 คะแนน)</p>
+                </div>
+            </section>
+
+            <!-- ================= 8. บันทึกผลหลังการจัดการเรียนรู้ ================= -->
+            <section class="mt-8 page-break">
+                <h3 class="font-heading text-lg font-bold text-blue-900 border-l-4 border-blue-700 pl-3 mb-3">
+                    8. บันทึกผลหลังการจัดการเรียนรู้ (ผลการใช้นวัตกรรมสื่อการสอนแบบโต้ตอบ)
+                </h3>
+                <div class="pl-4 space-y-3 text-sm text-slate-800">
+                    <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl">
+                        <h4 class="font-heading font-bold text-emerald-950 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-square-poll-vertical text-emerald-600"></i>
+                            ผลสัมฤทธิ์ทางการเรียนของนักเรียนชั้น ม.3 (จำนวน 20 คน):
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center my-3">
+                            <div class="p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
+                                <div class="text-xs text-slate-500">คะแนนเฉลี่ยก่อนเรียน (Pre-test)</div>
+                                <div class="font-heading text-xl font-extrabold text-slate-700">4.4 / 10</div>
+                                <div class="text-[11px] text-slate-400">ร้อยละ 44.0</div>
+                            </div>
+                            <div class="p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
+                                <div class="text-xs text-slate-500">คะแนนเฉลี่ยหลังเรียน (Post-test)</div>
+                                <div class="font-heading text-xl font-extrabold text-blue-700">8.3 / 10</div>
+                                <div class="text-[11px] text-slate-400">ร้อยละ 83.0</div>
+                            </div>
+                            <div class="p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
+                                <div class="text-xs text-slate-500">พัฒนาการเฉลี่ยรวม (+Gain Score)</div>
+                                <div class="font-heading text-xl font-extrabold text-emerald-600">+3.9</div>
+                                <div class="text-[11px] text-emerald-700 font-bold">ผ่านเกณฑ์ทุกคน 100%</div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 mt-2 leading-relaxed">
+                            <strong>สรุปผล:</strong> นักเรียนชั้นมัธยมศึกษาปีที่ 3 ทั้ง 20 คน มีพัฒนาการทางความรู้เท่าทันดิจิทัลสูงขึ้นอย่างมีนัยสำคัญ สามารถผ่านเกณฑ์การประเมินครบ 100% และปฏิบัติภารกิจในฐานจำลองสำเร็จครบทุกฐาน ได้รับเกียรติบัตรอิเล็กทรอนิกส์ทุกคน
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong class="text-slate-900 block mb-1">ปัญหาและอุปสรรค:</strong>
+                            <p class="text-slate-600">นักเรียนบางส่วนในกลุ่มเริ่มต้นยังมีความลังเลในการแยกแยะอีเมลฟิชชิงที่มีความแนบเนียน จำเป็นต้องใช้เวลาในการพิจารณาชื่อโดเมนและลิงก์เชื่อมโยง</p>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                            <strong class="text-slate-900 block mb-1">ข้อเสนอแนะและแนวทางแก้ไข:</strong>
+                            <p class="text-slate-600">การใช้แล็บจำลองสถานการณ์ช่วยให้นักเรียนเห็นผลลัพธ์ของการคลิกได้ทันทีโดยไม่เกิดอันตรายจริง ควรส่งเสริมให้นักเรียนนำความรู้นี้ไปแนะนำผู้ปกครองที่บ้าน</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 9. ลายมือชื่อและการรับรองแผน ================= -->
+            <section class="mt-12 pt-8 border-t-2 border-slate-200 avoid-break">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 text-center text-xs text-slate-800">
+                    
+                    <!-- Teacher Signature Box -->
+                    <div class="flex flex-col items-center">
+                        <div class="h-20 flex items-end justify-center mb-1">
+                            <img src="ลายเซ็น นิรุทธิ์.png" alt="ลายเซ็น นายนิรุทธิ์ เสวะนา" class="max-h-20 max-w-[130px] object-contain drop-shadow-sm">
+                        </div>
+                        <div class="w-56 border-b border-slate-400 mb-2"></div>
+                        <div class="font-heading font-bold text-sm text-slate-900">( นายนิรุทธิ์ เสวะนา )</div>
+                        <div class="text-slate-600">ครูประจำชั้นมัธยมศึกษาปีที่ 3 / ครูผู้สอน</div>
+                        <div class="text-slate-500 mt-1">วันที่ 24 เดือน สิงหาคม พ.ศ. 2569</div>
+                    </div>
+
+                    <!-- Director Signature Box -->
+                    <div class="flex flex-col items-center">
+                        <div class="h-20 flex items-end justify-center mb-1">
+                            <img src="ลายเซ็น ผอ.ศิวาลัย.png" alt="ลายเซ็น นางศิวาลัย แก้วเขียว" class="max-h-20 max-w-[150px] object-contain drop-shadow-sm">
+                        </div>
+                        <div class="w-56 border-b border-slate-400 mb-2"></div>
+                        <div class="font-heading font-bold text-sm text-slate-900">( นางศิวาลัย แก้วเขียว )</div>
+                        <div class="text-slate-600">ผู้อำนวยการโรงเรียนบ้านน้ำพร</div>
+                        <div class="text-slate-500 mt-1">วันที่ 25 เดือน สิงหาคม พ.ศ. 2569</div>
+                    </div>
+
+                </div>
+
+                <!-- Administrative Approval Stamp Note -->
+                <div class="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center text-[11px] text-slate-500 avoid-break">
+                    <span class="font-bold text-blue-900">บันทึกการอนุมัติ:</span> แผนการจัดการเรียนรู้นี้ผ่านการตรวจสอบความสอดคล้องกับหลักสูตรสถานศึกษา และได้รับอนุมัติให้ใช้จัดการเรียนการสอนประจำปีการศึกษา 2569 โรงเรียนบ้านน้ำพร
+                </div>
+            </section>
+
+        </article>
+
+    </main>
+
+    <!-- Teacher Login Modal -->
+    <div id="teacher-login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-sm">เข้าสู่โหมดครูผู้สอน</h4>
+                    <p class="text-[11px] text-slate-500">สำหรับนายนิรุทธิ์ เสวะนา</p>
+                </div>
+            </div>
+            <form onsubmit="handleTeacherSubmit(event)" class="space-y-3">
+                <input type="password" id="teacher-pwd-input" placeholder="กรุณากรอกรหัสผ่านครูผู้สอน" class="w-full py-2.5 px-3 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-blue-600">
+                <div id="teacher-login-error" class="text-rose-600 text-[11px] hidden font-semibold">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeTeacherLogin()" class="flex-1 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">ยืนยัน</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <script>
+        function openTeacherLogin() {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'เข้าสู่โหมดครูผู้สอน',
+                    html: '<p class="text-xs text-slate-500 mb-2">สำหรับคุณครูนิรุทธิ์ เสวะนา</p>',
+                    input: 'password',
+                    inputPlaceholder: 'กรุณากรอกรหัสผ่านครูผู้สอน',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'เข้าสู่ระบบ',
+                    cancelButtonText: 'ยกเลิก',
+                    confirmButtonColor: '#0f172a',
+                    preConfirm: (pwd) => {
+                        if (pwd && pwd.trim() === '42010113') {
+                            return true;
+                        } else {
+                            Swal.showValidationMessage('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+                            return false;
+                        }
+                    }
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ยินดีต้อนรับครูผู้สอน',
+                            text: 'เข้าสู่ระบบจัดการข้อมูลการสอน ม.3 โรงเรียนบ้านน้ำพร สำเร็จ',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            } else {
+                const m = document.getElementById("teacher-login-modal");
+                if (m) {
+                    m.classList.remove("hidden");
+                    const inp = document.getElementById("teacher-pwd-input");
+                    if (inp) { inp.value = ""; inp.focus(); }
+                }
+            }
+        }
+        function closeTeacherLogin() {
+            const m = document.getElementById("teacher-login-modal");
+            if (m) m.classList.add("hidden");
+        }
+    </script>
+
+
+    <!-- In-Content Bottom Note (No Footer Tag) -->
+    <div class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 no-print">
+        <p class="font-medium text-slate-600">โรงเรียนบ้านน้ำพร สำนักงานเขตพื้นที่การศึกษาประถมศึกษาเลย เขต 1</p>
+        <p class="text-[11px] text-slate-400 mt-1">นตฺถิ ปญฺญา สมา อาภา — ไม่มีแสงสว่างใดเสมอด้วยปัญญา • ครูผู้สอน: นายนิรุทธิ์ เสวะนา • ผู้อำนวยการโรงเรียน: นางศิวาลัย แก้วเขียว</p>
+    </div>
+    
+</body>
+</html>
