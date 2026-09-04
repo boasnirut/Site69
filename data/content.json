@@ -2506,29 +2506,19 @@
         "selfAssessmentLevel": "3",
         "images": [
           {
-            "type": "image",
-            "title": "",
-            "url": "/placeholder-pa-challenge-02-01.jpg"
+            "type": "link",
+            "title": "แผนการจัดการเรียนรู้",
+            "url": "https://boasnirut.in.th/classroom-lessons/smart-packaging/lesson-plan.html"
           },
           {
-            "type": "image",
-            "title": "",
-            "url": "/placeholder-pa-challenge-02-02.jpg"
+            "type": "link",
+            "title": "สื่อการสอน",
+            "url": "https://boasnirut.in.th/classroom-lessons/smart-packaging/app.html#home"
           },
           {
-            "type": "image",
-            "title": "",
-            "url": "/placeholder-pa-challenge-02-03.jpg"
-          },
-          {
-            "type": "image",
-            "title": "",
-            "url": "/placeholder-pa-challenge-02-04.jpg"
-          },
-          {
-            "type": "image",
-            "title": "",
-            "url": "/placeholder-pa-challenge-02-05.jpg"
+            "type": "link",
+            "title": "แบบสรุปผล",
+            "url": "https://boasnirut.in.th/classroom-lessons/smart-packaging/app.html#dashboard"
           }
         ]
       }
