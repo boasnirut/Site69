@@ -13,6 +13,16 @@ import {
 } from "lucide-react";
 import { homeroomInsights, homeroomStudents as seedStudents } from "@/lib/site-data";
 
+type SdqKey =
+  | "emotional"
+  | "conduct"
+  | "hyperactivity"
+  | "peer"
+  | "prosocial";
+
+type SdqRecord = Record<SdqKey, number>;
+type SdqLevel = "ปกติ" | "เสี่ยง" | "ช่วยเหลือ";
+
 type Student = {
   no: number;
   nickname: string;
@@ -20,22 +30,35 @@ type Student = {
   gender: string;
   image: string;
   attendance: number;
-  sdq: {
-    emotional: number;
-    conduct: number;
-    hyperactivity: number;
-    peer: number;
-    prosocial: number;
-    level?: string;
-  };
+  sdq: SdqRecord;
 };
 
 type AuthMode = "edit" | "import";
 type StudentForm = ReturnType<typeof makeForm>;
 
 const PASSWORD = "42010113";
-const STORAGE_KEY = "nirut-homeroom-students-csv";
+const STORAGE_KEY = "nirut-homeroom-students-csv-2569";
+const sdqFields: { key: SdqKey; label: string }[] = [
+  { key: "emotional", label: "อารมณ์" },
+  { key: "conduct", label: "ความประพฤติ" },
+  { key: "hyperactivity", label: "สมาธิ" },
+  { key: "peer", label: "เพื่อน" },
+  { key: "prosocial", label: "สัมพันธภาพสังคม" }
+];
+const sdqLevelNotes: { value: number; label: SdqLevel; detail: string; color: "coral" | "amber" | "green" }[] = [
+  { value: 1, label: "ช่วยเหลือ", detail: "ควรดูแลช่วยเหลือเป็นรายกรณี", color: "coral" },
+  { value: 2, label: "เสี่ยง", detail: "ควรเฝ้าระวังและติดตามต่อเนื่อง", color: "amber" },
+  { value: 3, label: "ปกติ", detail: "อยู่ในเกณฑ์ปกติ", color: "green" }
+];
 const csvHeader = "no,nickname,fullName,gender,image,attendance,emotional,conduct,hyperactivity,peer,prosocial";
+
+const defaultSdq: SdqRecord = {
+  emotional: 3,
+  conduct: 3,
+  hyperactivity: 3,
+  peer: 3,
+  prosocial: 3
+};
 
 function escapeCsv(value: string | number) {
   const text = String(value);
@@ -76,13 +99,42 @@ function toNumber(value: string | number, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function normalizeSdqValue(value: string | number | undefined, fallback = 3) {
+  const number = toNumber(value ?? fallback, fallback);
+  return number === 1 || number === 2 || number === 3 ? number : fallback;
+}
+
+function getSdqLabel(value: number): SdqLevel {
+  if (value === 1) return "ช่วยเหลือ";
+  if (value === 2) return "เสี่ยง";
+  return "ปกติ";
+}
+
+function getSdqColor(value: number) {
+  if (value === 1) return "coral";
+  if (value === 2) return "amber";
+  return "green";
+}
+
 function parseCsv(csv: string): Student[] {
   return csv
     .trim()
     .split(/\r?\n/)
     .slice(1)
     .map((line) => {
-      const [no, nickname, fullName, gender, image, attendance, emotional, conduct, hyperactivity, peer, prosocial] =
+      const [
+        no,
+        nickname,
+        fullName,
+        gender,
+        image,
+        attendance,
+        emotional,
+        conduct,
+        hyperactivity,
+        peer,
+        prosocial
+      ] =
         parseCsvLine(line);
       return {
         no: toNumber(no),
@@ -92,11 +144,11 @@ function parseCsv(csv: string): Student[] {
         image,
         attendance: toNumber(attendance, 100),
         sdq: {
-          emotional: toNumber(emotional),
-          conduct: toNumber(conduct),
-          hyperactivity: toNumber(hyperactivity),
-          peer: toNumber(peer),
-          prosocial: toNumber(prosocial)
+          emotional: normalizeSdqValue(emotional),
+          conduct: normalizeSdqValue(conduct),
+          hyperactivity: normalizeSdqValue(hyperactivity),
+          peer: normalizeSdqValue(peer),
+          prosocial: normalizeSdqValue(prosocial)
         }
       };
     })
@@ -132,13 +184,13 @@ function notify(kind: "success" | "error", text: string) {
 }
 
 function getRiskScore(student: Student) {
-  return student.sdq.emotional + student.sdq.conduct + student.sdq.hyperactivity + student.sdq.peer;
+  return sdqFields.filter((field) => student.sdq[field.key] < 3).length;
 }
 
-function getSdqLevel(student: Student) {
-  const risk = getRiskScore(student);
-  if (risk >= 20) return "ควรช่วยเหลือ";
-  if (risk >= 13) return "เฝ้าระวัง";
+function getSdqLevel(student: Student): SdqLevel {
+  const values = sdqFields.map((field) => student.sdq[field.key]);
+  if (values.includes(1)) return "ช่วยเหลือ";
+  if (values.includes(2)) return "เสี่ยง";
   return "ปกติ";
 }
 
@@ -158,13 +210,24 @@ function makeForm(student: Student) {
   };
 }
 
+const initialStudents: Student[] = seedStudents.map((student) => ({
+  ...student,
+  sdq: sdqFields.reduce<SdqRecord>(
+    (result, field) => ({
+      ...result,
+      [field.key]: normalizeSdqValue(student.sdq?.[field.key as keyof typeof student.sdq])
+    }),
+    { ...defaultSdq }
+  )
+}));
+
 export function HomeroomClassroom() {
-  const [students, setStudents] = useState<Student[]>(seedStudents);
+  const [students, setStudents] = useState<Student[]>(initialStudents);
   const [authMode, setAuthMode] = useState<AuthMode | null>(null);
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [tableOpen, setTableOpen] = useState(false);
-  const [tableForms, setTableForms] = useState<StudentForm[]>(() => seedStudents.map((student) => makeForm(student)));
+  const [tableForms, setTableForms] = useState<StudentForm[]>(() => initialStudents.map((student) => makeForm(student)));
   const [importOpen, setImportOpen] = useState(false);
   const [importText, setImportText] = useState("");
   const [importError, setImportError] = useState("");
@@ -187,7 +250,7 @@ export function HomeroomClassroom() {
           setStudents(parsed);
         }
       })
-      .catch(() => setStudents(seedStudents));
+      .catch(() => setStudents(initialStudents));
   }, []);
 
   useEffect(() => {
@@ -202,8 +265,8 @@ export function HomeroomClassroom() {
       ? students.reduce((sum, student) => sum + student.attendance, 0) / total
       : 0;
     const normal = students.filter((student) => getSdqLevel(student) === "ปกติ").length;
-    const watch = students.filter((student) => getSdqLevel(student) === "เฝ้าระวัง").length;
-    const help = students.filter((student) => getSdqLevel(student) === "ควรช่วยเหลือ").length;
+    const risk = students.filter((student) => getSdqLevel(student) === "เสี่ยง").length;
+    const help = students.filter((student) => getSdqLevel(student) === "ช่วยเหลือ").length;
 
     return {
       total,
@@ -211,7 +274,7 @@ export function HomeroomClassroom() {
       female,
       attendance,
       normal,
-      watch,
+      risk,
       help,
       metrics: [
         { label: "นักเรียนทั้งหมด", value: String(total), detail: "ม.3", tone: "orange" },
@@ -219,15 +282,15 @@ export function HomeroomClassroom() {
         { label: "หญิง", value: String(female), detail: `${total ? Math.round((female / total) * 100) : 0}%`, tone: "coral" },
         { label: "มาเรียนเฉลี่ย", value: `${attendance.toFixed(1)}%`, detail: "คำนวณจากข้อมูลรายบุคคล", tone: "teal" },
         { label: "SDQ ปกติ", value: String(normal), detail: `${total ? Math.round((normal / total) * 100) : 0}%`, tone: "green" },
-        { label: "ควรติดตาม", value: String(watch + help), detail: `เฝ้าระวัง ${watch} / ช่วยเหลือ ${help}`, tone: "amber" }
+        { label: "ควรติดตาม", value: String(risk + help), detail: `เสี่ยง ${risk} / ช่วยเหลือ ${help}`, tone: "amber" }
       ]
     };
   }, [students]);
 
   const sdqSummary = [
-    { label: "ปกติ", value: dashboard.normal, percent: dashboard.total ? (dashboard.normal / dashboard.total) * 100 : 0, color: "green" },
-    { label: "เฝ้าระวัง", value: dashboard.watch, percent: dashboard.total ? (dashboard.watch / dashboard.total) * 100 : 0, color: "amber" },
-    { label: "ควรช่วยเหลือ", value: dashboard.help, percent: dashboard.total ? (dashboard.help / dashboard.total) * 100 : 0, color: "coral" }
+    { label: "ช่วยเหลือ", value: dashboard.help, percent: dashboard.total ? (dashboard.help / dashboard.total) * 100 : 0, color: "coral" },
+    { label: "เสี่ยง", value: dashboard.risk, percent: dashboard.total ? (dashboard.risk / dashboard.total) * 100 : 0, color: "amber" },
+    { label: "ปกติ", value: dashboard.normal, percent: dashboard.total ? (dashboard.normal / dashboard.total) * 100 : 0, color: "green" }
   ];
 
   const openAuth = (mode: AuthMode) => {
@@ -271,11 +334,11 @@ export function HomeroomClassroom() {
           image: item.image.trim() || `/student-m3-${String(no).padStart(2, "0")}.jpg`,
           attendance: Math.max(0, Math.min(100, toNumber(item.attendance, 100))),
           sdq: {
-            emotional: toNumber(item.emotional),
-            conduct: toNumber(item.conduct),
-            hyperactivity: toNumber(item.hyperactivity),
-            peer: toNumber(item.peer),
-            prosocial: toNumber(item.prosocial)
+            emotional: normalizeSdqValue(item.emotional),
+            conduct: normalizeSdqValue(item.conduct),
+            hyperactivity: normalizeSdqValue(item.hyperactivity),
+            peer: normalizeSdqValue(item.peer),
+            prosocial: normalizeSdqValue(item.prosocial)
           }
         };
       })
@@ -384,6 +447,15 @@ export function HomeroomClassroom() {
                 </div>
               ))}
             </div>
+            <div className="sdq-level-notes" aria-label="หมายเหตุค่าระดับ SDQ">
+              {sdqLevelNotes.map((item) => (
+                <div className={`sdq-level-note ${item.color}`} key={item.value}>
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
+                  <small>{item.detail}</small>
+                </div>
+              ))}
+            </div>
           </article>
 
           <article className="homeroom-chart-panel gender">
@@ -408,8 +480,6 @@ export function HomeroomClassroom() {
 
       <section className="section-block">
         <div className="section-heading">
-          <span className="eyebrow">Student Members</span>
-          <h2>สมาชิกในห้องเรียน</h2>
           <div className="student-members-heading">
             <span className="eyebrow">Student Members</span>
             <button type="button" onClick={() => openAuth("edit")}>
@@ -448,22 +518,19 @@ export function HomeroomClassroom() {
                       <strong>{level}</strong>
                     </div>
                     <div className="sdq-stat-list">
-                      {[
-                        ["อารมณ์", student.sdq.emotional],
-                        ["ความประพฤติ", student.sdq.conduct],
-                        ["สมาธิ/อยู่ไม่นิ่ง", student.sdq.hyperactivity],
-                        ["เพื่อน", student.sdq.peer],
-                        ["สัมพันธภาพสังคม", student.sdq.prosocial]
-                      ].map(([label, value]) => (
-                        <div className="sdq-mini-row" key={label}>
+                      {sdqFields.map(({ key, label }) => {
+                        const value = student.sdq[key];
+                        return (
+                        <div className={`sdq-mini-row ${getSdqColor(value)}`} key={key}>
                           <span>{label}</span>
-                          <strong>{value}</strong>
+                          <strong title={getSdqLabel(value)}>{value}</strong>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
-                    <div className="student-risk-chip">
+                    <div className={`student-risk-chip ${getSdqColor(level === "ช่วยเหลือ" ? 1 : level === "เสี่ยง" ? 2 : 3)}`}>
                       <ShieldCheck aria-hidden="true" />
-                      คะแนนกลุ่มเสี่ยง {totalRisk}
+                      {level} {totalRisk > 0 ? `${totalRisk} ด้านที่ควรติดตาม` : "ครบทุกด้าน"}
                     </div>
                   </div>
                 </div>
@@ -549,11 +616,21 @@ export function HomeroomClassroom() {
                       </td>
                       <td><input value={student.image} onChange={(event) => updateTableForm(index, "image", event.target.value)} /></td>
                       <td><input inputMode="decimal" value={student.attendance} onChange={(event) => updateTableForm(index, "attendance", event.target.value)} /></td>
-                      <td><input inputMode="numeric" value={student.emotional} onChange={(event) => updateTableForm(index, "emotional", event.target.value)} /></td>
-                      <td><input inputMode="numeric" value={student.conduct} onChange={(event) => updateTableForm(index, "conduct", event.target.value)} /></td>
-                      <td><input inputMode="numeric" value={student.hyperactivity} onChange={(event) => updateTableForm(index, "hyperactivity", event.target.value)} /></td>
-                      <td><input inputMode="numeric" value={student.peer} onChange={(event) => updateTableForm(index, "peer", event.target.value)} /></td>
-                      <td><input inputMode="numeric" value={student.prosocial} onChange={(event) => updateTableForm(index, "prosocial", event.target.value)} /></td>
+                      {sdqFields.map((field) => (
+                        <td key={field.key}>
+                          <select
+                            aria-label={`${field.label} ${student.fullName}`}
+                            value={student[field.key]}
+                            onChange={(event) => updateTableForm(index, field.key, event.target.value)}
+                          >
+                            {sdqLevelNotes.map((note) => (
+                              <option key={note.value} value={String(note.value)}>
+                                {note.value} - {note.label}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                      ))}
                     </tr>
                   ))}
                 </tbody>

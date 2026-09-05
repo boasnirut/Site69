@@ -272,8 +272,8 @@ export const homeroomDashboard = [
   { label: "ชาย", value: "9", detail: "45%", tone: "blue" },
   { label: "หญิง", value: "11", detail: "55%", tone: "coral" },
   { label: "มาเรียนเฉลี่ย", value: "96.8%", detail: "เดือนล่าสุด", tone: "teal" },
-  { label: "SDQ ปกติ", value: "15", detail: "75%", tone: "green" },
-  { label: "ควรติดตาม", value: "5", detail: "เฝ้าระวัง 4 / ช่วยเหลือ 1", tone: "amber" }
+  { label: "SDQ ปกติ", value: "3", detail: "15%", tone: "green" },
+  { label: "ควรติดตาม", value: "17", detail: "เสี่ยง 9 / ช่วยเหลือ 8", tone: "amber" }
 ];
 
 export const homeroomInsights = [
@@ -284,32 +284,32 @@ export const homeroomInsights = [
 ];
 
 export const homeroomSdqSummary = [
-  { label: "ปกติ", value: 15, percent: 75, color: "green" },
-  { label: "เฝ้าระวัง", value: 4, percent: 20, color: "amber" },
-  { label: "ควรช่วยเหลือ", value: 1, percent: 5, color: "coral" }
+  { label: "ช่วยเหลือ", value: 8, percent: 40, color: "coral" },
+  { label: "เสี่ยง", value: 9, percent: 45, color: "amber" },
+  { label: "ปกติ", value: 3, percent: 15, color: "green" }
 ];
 
 export const homeroomStudents = [
-  { no: 1, nickname: "กัมปั้น", fullName: "ธันวา บุญตัน", gender: "ชาย", image: "/student-m3-01.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 3, peer: 2, prosocial: 8 } },
-  { no: 2, nickname: "แคน", fullName: "ธีรศักดิ์ บุญมาก", gender: "ชาย", image: "/student-m3-02.jpg", attendance: 96, sdq: { emotional: 3, conduct: 2, hyperactivity: 4, peer: 2, prosocial: 7 } },
-  { no: 3, nickname: "คิว", fullName: "วรเมธ แสงขาว", gender: "ชาย", image: "/student-m3-03.jpg", attendance: 95, sdq: { emotional: 4, conduct: 2, hyperactivity: 5, peer: 3, prosocial: 7 } },
-  { no: 4, nickname: "อิค", fullName: "สุรศักดิ์ ฤทธิศักดิ์", gender: "ชาย", image: "/student-m3-04.jpg", attendance: 99, sdq: { emotional: 1, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
-  { no: 5, nickname: "โชกุน", fullName: "ธนโชติ นิวงษา", gender: "ชาย", image: "/student-m3-05.jpg", attendance: 94, sdq: { emotional: 5, conduct: 3, hyperactivity: 5, peer: 4, prosocial: 6 } },
-  { no: 6, nickname: "จูดี้", fullName: "ณัฏฐวี ซุ้ยไกร", gender: "ชาย", image: "/student-m3-06.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 3, peer: 2, prosocial: 8 } },
-  { no: 7, nickname: "วีโก้", fullName: "อนุสรณ์ โพธิ์พันธุ์", gender: "ชาย", image: "/student-m3-07.jpg", attendance: 96, sdq: { emotional: 3, conduct: 1, hyperactivity: 4, peer: 2, prosocial: 8 } },
-  { no: 8, nickname: "ไนท์", fullName: "กฤษณะพงษ์ ฝอยทอง", gender: "ชาย", image: "/student-m3-08.jpg", attendance: 91, sdq: { emotional: 6, conduct: 4, hyperactivity: 6, peer: 5, prosocial: 5 } },
-  { no: 9, nickname: "ออกัส", fullName: "วชิรวิทย์ คำบุผา", gender: "ชาย", image: "/student-m3-09.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 3, peer: 1, prosocial: 9 } },
-  { no: 10, nickname: "โบนัส", fullName: "กวินตรา สุกสัก", gender: "หญิง", image: "/student-m3-10.jpg", attendance: 99, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
-  { no: 11, nickname: "จูน", fullName: "กวิสรา เนินสง่า", gender: "หญิง", image: "/student-m3-11.jpg", attendance: 97, sdq: { emotional: 3, conduct: 1, hyperactivity: 3, peer: 2, prosocial: 8 } },
-  { no: 12, nickname: "จีจี้", fullName: "จันทร์จิรา ครองเคหา", gender: "หญิง", image: "/student-m3-12.jpg", attendance: 96, sdq: { emotional: 3, conduct: 2, hyperactivity: 4, peer: 2, prosocial: 8 } },
-  { no: 13, nickname: "ทิพย์", fullName: "ชญานี พรหมสาส์น", gender: "หญิง", image: "/student-m3-13.jpg", attendance: 95, sdq: { emotional: 4, conduct: 2, hyperactivity: 4, peer: 3, prosocial: 7 } },
-  { no: 14, nickname: "ใบไผ่", fullName: "ปรายฉัตร โคตรอาษา", gender: "หญิง", image: "/student-m3-14.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 2, prosocial: 9 } },
-  { no: 15, nickname: "ผักบุ้ง", fullName: "รักษา แสงขาว", gender: "หญิง", image: "/student-m3-15.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 3, peer: 2, prosocial: 8 } },
-  { no: 16, nickname: "ไป๋", fullName: "อินฑิรา ถามูล", gender: "หญิง", image: "/student-m3-16.jpg", attendance: 96, sdq: { emotional: 3, conduct: 1, hyperactivity: 3, peer: 2, prosocial: 8 } },
-  { no: 17, nickname: "แอ้น", fullName: "อินทิรา มาลา", gender: "หญิง", image: "/student-m3-17.jpg", attendance: 94, sdq: { emotional: 5, conduct: 2, hyperactivity: 5, peer: 4, prosocial: 6 } },
-  { no: 18, nickname: "น้ำปั่น", fullName: "กมลลักษณ์ ศรีพิพัฒน์", gender: "หญิง", image: "/student-m3-18.jpg", attendance: 99, sdq: { emotional: 1, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
-  { no: 19, nickname: "แก้ม", fullName: "น้ำเหนือ แก้วไกรสร", gender: "หญิง", image: "/student-m3-19.jpg", attendance: 98, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 1, prosocial: 9 } },
-  { no: 20, nickname: "อ่อง", fullName: "อ่อง พรมสาส์น", gender: "หญิง", image: "/student-m3-20.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 3, peer: 2, prosocial: 8 } }
+  { no: 1, nickname: "กัมปั้น", fullName: "ธันวา บุญตัน", gender: "ชาย", image: "/student-m3-01.jpg", attendance: 98, sdq: { emotional: 2, conduct: 2, hyperactivity: 2, peer: 3, prosocial: 3 } },
+  { no: 2, nickname: "แคน", fullName: "ธีรศักดิ์ บุญมาก", gender: "ชาย", image: "/student-m3-02.jpg", attendance: 96, sdq: { emotional: 1, conduct: 1, hyperactivity: 1, peer: 2, prosocial: 2 } },
+  { no: 3, nickname: "คิว", fullName: "วรเมธ แสงขาว", gender: "ชาย", image: "/student-m3-03.jpg", attendance: 95, sdq: { emotional: 2, conduct: 3, hyperactivity: 1, peer: 2, prosocial: 2 } },
+  { no: 4, nickname: "อิค", fullName: "สุรศักดิ์ ฤทธิศักดิ์", gender: "ชาย", image: "/student-m3-04.jpg", attendance: 99, sdq: { emotional: 2, conduct: 3, hyperactivity: 2, peer: 3, prosocial: 3 } },
+  { no: 5, nickname: "โชกุน", fullName: "ธนโชติ นิวงษา", gender: "ชาย", image: "/student-m3-05.jpg", attendance: 94, sdq: { emotional: 1, conduct: 1, hyperactivity: 1, peer: 2, prosocial: 2 } },
+  { no: 6, nickname: "จูดี้", fullName: "ณัฏฐวี ซุ้ยไกร", gender: "ชาย", image: "/student-m3-06.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 2, peer: 2, prosocial: 2 } },
+  { no: 7, nickname: "วีโก้", fullName: "อนุสรณ์ โพธิ์พันธุ์", gender: "ชาย", image: "/student-m3-07.jpg", attendance: 96, sdq: { emotional: 2, conduct: 2, hyperactivity: 1, peer: 2, prosocial: 2 } },
+  { no: 8, nickname: "ไนท์", fullName: "กฤษณะพงษ์ ฝอยทอง", gender: "ชาย", image: "/student-m3-08.jpg", attendance: 91, sdq: { emotional: 2, conduct: 3, hyperactivity: 1, peer: 2, prosocial: 2 } },
+  { no: 9, nickname: "ออกัส", fullName: "วชิรวิทย์ คำบุผา", gender: "ชาย", image: "/student-m3-09.jpg", attendance: 98, sdq: { emotional: 2, conduct: 3, hyperactivity: 3, peer: 2, prosocial: 1 } },
+  { no: 10, nickname: "โบนัส", fullName: "กวินตรา สุกสัก", gender: "หญิง", image: "/student-m3-10.jpg", attendance: 99, sdq: { emotional: 3, conduct: 3, hyperactivity: 3, peer: 2, prosocial: 2 } },
+  { no: 11, nickname: "จูน", fullName: "กวิสรา เนินสง่า", gender: "หญิง", image: "/student-m3-11.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 2, peer: 2, prosocial: 2 } },
+  { no: 12, nickname: "จีจี้", fullName: "จันทร์จิรา ครองเคหา", gender: "หญิง", image: "/student-m3-12.jpg", attendance: 96, sdq: { emotional: 2, conduct: 3, hyperactivity: 3, peer: 3, prosocial: 3 } },
+  { no: 13, nickname: "ทิพย์", fullName: "ชญานี พรหมสาส์น", gender: "หญิง", image: "/student-m3-13.jpg", attendance: 95, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 2, prosocial: 2 } },
+  { no: 14, nickname: "ใบไผ่", fullName: "ปรายฉัตร โคตรอาษา", gender: "หญิง", image: "/student-m3-14.jpg", attendance: 98, sdq: { emotional: 2, conduct: 3, hyperactivity: 3, peer: 2, prosocial: 2 } },
+  { no: 15, nickname: "ผักบุ้ง", fullName: "รักษา แสงขาว", gender: "หญิง", image: "/student-m3-15.jpg", attendance: 97, sdq: { emotional: 2, conduct: 2, hyperactivity: 2, peer: 3, prosocial: 3 } },
+  { no: 16, nickname: "ไป๋", fullName: "อินฑิรา ถามูล", gender: "หญิง", image: "/student-m3-16.jpg", attendance: 96, sdq: { emotional: 3, conduct: 3, hyperactivity: 3, peer: 2, prosocial: 2 } },
+  { no: 17, nickname: "แอ้น", fullName: "อินทิรา มาลา", gender: "หญิง", image: "/student-m3-17.jpg", attendance: 94, sdq: { emotional: 2, conduct: 1, hyperactivity: 2, peer: 2, prosocial: 2 } },
+  { no: 18, nickname: "น้ำปั่น", fullName: "กมลลักษณ์ ศรีพิพัฒน์", gender: "หญิง", image: "/student-m3-18.jpg", attendance: 99, sdq: { emotional: 3, conduct: 3, hyperactivity: 3, peer: 3, prosocial: 3 } },
+  { no: 19, nickname: "แก้ม", fullName: "น้ำเหนือ แก้วไกรสร", gender: "หญิง", image: "/student-m3-19.jpg", attendance: 98, sdq: { emotional: 3, conduct: 3, hyperactivity: 3, peer: 3, prosocial: 3 } },
+  { no: 20, nickname: "อ่อง", fullName: "อ่อง พรมสาส์น", gender: "หญิง", image: "/student-m3-20.jpg", attendance: 97, sdq: { emotional: 3, conduct: 3, hyperactivity: 3, peer: 3, prosocial: 3 } }
 ];
 
 export const awards = [

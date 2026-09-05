@@ -2601,6 +2601,63 @@ p {
   background: linear-gradient(90deg, var(--coral), #ff8a8a);
 }
 
+.sdq-level-notes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.sdq-level-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 8px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.sdq-level-note strong {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  width: 30px;
+  aspect-ratio: 1;
+  color: #050505;
+  border-radius: 50%;
+  font-size: 0.92rem;
+  font-weight: 950;
+}
+
+.sdq-level-note span {
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.sdq-level-note small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.sdq-level-note.coral strong {
+  background: linear-gradient(135deg, var(--coral), #ff8a8a);
+}
+
+.sdq-level-note.amber strong {
+  background: linear-gradient(135deg, var(--amber), var(--orange-strong));
+}
+
+.sdq-level-note.green strong {
+  background: linear-gradient(135deg, var(--green), var(--teal));
+}
+
 .homeroom-chart-panel.gender {
   justify-items: center;
   text-align: center;
@@ -2794,7 +2851,7 @@ p {
 
 .sdq-mini-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 36px;
+  grid-template-columns: minmax(0, 1fr) 32px;
   gap: 8px;
   align-items: center;
   min-height: 34px;
@@ -2822,6 +2879,18 @@ p {
   font-size: 0.86rem;
 }
 
+.sdq-mini-row.coral strong {
+  background: linear-gradient(135deg, var(--coral), #ff8a8a);
+}
+
+.sdq-mini-row.amber strong {
+  background: linear-gradient(135deg, var(--amber), var(--orange-strong));
+}
+
+.sdq-mini-row.green strong {
+  background: linear-gradient(135deg, var(--green), var(--teal));
+}
+
 .student-risk-chip {
   display: flex;
   align-items: center;
@@ -2835,6 +2904,24 @@ p {
   font-size: 0.78rem;
   font-weight: 900;
   line-height: 1.35;
+}
+
+.student-risk-chip.coral {
+  color: #ffd5dc;
+  background: rgba(251, 113, 133, 0.12);
+  border-color: rgba(251, 113, 133, 0.28);
+}
+
+.student-risk-chip.amber {
+  color: #ffe8a3;
+  background: rgba(250, 204, 21, 0.1);
+  border-color: rgba(250, 204, 21, 0.26);
+}
+
+.student-risk-chip.green {
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.24);
 }
 
 .student-risk-chip svg {
@@ -3581,7 +3668,7 @@ p {
 }
 
 .student-table-editor td:nth-child(n + 6) {
-  width: 82px;
+  width: 104px;
 }
 
 .award-card {
@@ -6961,6 +7048,10 @@ p {
 
   .sdq-summary-row em {
     justify-self: end;
+  }
+
+  .sdq-level-notes {
+    grid-template-columns: 1fr;
   }
 
   .student-editor-grid {
