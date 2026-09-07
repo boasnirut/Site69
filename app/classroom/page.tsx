@@ -1,4 +1,13 @@
-import { BookOpenCheck, ExternalLink, ListChecks, Package, PlayCircle, Presentation, School, ShieldCheck } from "lucide-react";
+import {
+  BookOpenCheck,
+  ExternalLink,
+  ListChecks,
+  Package,
+  PlayCircle,
+  Presentation,
+  School,
+  ShieldCheck
+} from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { classScheduleSummary, nirutTeachingSchedule, schedulePeriods } from "@/lib/schedule-data";
 import { getPageVisuals } from "@/lib/site-data";
@@ -16,6 +25,119 @@ const courseSpaces = [
     level: "Smart Packaging with NFC Tag • ม.3",
     href: "/classroom-lessons/smart-packaging/index.html",
     icon: Package
+  }
+];
+
+const aksornLevelGroups = [
+  {
+    level: "ม.1",
+    description: "สื่อวิดีโอพื้นฐานสำหรับเริ่มต้นรายวิชาเทคโนโลยีในระดับมัธยมศึกษาปีที่ 1",
+    subjects: [
+      {
+        subject: "วิทยาการคำนวณ",
+        sourcePage: "https://www.aksorn.com/app/po66/m-cs-media.htm",
+        clips: [
+          {
+            title: "ทำความรู้จัก Python เบื้องต้น",
+            youtubeId: "psIPlLNni8k"
+          },
+          {
+            title: "การใช้เทคโนโลยีสารสนเทศอย่างปลอดภัย",
+            youtubeId: "9KP3ti2JQs0"
+          }
+        ]
+      },
+      {
+        subject: "ออกแบบและเทคโนโลยี",
+        sourcePage: "https://www.aksorn.com/app/po66/m-dt-media.htm",
+        clips: [
+          {
+            title: "เทคโนโลยีกับมนุษย์",
+            youtubeId: "O8FgzVEd1uo"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    level: "ม.2",
+    description: "คลิปประกอบการสอนสำหรับต่อยอดการคิดเชิงคำนวณ การเขียนโปรแกรม และกระบวนการออกแบบ",
+    subjects: [
+      {
+        subject: "วิทยาการคำนวณ",
+        sourcePage: "https://www.aksorn.com/app/po66/m-cs-media.htm",
+        clips: [
+          {
+            title: "ประวัติความเป็นมาของภาษาไพทอน Python",
+            youtubeId: "V1MiIyyx1Bg"
+          }
+        ]
+      },
+      {
+        subject: "ออกแบบและเทคโนโลยี",
+        sourcePage: "https://www.aksorn.com/app/po66/m-dt-media.htm",
+        clips: [
+          {
+            title: "การเปลี่ยนแปลงเทคโนโลยี",
+            youtubeId: "58iud5XWPRw"
+          },
+          {
+            title: "วัสดุสังเคราะห์",
+            youtubeId: "B5inL05y1vM"
+          },
+          {
+            title: "กระบวนการทางวิทยาศาสตร์กับการทดลองการหักเหของแสง",
+            youtubeId: "G2yWfkrXcnc"
+          },
+          {
+            title: "ความแตกต่างระหว่างการคิดเชิงออกแบบและการคิดเชิงวิศวกรรม",
+            youtubeId: "Y6gFjkVd6cA"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    level: "ม.3",
+    description: "คลิปสำหรับสรุปและต่อยอดสู่การใช้เทคโนโลยีสร้างชิ้นงานและแก้ปัญหาในสถานการณ์จริง",
+    subjects: [
+      {
+        subject: "วิทยาการคำนวณ",
+        sourcePage: "https://www.aksorn.com/app/po66/m-cs-media.htm",
+        clips: [
+          {
+            title: "การประมวลผลแบบอินเทอร์แอ็กทิฟ",
+            youtubeId: "kK0zU6skAVQ"
+          },
+          {
+            title: "การซื้อสินค้าออนไลน์อย่างปลอดภัย",
+            youtubeId: "ImQiW5FaLM4"
+          },
+          {
+            title: "ประโยชน์ของแอปพลิเคชัน",
+            youtubeId: "5kJU--MoCz8"
+          }
+        ]
+      },
+      {
+        subject: "ออกแบบและเทคโนโลยี",
+        sourcePage: "https://www.aksorn.com/app/po66/m-dt-media.htm",
+        clips: [
+          {
+            title: "ขั้นตอนการจดทะเบียนสิทธิบัตร อนุสิทธิบัตร",
+            youtubeId: "VEzH7Bso0tg"
+          },
+          {
+            title: "คุณภาพของวัสดุในการสร้างชิ้นงาน",
+            youtubeId: "bI_2mGZDeQo"
+          },
+          {
+            title: "ตัวอย่างของการคำนวณลำดับความสำคัญของแต่ละปัญหา",
+            youtubeId: "uGstyRMSOls"
+          }
+        ]
+      }
+    ]
   }
 ];
 
@@ -138,6 +260,83 @@ export default async function ClassroomPage() {
             </article>
             );
           })}
+        </div>
+      </section>
+
+      <section className="section-block aksorn-media-section">
+        <div className="section-heading">
+          <span className="eyebrow">Aksorn Video Clips</span>
+          <h2>คลิปประกอบการสอนจากสำนักพิมพ์ อจท.</h2>
+          <p>
+            จัดตามระดับชั้นก่อน แล้วแยกเป็นรายวิชาวิทยาการคำนวณ และออกแบบและเทคโนโลยี
+            เพื่อให้เลือกคลิปประกอบการสอนได้ตรงกับห้องเรียน
+          </p>
+        </div>
+
+        <div className="aksorn-source-note">
+          <ShieldCheck aria-hidden="true" />
+          <span>
+            คลิปทั้งหมดเป็นลิงก์ YouTube ที่ครูระบุไว้สำหรับรายวิชาและระดับชั้นโดยตรง
+            สามารถดูตัวอย่างในหน้าเว็บหรือเปิดไปยัง YouTube ได้ทันที
+          </span>
+        </div>
+
+        <div className="aksorn-grade-stack">
+          {aksornLevelGroups.map((grade) => (
+            <article className="aksorn-grade-panel" key={grade.level}>
+              <div className="aksorn-grade-head">
+                <div>
+                  <span className="eyebrow">Grade Level</span>
+                  <h3>{grade.level}</h3>
+                  <p>{grade.description}</p>
+                </div>
+                <strong>{grade.subjects.reduce((sum, subject) => sum + subject.clips.length, 0)} คลิป</strong>
+              </div>
+
+              <div className="aksorn-subject-grid">
+                {grade.subjects.map((subject) => (
+                  <section className="aksorn-subject-panel" key={`${grade.level}-${subject.subject}`}>
+                    <div className="aksorn-subject-head">
+                      <div>
+                        <span>{subject.clips.length} คลิป</span>
+                        <h4>{subject.subject}</h4>
+                      </div>
+                      <a href={subject.sourcePage} target="_blank" rel="noreferrer" aria-label={`เปิดหน้าสื่อ อจท. ${subject.subject} ${grade.level}`}>
+                        <ExternalLink aria-hidden="true" />
+                        หน้าสื่อ อจท.
+                      </a>
+                    </div>
+
+                    <div className="aksorn-clip-grid">
+                      {subject.clips.map((clip, index) => (
+                        <article className="aksorn-media-card" key={`${grade.level}-${subject.subject}-${clip.youtubeId}`}>
+                          <div className="aksorn-video-frame">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${clip.youtubeId}`}
+                              title={`${subject.subject} ${grade.level}: ${clip.title}`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                              loading="lazy"
+                            />
+                          </div>
+                          <div className="aksorn-media-card-head">
+                            <small>คลิปที่ {index + 1}</small>
+                            <strong>{clip.title}</strong>
+                          </div>
+                          <div className="aksorn-media-actions">
+                            <a href={`https://www.youtube.com/watch?v=${clip.youtubeId}`} target="_blank" rel="noreferrer" aria-label={`เปิด YouTube ${clip.title}`}>
+                              <PlayCircle aria-hidden="true" />
+                              เปิดบน YouTube
+                            </a>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
