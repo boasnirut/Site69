@@ -13,6 +13,7 @@ import {
   UserCheck
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
+import { PaIntroPopup } from "@/components/PaIntroPopup";
 import { PaEvidenceGallery } from "@/components/PaEvidenceGallery";
 import { PaAssessmentInfoPopover } from "@/components/PaAssessmentInfoPopover";
 import { PaTimelineNav } from "@/components/PaTimelineNav";
@@ -464,6 +465,8 @@ export default async function PaPage() {
 
   return (
     <>
+      <PaIntroPopup />
+
       <PageHero
         {...visuals.pa}
         eyebrow="PA Report 2569"
